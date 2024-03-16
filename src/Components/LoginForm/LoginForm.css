@@ -1,0 +1,63 @@
+.login-container {
+    width: 90%; /* Cambiado a un porcentaje para que se ajuste al ancho del contenedor padre */
+    max-width: 400px; /* Establecido un ancho máximo para que no se vea demasiado estirado en pantallas grandes */
+    margin: 0 auto;
+    position: absolute;
+    left: 50%; /* Centrado horizontalmente */
+    top: 50%; /* Centrado verticalmente */
+    transform: translate(-50%, -50%); /* Centrado absoluto */
+    padding: 30px;
+    border: 1px solid #ccc;
+    border-radius: 10px;
+    box-shadow: 0 12px 5px rgba(0, 0, 0, 0.1), 0 2px 5px rgba(0, 0, 0, 0.1); /* Arreglada la declaración de box-shadow */
+    background-color: rgb(255, 255, 255); /* Cambiar el color de fondo a blanco */
+    color: rgb(0, 0, 0); /* Cambiar el color del texto a negro */
+  }
+  
+  .general {
+    background-image: url('../Assets/pr3.png');
+    background-size: cover;
+    background-position: center;  
+    width: 100vw;
+    height: 100vh;
+  }
+  
+  .login-container h2 {
+    text-align: center;
+    margin-bottom: 50px; 
+  }
+  
+  .p-inputgroup {
+    margin-bottom: 20px;
+  }
+  
+  .p-inputgroup-addon {
+    background-color: #f4f4f4;
+    border: 1px solid #ccc;
+  }
+  
+  .pi {
+    font-size: 1.2em;
+    margin-right: 5px;
+  }
+  
+  .p-button {
+    width: 100%;
+  }
+  
+
+  @media screen and (max-width: 768px) {
+    .login-container {
+      width: 90%;
+      max-width: 90%; 
+      padding: 20px;
+    }
+  
+    .login-container h2 {
+      margin-bottom: 30px; 
+    }
+  
+   
+  }
+
+  
