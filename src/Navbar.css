@@ -1,0 +1,88 @@
+/* NavbarVertical.css */
+
+.navbar-vertical {
+    width: 250px;
+    height: calc(120vh - 20px); 
+    position: fixed; 
+    top: 0px; 
+    left: 0px; 
+    background-color: #ffffff;
+    overflow-y: auto;
+    z-index: 1000; 
+  }
+  
+  .navbar-vertical ul {
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+  }
+  
+  .navbar-vertical li {
+    border-bottom: 1px solid #555; 
+  }
+  
+  .navbar-vertical li a {
+    display: block;
+    padding: 18px; 
+    color: rgb(118 118 155); 
+    text-decoration: none;
+  }
+  
+  .navbar-vertical li a:hover {
+    background-color: #0691a324; 
+  }
+  
+.menubarNavegadorHorizontal{
+  width: 52px; 
+  height: calc(120vh - 20px); 
+  position: fixed;
+  top: 58px; 
+  left: 0px;
+  background-color: #ffffff;
+  overflow-y: auto; 
+  z-index: 1000;
+
+}
+
+.p-tieredmenu .p-menuitem > .p-menuitem-content .p-menuitem-link .p-menuitem-text {
+  font-size: 16px !important; 
+  font-weight: bold;
+}
+
+
+
+.menuNavegadorHorizontal .pi {
+  font-size: 1.5rem !important;
+}
+.p-tieredmenu .p-menuitem > .p-menuitem-content .p-menuitem-link {
+  padding: 1.75rem 1.1rem !important;
+}
+.menubarNavegadorHorizontal:hover{
+  width: 250px;
+}
+ 
+.menubarNavegador{
+    display: flex;
+    align-items: center;
+    position: relative;
+    left: -10px;
+    top: -10px;
+    width: 120.1rem;
+   
+
+  }
+
+  @media only screen and (min-width: 1500px) and (max-width: 1900px) {
+    .menubarNavegadorHorizontal .p-tieredmenu {
+      font-size: 14px; /* Reducir el tamaño de la fuente */
+      width: 120px; /* Reducir el ancho del TieredMenu */
+    }
+  }
+
+  @media only screen and (min-width: 800px) and (max-width: 1460px) {
+    .menubarNavegadorHorizontal .p-tieredmenu {
+      font-size: 14px; /* Reducir el tamaño de la fuente */
+      width: 100px  !important; /* Reducir el ancho del TieredMenu */
+    }
+  }
+ 

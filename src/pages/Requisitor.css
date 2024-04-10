@@ -1,0 +1,14 @@
+.cardSolicitante{
+    position: relative;
+    left: 15.5rem;
+    width: 90rem;
+    border-radius: 10px
+}
+
+.botonInsertarRequisitor {
+  position: absolute;
+  width: 12rem;
+  top: 0;
+  left: 75rem;
+  margin: 1rem;
+}

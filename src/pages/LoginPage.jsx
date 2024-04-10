@@ -25,21 +25,21 @@ export const LoginPage = () => {
         password: "admin123",
         name: "Admin",
         profile: "admin",
-        redirectPath: "/dashboard",
+        redirectPath: "/Administrador",
       },
       {
         email: "solicitante@example.com",
-        password: "solicitante123",
+        password: "123",
         name: "Solicitante",
         profile: "solicitante",
-        redirectPath: "/solicitante",
+        redirectPath: "/Requisitor",
       },
       {
         email: "proveedor@example.com",
-        password: "1234 ",
+        password: "1234",
         name: "Proveedor",
         profile: "proveedor",
-        redirectPath: "/proveedor",
+        redirectPath: "/Proveedor",
       },
     ];
 
@@ -67,7 +67,7 @@ export const LoginPage = () => {
       <form onSubmit={onLogin}>
     
         <div className="login-container">
-          <h2>TechsConsulting</h2>
+          <h2>TeschConsulting</h2>
           <div className="p-inputgroup">
             <span className="p-inputgroup-addon">
               <i className="pi pi-user" />

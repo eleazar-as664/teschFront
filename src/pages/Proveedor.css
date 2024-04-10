@@ -1,0 +1,13 @@
+.cardProveedor{
+    position: relative;
+    left: 18.5rem;
+    width: 97.5rem;
+}
+
+.botonInsertar{
+    width: 12rem;
+    position: relative;
+    left: 1430px;
+    bottom: 6px;
+    
+}

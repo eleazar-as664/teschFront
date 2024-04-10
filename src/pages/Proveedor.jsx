@@ -1,11 +1,260 @@
-import React from 'react'
+import React, { useState } from "react";
+import { DataTable } from "primereact/datatable";
+import { Column } from "primereact/column";
+import { Card } from "primereact/card";
+import { FileUpload } from "primereact/fileupload";
+import { Button } from "primereact/button";
+import { useNavigate } from "react-router-dom";
+import { Navbar } from "../Navbar";
+import "./Proveedor.css";
 
 function Proveedor() {
+  const [selectedItem, setSelectedItem] = useState(null);
+
+  const navigate = useNavigate();
+  const arrayObjetos = [
+    {
+      orden: 1,
+      empresa: "Empresa A",
+      fechaRequerida: new Date(2024, 3, 1), // Año, mes (0-indexed), día
+      estatus: "En proceso",
+      rutaPDF: "../assets/pdfs/prueba.pdf",
+    },
+    {
+      orden: 2,
+      empresa: "Empresa B",
+      fechaRequerida: new Date(2024, 2, 15),
+      estatus: "Completado",
+    },
+    {
+      orden: 3,
+      empresa: "Empresa C",
+      fechaRequerida: new Date(2024, 1, 20),
+      estatus: "Cancelado",
+    },
+    {
+      orden: 4,
+      empresa: "Empresa D",
+      fechaRequerida: new Date(2024, 0, 10),
+      estatus: "En proceso",
+    },
+    {
+      orden: 5,
+      empresa: "Empresa E",
+      fechaRequerida: new Date(2023, 11, 5),
+      estatus: "Completado",
+    },
+    {
+      orden: 6,
+      empresa: "Empresa F",
+      fechaRequerida: new Date(2023, 10, 25),
+      estatus: "En proceso",
+    },
+    {
+      orden: 7,
+      empresa: "Empresa G",
+      fechaRequerida: new Date(2023, 9, 15),
+      estatus: "Cancelado",
+    },
+    {
+      orden: 8,
+      empresa: "Empresa H",
+      fechaRequerida: new Date(2023, 8, 7),
+      estatus: "Completado",
+    },
+    {
+      orden: 9,
+      empresa: "Empresa I",
+      fechaRequerida: new Date(2023, 7, 2),
+      estatus: "En proceso",
+    },
+    {
+      orden: 10,
+      empresa: "Empresa J",
+      fechaRequerida: new Date(2023, 6, 30),
+      estatus: "En proceso",
+    },
+    {
+      orden: 11,
+      empresa: "Empresa K",
+      fechaRequerida: new Date(2023, 5, 20),
+      estatus: "Completado",
+    },
+    {
+      orden: 12,
+      empresa: "Empresa L",
+      fechaRequerida: new Date(2023, 4, 12),
+      estatus: "En proceso",
+    },
+    {
+      orden: 13,
+      empresa: "Empresa M",
+      fechaRequerida: new Date(2023, 3, 6),
+      estatus: "Cancelado",
+    },
+    {
+      orden: 14,
+      empresa: "Empresa N",
+      fechaRequerida: new Date(2023, 2, 25),
+      estatus: "Completado",
+    },
+    {
+      orden: 15,
+      empresa: "Empresa O",
+      fechaRequerida: new Date(2023, 1, 15),
+      estatus: "En proceso",
+    },
+    {
+      orden: 16,
+      empresa: "Empresa P",
+      fechaRequerida: new Date(2023, 0, 8),
+      estatus: "Completado",
+    },
+    {
+      orden: 17,
+      empresa: "Empresa Q",
+      fechaRequerida: new Date(2022, 11, 30),
+      estatus: "Cancelado",
+    },
+    {
+      orden: 18,
+      empresa: "Empresa R",
+      fechaRequerida: new Date(2022, 10, 20),
+      estatus: "En proceso",
+    },
+    {
+      orden: 19,
+      empresa: "Empresa S",
+      fechaRequerida: new Date(2022, 9, 10),
+      estatus: "En proceso",
+    },
+    {
+      orden: 20,
+      empresa: "Empresa T",
+      fechaRequerida: new Date(2022, 8, 5),
+      estatus: "Completado",
+    },
+  ];
+  const onPDFUpload = (event) => {
+    // const file = event.files[0];
+    // const newFile = { name: file.name, size: file.size, type: file.type };
+    // setUploadedFiles([...uploadedFiles, newFile]);
+  };
+  const onXMLUpload = (event) => {
+    // const file = event.files[0];
+    // setUploadedXML(file);
+  };
+  const handleRowClick = (event) => {
+    // Obtener los datos de la fila seleccionada
+    const rowData = event.data;
+
+    // Guardar solo los datos necesarios en el localStorage
+    const selectedItem = {
+      orden: rowData.orden,
+      empresa: rowData.empresa,
+      // Añade más propiedades según sea necesario
+    };
+    localStorage.setItem("selectedItem", JSON.stringify(selectedItem));
+
+    // Redirigir a la página de detalles
+    navigate("./Proveedor/OrdenCompra");
+  };
+
+  const redirectToDetalle = (event) =>{
+    console.log('HOLAAAAAAAAAAAAAAAAAAAA ELEAZAR :b')
+  }
+
   return (
     <div>
-      <h1>Proveedor</h1>
+      <Navbar />
+      <Card title="" className="cardProveedor">
+        {/* <Link to="./Requisitor/NuevaCompra">
+          <Button
+            label="Nuevo"
+            severity="info"
+            raised
+            icon="pi pi-plus"
+            iconPos="right"
+            className="botonInsertar"
+          />
+        </Link> 
+        
+         
+      */}
+        <DataTable
+          value={arrayObjetos}
+          selectionMode="single"
+          selection={selectedItem}
+          onRowClick={handleRowClick} // Capturar el clic en la fila
+          scrollable
+          scrollHeight="400px"
+        >
+          <Column field="orden" header="Orden"></Column>
+          <Column field="empresa" header="Empresa/fechaRequerida"></Column>
+          <Column field="estatus" header="Estatus"></Column>
+          <Column
+            header="Orden Detalle"
+            body={(rowData) => (
+              <Button
+                onClick={() => redirectToDetalle(rowData.id)} // Agrega la función para redireccionar a la página de detalle
+                label="Ver"
+                style={{ width: "80px", height: "40px" }}
+              />
+            )}
+          ></Column>
+
+          <Column
+            header="Facturas XML"
+            body={() => (
+              <div onClick={(e) => e.stopPropagation()}>
+                <FileUpload
+                  mode="basic"
+                  chooseLabel={
+                    <i
+                      className="pi pi-file-pdf"
+                      style={{ fontSize: "24px" }}
+                    />
+                  }
+                  uploadLabel="Subir"
+                  cancelLabel="Cancelar"
+                  customUpload
+                  onUpload={onPDFUpload}
+                  accept="application/pdf"
+                  style={{ width: "80px", height: "50px" }}
+                />
+              </div>
+            )}
+          />
+          <Column
+            header="Facturas XML"
+            body={() => (
+              <div onClick={(e) => e.stopPropagation()}>
+                <FileUpload
+                  mode="basic"
+                  chooseLabel={
+                    <i
+                      className="pi pi-file-excel"
+                      style={{ fontSize: "24px" }}
+                    />
+                  }
+                  uploadLabel="Subir"
+                  cancelLabel="Cancelar"
+                  customUpload
+                  onUpload={onPDFUpload}
+                  accept="application/xml"
+                  style={{ width: "80px", height: "50px" }}
+                />
+              </div>
+            )}
+          />
+          <Column
+            headerStyle={{ width: "5%", minWidth: "5rem" }}
+            bodyStyle={{ textAlign: "center" }}
+          ></Column>
+        </DataTable>
+      </Card>
     </div>
-  )
+  );
 }
 
-export default Proveedor
+export default Proveedor;
