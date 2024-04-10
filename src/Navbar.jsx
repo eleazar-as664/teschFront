@@ -17,6 +17,10 @@ export const Navbar = () => {
   const direcionamiento = () => {
     navigate("/Proveedor");
   };
+
+  const direcionarRequicisiones = () =>{
+    navigate("/Requisitor")
+  }
   const items = [
     {
       label: "Components",
@@ -87,6 +91,12 @@ export const Navbar = () => {
       id: "4",
     },
     {
+      label: "Solicitud De Compra",
+      icon: "pi pi-cart-plus",
+      id: "7",
+      command: direcionarRequicisiones,
+    },
+    {
       label: "Cerrar",
       icon: "pi pi-sign-out",
       id: "5",
@@ -104,7 +114,7 @@ export const Navbar = () => {
 
   if (user?.profile === "solicitante") {
     filteredItems10 = items10.filter(
-      (item) => item.id === "1" ||item.id === "5" || item.id === "6" 
+      (item) => item.id === "1" ||item.id === "5" || item.id === "6" || item.id === "7"  
     );
   } else if (user?.profile === "proveedor") {
     filteredItems10 = items10.filter(

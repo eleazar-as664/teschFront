@@ -6,6 +6,7 @@ import { DataTable } from "primereact/datatable";
 import { Column } from "primereact/column";
 import { Card } from "primereact/card";
 import { Button } from "primereact/button";
+import { useNavigate } from "react-router-dom";
 import "./Requisitor.css";
 function Requisitor() {
   const msgs = useRef(null);
@@ -110,28 +111,9 @@ function Requisitor() {
 
   const [expandedRows, setExpandedRows] = useState(null);
 
+  const navigate = useNavigate();
   const onRowToggle = (event) => {
     setExpandedRows(event.data);
-  };
-
-  const rowExpansionTemplate = (rowData) => {
-    return (
-      <div className="row-expansion-content">
-        <p>
-          <strong>Comentarios:</strong> {rowData.Comentarios}
-        </p>
-        <p>
-          <strong>No. OC SAP:</strong> {rowData.No_OC_SAP}
-        </p>
-        <p>
-          <strong>Notas de Autorización:</strong> {rowData.Notas_autorizacion}
-        </p>
-        <p>
-          <strong>Notas del Requisitor:</strong> {rowData.Notas_requisitor}
-        </p>
-        {/* Agrega aquí más detalles o datos que desees mostrar */}
-      </div>
-    );
   };
 
   useMountEffect(() => {
@@ -147,6 +129,13 @@ function Requisitor() {
       });
     }
   });
+
+  const redirectToEditar = (datos) => {
+    // Obtener los datos de la fila seleccionada
+    const rowData = datos;   
+    localStorage.setItem("datosRequisitor", JSON.stringify(rowData));
+    navigate("./Requisitor/EditarRequisicion");
+  };
 
   return (
     <div className="card flex justify-content-center">
@@ -167,7 +156,6 @@ function Requisitor() {
           value={data}
           expandedRows={expandedRows}
           onRowToggle={onRowToggle}
-          rowExpansionTemplate={rowExpansionTemplate}
           scrollable
           scrollHeight="400px"
           stripedRows
@@ -183,7 +171,7 @@ function Requisitor() {
             header="Cancelar"
             body={(rowData) => (
               <Button
-                // onClick={() => redirectToDetalle(rowData.id)} // Agrega la función para redireccionar a la página de detalle
+                // onClick={() => redirectToDetalle(rowData.id)}
                 label="Cancelar"
                 severity="danger"
               />
@@ -193,12 +181,11 @@ function Requisitor() {
             header="Editar"
             body={(rowData) => (
               <Button
-             
+                onClick={() => redirectToEditar(rowData)}
                 label="Editar"
-                           />
+              />
             )}
           ></Column>
-         
         </DataTable>
       </Card>
     </div>
