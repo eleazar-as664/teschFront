@@ -109,20 +109,30 @@ export const Navbar = () => {
     },
   ];
 
-  const user = JSON.parse(localStorage.getItem("user"));
   let filteredItems10 = [];
-
-  if (user?.profile === "solicitante") {
-    filteredItems10 = items10.filter(
-      (item) => item.id === "1" ||item.id === "5" || item.id === "6" || item.id === "7"  
+  const user = JSON.parse(localStorage.getItem("user"));
+  if (user.Profiles.some(profile => profile.Name === "Solicitante")) {
+    const solicitanteItems = items10.filter(
+      item => item.id === "1" || item.id === "2"
     );
-  } else if (user?.profile === "proveedor") {
-    filteredItems10 = items10.filter(
-      (item) => item.id === "1" || item.id === "2" || item.id === "5"
-    );
-  } else if (user?.profile === "administrador") {
-    filteredItems10 = items10;
+    filteredItems10 = filteredItems10.concat(solicitanteItems);
   }
+  
+  if (user.Profiles.some(profile => profile.Name === "Requisitor")) {
+    const requisitorItems = items10.filter(
+      item => item.id === "1" ||item.id === "5" || item.id === "6" || item.id === "7"  
+    );
+    filteredItems10 = filteredItems10.concat(requisitorItems);
+  }
+  
+  if (user.Profiles.some(profile => profile.Name === "Administrador")) {
+    const adminItems = items10.filter(
+      item => item.id === "5" || item.id === "6"
+    );
+    filteredItems10 = filteredItems10.concat(adminItems);
+  }
+
+
 
   return (
     <>

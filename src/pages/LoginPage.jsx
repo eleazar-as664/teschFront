@@ -1,57 +1,48 @@
-import React, { useState } from "react";
+import React, { useState,useEffect } from "react";
 import { InputText } from "primereact/inputtext";
 import { Button } from "primereact/button";
 import { Toast } from "primereact/toast";
 import { useNavigate } from "react-router-dom";
 import { useForm } from "../hook/useForm";
+import axios from "axios"; // Importar Axios
 import "../Components/LoginForm/LoginForm.css";
 export const LoginPage = () => {
   const navigate = useNavigate();
   const [error, setError] = useState(null);
 
-  const { name, email, password, onInputChange } = useForm({
+  const { name, password, onInputChange } = useForm({
     name: "",
     email: "",
     password: "",
   });
 
   let toast;
-  const onLogin = (e) => {
-    e.preventDefault();
-
-    const allowedUsers = [
-      {
-        email: "admin@example.com",
-        password: "admin123",
-        name: "Admin",
-        profile: "admin",
-        redirectPath: "/Administrador",
-      },
-      {
-        email: "solicitante@example.com",
-        password: "123",
-        name: "Solicitante",
-        profile: "solicitante",
-        redirectPath: "/Requisitor",
-      },
-      {
-        email: "proveedor@example.com",
-        password: "1234",
-        name: "Proveedor",
-        profile: "proveedor",
-        redirectPath: "/Proveedor",
-      },
-    ];
-
-    const user = allowedUsers.find(
-      (u) => u.name === name && u.password === password
-    );
+  const user = JSON.parse(localStorage.getItem("user"));
+  useEffect(() => {
     if (user) {
+      const firstProfilePath = user.Profiles[0]?.Path;
+      if (firstProfilePath) {
+        return navigate(firstProfilePath);;
+      }
+    }
+  }, [user,navigate]);
+  const onLoginPrueba = async (e) => { 
+    e.preventDefault();
+    try {
+      const response = await axios.post("http://localhost:3000/api/v1/SignIn", {
+        UserName: name,
+        Password: password,
+        SecretKey: "O6XcIjRgEOvvRyO0QFHzf5jllsuzCiLEZj9YftaOwg"
+      });
+
+      const user = response.data.data; 
+       
+      console.log('Lo LOGRASTE, TOMA PERRROOO',user)
       localStorage.setItem("user", JSON.stringify(user));
-      navigate(user.redirectPath);
-    } else {
-      // Realizar alguna acción si las credenciales no son válidas, como mostrar un mensaje de error
-    
+      const firstProfilePath = user.Profiles[0]?.Path;
+      console.log('OLAAAAAAAAAA', firstProfilePath)
+      navigate(firstProfilePath);
+    } catch (error) {
       setError("Credenciales incorrectas");
       toast.show({
         severity: "warn",
@@ -61,10 +52,13 @@ export const LoginPage = () => {
       });
     }
   };
-  return (
+
+
+
+ return (
     <div className="general">
       <Toast ref={(el) => (toast = el)} />
-      <form onSubmit={onLogin}>
+      <form onSubmit={onLoginPrueba}>
     
         <div className="login-container">
           <h2>TeschConsulting</h2>
