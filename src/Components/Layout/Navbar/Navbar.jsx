@@ -3,7 +3,10 @@ import { Link, Outlet, useLocation, useNavigate } from "react-router-dom";
 import { Button } from "primereact/button";
 import { TieredMenu } from "primereact/tieredmenu";
 import { Menubar } from "primereact/menubar";
-import "./Components/Layout/Navbar/Navbar.css";
+import { Avatar } from 'primereact/avatar';
+import { Toast } from "primereact/toast";
+
+import "./Navbar.css";
 
 export const Navbar = () => {
   const navigate = useNavigate();
@@ -23,52 +26,40 @@ export const Navbar = () => {
   }
   const items = [
     {
-      label: "Components",
-      icon: "pi pi-bolt",
+      label: "Fecha",
+      icon: "pi pi-calendar",
     },
     {
-      label: "Features",
-      icon: "pi pi-star",
+      label: "Notificaciones",
+      icon: "pi pi-bell",
     },
     {
-      label: "Projects",
-      icon: "pi pi-search",
+      label: "Angel Star",
+      icon: "pi pi-user",
       items: [
         {
-          label: "Home",
-          icon: "pi pi-home",
+          label: "Contraseña",
+          icon: "pi pi-key",
         },
         {
-          label: "Blocks",
-          icon: "pi pi-server",
-        },
-        {
-          label: "UI Kit",
-          icon: "pi pi-pencil",
-        },
-        {
-          label: "Templates",
-          icon: "pi pi-palette",
-          items: [
-            {
-              label: "Apollo",
-              icon: "pi pi-palette",
-            },
-            {
-              label: "Ultima",
-              icon: "pi pi-palette",
-            },
-          ],
-        },
-      ],
-    },
-    {
-      label: "Contact",
-      icon: "pi pi-envelope",
+          label: "Cerrar sesión",
+          icon: "pi pi-sign-out",
+          command: onLogout,
+        }
+      ]
     },
   ];
 
   const items10 = [
+    {
+      menu: true,
+      label: "Tesch",
+      id: "11",
+    },
+    {
+      separator: true,
+      id: "6",
+    },
     {
       label: "Inicio",
       icon: "pi pi-home",
@@ -97,6 +88,21 @@ export const Navbar = () => {
       command: direcionarRequicisiones,
     },
     {
+      label: "Sincronización",
+      icon: "pi pi-sync",
+      id: "8",
+    },    
+    {
+      label: "Usuarios",
+      icon: "pi pi-users",
+      id: "9",
+    },  
+    {
+      label: "Configuración",
+      icon: "pi pi-cog",
+      id: "10",
+    },  
+    {
       label: "Cerrar",
       icon: "pi pi-sign-out",
       id: "5",
@@ -107,6 +113,21 @@ export const Navbar = () => {
       label: "S",
       id: "6",
     },
+    ,
+        {
+            template: (item, options) => {
+                return (
+                    <button onClick={(e) => options.onClick(e)} className="w-full p-link flex align-items-center p-2 pl-4 text-color hover:surface-200 border-noround">
+                        <Avatar image="https://primefaces.org/cdn/primereact/images/avatar/amyelsner.png" className="mr-2" shape="circle" />
+                        <div className="flex flex-column align">
+                            <span className="font-bold">Amy Elsner</span>
+                            <span className="text-sm">Agent</span>
+                        </div>
+                    </button>
+                );
+            },
+            id: "22",
+        }
   ];
 
   const user = JSON.parse(localStorage.getItem("user"));
@@ -114,24 +135,30 @@ export const Navbar = () => {
 
   if (user?.profile === "solicitante") {
     filteredItems10 = items10.filter(
-      (item) => item.id === "1" ||item.id === "5" || item.id === "6" || item.id === "7"  
+      (item) => item.id === "1" ||item.id === "5" || item.id === "6" || item.id === "7" || item.id === "11"  
     );
   } else if (user?.profile === "proveedor") {
     filteredItems10 = items10.filter(
-      (item) => item.id === "1" || item.id === "2" || item.id === "5"
+      (item) => item.id === "1" || item.id === "2" || item.id === "5" || item.id === "11"  || item.id === "6" || item.id === "22"
     );
   } else if (user?.profile === "administrador") {
-    filteredItems10 = items10;
+    filteredItems10 = items10.filter(
+      (item) => item.id === "8" || item.id === "9" || item.id === "10" || item.id === "11"  || item.id === "6"
+    );
   }
 
   return (
     <>
       <TieredMenu
+
         model={filteredItems10}
         breakpoint="1500px"
         className="menubarNavegadorHorizontal"
+        
       />
+
       <Menubar model={items} className="menubarNavegador" />
+      
       <header>
         {user?.profile === "solicitante" && <div className="user"></div>}
         {user?.profile === "proveedor" && <div className="user"></div>}

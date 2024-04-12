@@ -1,0 +1,20 @@
+.container-base{
+    --bs-gutter-x: 1.5rem;
+    --bs-gutter-y: 0;
+    margin-top: 30px;
+    margin-left: auto;
+    margin-right: auto;
+    padding-left: calc(var(--bs-gutter-x)* .5);
+    padding-right: calc(var(--bs-gutter-x)* .5);
+    width: 100%;
+    font-family: Rubik, sans-serif;
+    font-size: 14px;
+}
+
+.p-card  {
+    border: none;
+    border-radius: 15px;
+    box-shadow: 0 9px 20px rgba(46,35,94,.07);
+    letter-spacing: .5px;
+    margin-bottom: 30px;
+}

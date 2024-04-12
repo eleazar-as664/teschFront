@@ -5,8 +5,9 @@ import { Card } from "primereact/card";
 import { FileUpload } from "primereact/fileupload";
 import { Button } from "primereact/button";
 import { useNavigate } from "react-router-dom";
-import { Navbar } from "../Navbar";
+import { Layout } from '../Components/Layout/Layout';
 import "./Proveedor.css";
+import "../Components/Styles/Global.css";
 
 function Proveedor() {
   const [selectedItem, setSelectedItem] = useState(null);
@@ -165,8 +166,10 @@ function Proveedor() {
   }
 
   return (
-    <div>
-      <Navbar />
+    <Layout>
+            <Card title="">
+        <h1> test</h1>
+        </Card>
       <Card title="" className="cardProveedor">
         {/* <Link to="./Requisitor/NuevaCompra">
           <Button
@@ -253,7 +256,7 @@ function Proveedor() {
           ></Column>
         </DataTable>
       </Card>
-    </div>
+     </Layout>
   );
 }
 
