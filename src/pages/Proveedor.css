@@ -1,7 +1,5 @@
 .cardProveedor{
-    position: relative;
     left: 18.5rem;
-    width: 97.5rem;
 }
 
 .botonInsertar{
@@ -9,5 +7,19 @@
     position: relative;
     left: 1430px;
     bottom: 6px;
-    
+}
+
+td .p-button-text{
+    text-align: left;
+}
+
+.p-fileupload-choose{
+    background-color: transparent;
+    display: flex;
+    align-items: center;
+    padding: 0px;
+    width: 40px;
+    height: 40px;
+    color: #2196f3;
+    margin-left: 10px;
 }

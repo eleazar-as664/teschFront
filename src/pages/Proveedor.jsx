@@ -5,8 +5,11 @@ import { Card } from "primereact/card";
 import { FileUpload } from "primereact/fileupload";
 import { Button } from "primereact/button";
 import { useNavigate } from "react-router-dom";
-import { Navbar } from "../Navbar";
+import { Layout } from '../Components/Layout/Layout';
+import { Dropdown } from "primereact/dropdown";
+import { InputText } from "primereact/inputtext";
 import "./Proveedor.css";
+import "../Components/Styles/Global.css";
 
 function Proveedor() {
   const [selectedItem, setSelectedItem] = useState(null);
@@ -165,8 +168,27 @@ function Proveedor() {
   }
 
   return (
-    <div>
-      <Navbar />
+    <Layout>
+      <Card className="card-header">
+        <div class="row"> 
+        <div className="p-card-title">Ordenes de compra</div>
+           <div class="gorup-search">
+              <div className="p-field">
+                <Dropdown
+                          id="Filtros"
+                          name="Filtros"
+                          placeholder="Filtros"
+                        />
+              </div>
+              <div className="p-field">
+                <InputText
+                  id="nombre"
+                  name="nombre"
+                />
+              </div>
+          </div>    
+        </div>
+      </Card>
       <Card title="" className="cardProveedor">
         {/* <Link to="./Requisitor/NuevaCompra">
           <Button
@@ -189,24 +211,30 @@ function Proveedor() {
           scrollable
           scrollHeight="400px"
         >
-          <Column field="orden" header="Orden"></Column>
-          <Column field="empresa" header="Empresa/fechaRequerida"></Column>
-          <Column field="estatus" header="Estatus"></Column>
+          <Column field="orden" header="Orden" style={{ width: '10%'}}></Column>
+          <Column field="empresa" header="Empresa/fechaRequerida" style={{ width: '40%'}} ></Column>
+          <Column field="estatus" header="Estatus" style={{ width: '10%'}}></Column>
           <Column
-            header="Orden Detalle"
+            header="Descargar"
             body={(rowData) => (
               <Button
                 onClick={() => redirectToDetalle(rowData.id)} // Agrega la función para redireccionar a la página de detalle
-                label="Ver"
-                style={{ width: "80px", height: "40px" }}
+                label={
+                  <i
+                    className="pi pi-file-pdf"
+                    style={{ fontSize: "24px" }}
+                  />                  
+                }
+                text
               />
             )}
           ></Column>
 
           <Column
-            header="Facturas XML"
+            header="Subir Factura"
+            style={{ width: '30%'}}
             body={() => (
-              <div onClick={(e) => e.stopPropagation()}>
+              <div onClick={(e) => e.stopPropagation()} style={{ display:"flex" }}>
                 <FileUpload
                   mode="basic"
                   chooseLabel={
@@ -220,15 +248,8 @@ function Proveedor() {
                   customUpload
                   onUpload={onPDFUpload}
                   accept="application/pdf"
-                  style={{ width: "80px", height: "50px" }}
+                  
                 />
-              </div>
-            )}
-          />
-          <Column
-            header="Facturas XML"
-            body={() => (
-              <div onClick={(e) => e.stopPropagation()}>
                 <FileUpload
                   mode="basic"
                   chooseLabel={
@@ -245,6 +266,7 @@ function Proveedor() {
                   style={{ width: "80px", height: "50px" }}
                 />
               </div>
+              
             )}
           />
           <Column
@@ -253,7 +275,7 @@ function Proveedor() {
           ></Column>
         </DataTable>
       </Card>
-    </div>
+     </Layout>
   );
 }
 

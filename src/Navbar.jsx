@@ -3,7 +3,7 @@ import { Link, Outlet, useLocation, useNavigate } from "react-router-dom";
 import { Button } from "primereact/button";
 import { TieredMenu } from "primereact/tieredmenu";
 import { Menubar } from "primereact/menubar";
-import "./Navbar.css";
+import "./Components/Layout/Navbar/Navbar.css";
 
 export const Navbar = () => {
   const navigate = useNavigate();

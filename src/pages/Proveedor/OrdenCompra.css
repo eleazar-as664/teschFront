@@ -2,20 +2,18 @@
 .cardOrdenCompra {
     width: 900px;
     margin: 20px auto;
-    position: relative;
     left: -255px;
     padding: 20px;
-    border-radius: 5px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+
+}
+.body-ordenConpra{
+    display: flex;
 }
 
 .adjuntos{
     width:500px;
     margin: 20px auto;
-    position: relative;
     left: 555px;
     bottom: 550px;
     padding: 20px;
-    border-radius: 5px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }

@@ -1,0 +1,134 @@
+.menubarNavegadorHorizontal{
+  width: 120px;
+  height: calc(120vh - 20px); 
+  position: fixed;
+  left: 0px;
+  background: #fff;
+  overflow-y: auto; 
+  z-index: 1000;
+  box-shadow: 0 0 21px 0 rgba(89,102,122,.1);
+  line-height: inherit;
+  transition: .3s;
+  border: none;
+}
+
+.page-header{
+  background-color: #fff;
+  box-shadow: 0 4px 40px rgba(39,32,120,.1);
+  top: 0;
+  z-index: 8;
+  margin-left: 52px;
+  width: 100%;
+}
+
+.p-tieredmenu .p-menuitem > .p-menuitem-content .p-menuitem-link .p-menuitem-text {
+  font-size: 16px !important; 
+  font-weight: bold;
+  margin-left: 5px;
+}
+
+.menuNavegadorHorizontal .pi {
+  font-size: 1.5rem !important;
+}
+.p-tieredmenu .p-menuitem > .p-menuitem-content .p-menuitem-link {
+  padding: 1.75rem 1.1rem !important;
+}
+.menubarNavegadorHorizontal:hover{
+  width: 250px;
+}
+ 
+.menubarNavegador{
+  padding: 16px 30px;
+  position: relative;
+  width: 100%;
+  border: none;
+  background: #fff;
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  } 
+
+.p-submenu-list{
+  border-radius: 15px;
+  display: block;
+  right: 0px;
+  padding: 0px 10px;
+  top: 57px;
+}
+
+.p-submenu-list:hover{
+  background-color: #fff !important;
+}
+.p-menuitem:hover{
+  background-color: #fff !important;
+}
+.p-menuitem-content:hover{
+  background-color: #fff !important;
+}
+
+.user-data{
+  margin-left: 15px;
+}
+.name-user{
+  font-weight: 500;
+  color: #2f2f3b;
+    font-family: var(--c-font-rubik);
+    font-size: 14px;
+}
+
+.flex-column{
+    display: flex;
+    flex-direction: column;
+    flex-wrap: wrap;
+}
+
+.flex-row{
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+}
+.p-menuitem-link{
+  display: flex;
+  justify-content: center;
+}
+.logo-conteiner{
+    display: flex;
+    justify-content: center;
+    padding: 20px 0px;
+    box-shadow: -9px 0 20px rgba(89,102,122,.1);
+}
+.p-menuitem-separator{
+  border: none;
+}
+.menubarNavegadorHorizontal ul li .p-menuitem-content a .p-menuitem-text {
+  display: none;
+}
+.menubarNavegadorHorizontal ul li .p-menuitem-content a .pi {
+  font-size: 1.8em !important;
+}
+
+.menubarNavegadorHorizontal:hover > ul li .p-menuitem-content .logo-conteiner img {
+  width: 180px;
+}
+
+.menubarNavegadorHorizontal:hover > ul li .p-menuitem-content a {
+  justify-content: left;
+}
+.menubarNavegadorHorizontal:hover > ul li .p-menuitem-content a .p-menuitem-text {
+    display: block;
+}
+
+  @media only screen and (min-width: 1500px) and (max-width: 1900px) {
+    .menubarNavegadorHorizontal{
+      font-size: 14px; /* Reducir el tamaño de la fuente */
+      width: 120px;/* Reducir el ancho del TieredMenu */
+    }
+  }
+
+  @media only screen and (min-width: 800px) and (max-width: 1460px) {
+    .menubarNavegadorHorizontal {
+      font-size: 14px; /* Reducir el tamaño de la fuente */
+      width: 120px  !important; /* Reducir el ancho del TieredMenu */
+    }
+  }
