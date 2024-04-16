@@ -34,8 +34,18 @@ export const Navbar = () => {
       icon: "pi pi-bell",
     },
     {
-      label: "Angel Star",
-      icon: "pi pi-user",
+        template: () => {
+          return (
+              <li className="w-full p-link flex-row">
+                  <Avatar image="https://primefaces.org/cdn/primereact/images/avatar/amyelsner.png" className="mr-2" shape="circle" />
+                  <div className="flex-column user-data">
+                      <span className="name-user">Angel star</span>
+                      <span className="text-sm">Admin</span>
+                  </div>
+              </li>
+          );
+      },
+      id: "22",
       items: [
         {
           label: "Contraseña",
@@ -53,8 +63,14 @@ export const Navbar = () => {
   const items10 = [
     {
       menu: true,
-      label: "Tesch",
-      id: "11",
+      template: () => {
+           return (
+               <div class="logo-conteiner">
+                <img src={"/hormadi-grupo.jpg"} alt=""  width="110"/>
+               </div>
+           );
+       },
+       id: "11"
     },
     {
       separator: true,
@@ -113,21 +129,6 @@ export const Navbar = () => {
       label: "S",
       id: "6",
     },
-    ,
-        {
-            template: (item, options) => {
-                return (
-                    <button onClick={(e) => options.onClick(e)} className="w-full p-link flex align-items-center p-2 pl-4 text-color hover:surface-200 border-noround">
-                        <Avatar image="https://primefaces.org/cdn/primereact/images/avatar/amyelsner.png" className="mr-2" shape="circle" />
-                        <div className="flex flex-column align">
-                            <span className="font-bold">Amy Elsner</span>
-                            <span className="text-sm">Agent</span>
-                        </div>
-                    </button>
-                );
-            },
-            id: "22",
-        }
   ];
 
   const user = JSON.parse(localStorage.getItem("user"));

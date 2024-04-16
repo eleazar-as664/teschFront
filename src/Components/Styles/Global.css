@@ -1,3 +1,37 @@
+@import url('https://fonts.googleapis.com/css2?family=Rubik:ital,wght@0,400;0,500;0,600;0,700;0,800;0,900;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@700&display=swap');
+
+
+
+/* Declaracion de variables para tipos de letra y colores */
+:root {
+    /* palette */
+    --c-primary-color: #0061C6;
+    --c-secondary-color: green;
+    --c-dark-blue: #07143E; 
+    --c-light-purple: #1F2F64;
+    --c-light-grey: #656363;
+    --c-orange: #F77619;
+    --c-grey-icon: #CFD5DD;
+    --c-avatar-color: #52B9E41A;
+    --c-avatar-hover: #52B9E4;
+  
+  
+    /* font family */
+    /* tablinks y titulos  */
+    --c-font-montserrat: 'Montserrat';
+    /* sitio en general */
+    --c-font-rubik: 'Rubik';
+}
+
+.c-font-rubik {
+    font-family: var(--c-font-rubik);
+  }
+.c-font-montserrat {
+    font-family: var(--c-font-montserrat);
+  }
+  
+ /* Definicion de clases que se utilizaran en todo el proyecto  */
 .container-base{
     --bs-gutter-x: 1.5rem;
     --bs-gutter-y: 0;
@@ -7,8 +41,14 @@
     padding-left: calc(var(--bs-gutter-x)* .5);
     padding-right: calc(var(--bs-gutter-x)* .5);
     width: 100%;
-    font-family: Rubik, sans-serif;
     font-size: 14px;
+}
+
+body{
+    margin: 0px;
+}
+.p-component{
+    font-family: var(--c-font-rubik);
 }
 
 .p-card  {
@@ -17,4 +57,20 @@
     box-shadow: 0 9px 20px rgba(46,35,94,.07);
     letter-spacing: .5px;
     margin-bottom: 30px;
+}
+
+.card-header .p-card-body{
+    padding: 8px 18px;
+}
+
+.card-header .row{
+    display: flex;
+    justify-content: space-between;
+}
+.gorup-search{
+    display: flex;
+}
+
+.p-field{
+    margin-left: 10px;
 }

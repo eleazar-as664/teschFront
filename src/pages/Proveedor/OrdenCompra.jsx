@@ -5,8 +5,8 @@ import { Button } from "primereact/button";
 import { DataTable } from "primereact/datatable";
 import { Column } from "primereact/column";
 import { InputText } from 'primereact/inputtext';
-import { Navbar } from "../../Navbar";
 import "./OrdenCompra.css";
+import { Layout } from "../../Components/Layout/Layout";
 
 function NuevaCompra() {
   const data = [
@@ -219,9 +219,8 @@ function NuevaCompra() {
   };
 
   return (
-    <div>
-      <Navbar />
-      <div className="card flex justify-content-center">
+      <Layout>
+        <div class="body-ordenConpra">
         <Card title="Orden De Compra" className="cardOrdenCompra">
           <div className="p-grid p-nogutter">
             <div className="p-col">
@@ -297,7 +296,7 @@ function NuevaCompra() {
           </div>
         </Card>
       </div>
-    </div>
+    </Layout>
   );
 }
 

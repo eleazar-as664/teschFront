@@ -7,7 +7,7 @@ import "./Layout.css";
 
 export const Layout = ({ children }) => {
   return (
-    <div class='page-layout'>
+    <div class='page-layout c-font-montserrat'>
     <Navbar/>
         <div class='body-layout'>
            <div class="container-base">

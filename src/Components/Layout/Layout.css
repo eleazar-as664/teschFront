@@ -1,13 +1,10 @@
-body{
-    margin: 0px;
-}
-
 .page-layout{
     display: flex;
     flex-direction: row;
     flex-wrap: wrap;
     justify-content: center;
     width: 100%;
+    background: #f7f8f9;
 }
 
 .body-layout{
@@ -16,7 +13,7 @@ body{
     flex-wrap: wrap;
     justify-content: center;
     width: 100%;
-    margin-left: 52px;
+    margin-left: 120px;
     min-height: calc(100vh - 80px);
     padding: 0 15px;
     position: relative;

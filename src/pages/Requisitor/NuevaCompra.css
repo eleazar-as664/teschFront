@@ -9,10 +9,6 @@
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
-.p-field {
-    margin-bottom: 20px;
-}
-
 .p-inputtext,
 .p-dropdown,
 .p-calendar {
@@ -39,8 +35,5 @@
     align-items: baseline;
 }
 
-.row > .p-field {
-    margin-right: 20px; 
-    flex: 1; 
-}
+
 

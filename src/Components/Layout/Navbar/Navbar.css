@@ -1,5 +1,5 @@
 .menubarNavegadorHorizontal{
-  width: 52px; 
+  width: 120px;
   height: calc(120vh - 20px); 
   position: fixed;
   left: 0px;
@@ -52,7 +52,7 @@
 .p-submenu-list{
   border-radius: 15px;
   display: block;
-  left: -12px;
+  right: 0px;
   padding: 0px 10px;
   top: 57px;
 }
@@ -67,16 +67,68 @@
   background-color: #fff !important;
 }
 
+.user-data{
+  margin-left: 15px;
+}
+.name-user{
+  font-weight: 500;
+  color: #2f2f3b;
+    font-family: var(--c-font-rubik);
+    font-size: 14px;
+}
+
+.flex-column{
+    display: flex;
+    flex-direction: column;
+    flex-wrap: wrap;
+}
+
+.flex-row{
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+}
+.p-menuitem-link{
+  display: flex;
+  justify-content: center;
+}
+.logo-conteiner{
+    display: flex;
+    justify-content: center;
+    padding: 20px 0px;
+    box-shadow: -9px 0 20px rgba(89,102,122,.1);
+}
+.p-menuitem-separator{
+  border: none;
+}
+.menubarNavegadorHorizontal ul li .p-menuitem-content a .p-menuitem-text {
+  display: none;
+}
+.menubarNavegadorHorizontal ul li .p-menuitem-content a .pi {
+  font-size: 1.8em !important;
+}
+
+.menubarNavegadorHorizontal:hover > ul li .p-menuitem-content .logo-conteiner img {
+  width: 180px;
+}
+
+.menubarNavegadorHorizontal:hover > ul li .p-menuitem-content a {
+  justify-content: left;
+}
+.menubarNavegadorHorizontal:hover > ul li .p-menuitem-content a .p-menuitem-text {
+    display: block;
+}
+
   @media only screen and (min-width: 1500px) and (max-width: 1900px) {
     .menubarNavegadorHorizontal{
       font-size: 14px; /* Reducir el tamaño de la fuente */
-      width: 52px;/* Reducir el ancho del TieredMenu */
+      width: 120px;/* Reducir el ancho del TieredMenu */
     }
   }
 
   @media only screen and (min-width: 800px) and (max-width: 1460px) {
     .menubarNavegadorHorizontal {
       font-size: 14px; /* Reducir el tamaño de la fuente */
-      width: 52px  !important; /* Reducir el ancho del TieredMenu */
+      width: 120px  !important; /* Reducir el ancho del TieredMenu */
     }
   }
