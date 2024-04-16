@@ -5,8 +5,10 @@ import { Navbar } from "../Navbar";
 import { DataTable } from "primereact/datatable";
 import { Column } from "primereact/column";
 import { Card } from "primereact/card";
+// import { ConfirmDialog, confirmDialog } from "primereact/confirmdialog";
 import { Button } from "primereact/button";
 import { useNavigate } from "react-router-dom";
+import { Dialog } from 'primereact/dialog';
 import "./Requisitor.css";
 function Requisitor() {
   const msgs = useRef(null);
@@ -109,12 +111,24 @@ function Requisitor() {
     },
   ];
 
-  const [expandedRows, setExpandedRows] = useState(null);
+  const [expandedRows] = useState(null);
+
+  const [visible, setVisible] = useState(false);
+  const [rowDataToCancel, setRowDataToCancel] = useState(null);
+
+  const cancelarSolicitud = (rowData) => {
+
+    setRowDataToCancel(rowData);
+    setVisible(true); // Esto abre el Dialog
+  };
+
+  const handleDialogCancel = () => {
+  
+    setRowDataToCancel(null);
+    setVisible(false); // Esto cierra el Dialog
+  };
 
   const navigate = useNavigate();
-  const onRowToggle = (event) => {
-    setExpandedRows(event.data);
-  };
 
   useMountEffect(() => {
     if (msgs.current) {
@@ -130,17 +144,37 @@ function Requisitor() {
     }
   });
 
-  const redirectToEditar = (datos) => {
-    // Obtener los datos de la fila seleccionada
-    const rowData = datos;   
+  const redirectToEditar = (datos) => {   
+    const rowData = datos;
     localStorage.setItem("datosRequisitor", JSON.stringify(rowData));
     navigate("./Requisitor/EditarRequisicion");
   };
+
 
   return (
     <div className="card flex justify-content-center">
       <Navbar />
       <Card title="Grupo Hormadi" className="cardSolicitante">
+      <Dialog
+        header="Cancelar Solicitud"
+        visible={visible}
+        style={{ width: '50vw' }}
+        onHide={handleDialogCancel}
+      >
+        {rowDataToCancel && (
+          <div>
+            <p>¿Estás seguro que deseas cancelar la solicitud?</p>
+            <p>Detalles de la solicitud: {rowDataToCancel.No_OC_SAP}</p>
+            <Button
+              onClick={handleDialogCancel}
+              label="Cancelar"
+              className="p-button-secondary"
+            />
+            {/* Agregar aquí el botón para confirmar la cancelación si es necesario */}
+          </div>
+        )}
+      </Dialog>
+
         <Link to="./Requisitor/NuevaCompra">
           <Button
             label="Nuevo"
@@ -155,7 +189,7 @@ function Requisitor() {
         <DataTable
           value={data}
           expandedRows={expandedRows}
-          onRowToggle={onRowToggle}
+       
           scrollable
           scrollHeight="400px"
           stripedRows
@@ -171,7 +205,7 @@ function Requisitor() {
             header="Cancelar"
             body={(rowData) => (
               <Button
-                // onClick={() => redirectToDetalle(rowData.id)}
+                onClick={() => cancelarSolicitud(rowData)}
                 label="Cancelar"
                 severity="danger"
               />

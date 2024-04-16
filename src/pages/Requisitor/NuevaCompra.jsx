@@ -1,269 +1,331 @@
-import React, { useRef, useState } from "react";
-import { redirect } from "react-router-dom";
+import React, { useState, useEffect, useRef } from "react";
 import { Card } from "primereact/card";
 import { Button } from "primereact/button";
-import { FileUpload } from "primereact/fileupload";
-import { InputText } from "primereact/inputtext";
+import TextInput from "../../Components/Requisitor/TextInput";
+import DatesInput from "../../Components/Requisitor/DatesInput";
+import TextTareaInput from "../../Components/Requisitor/TextTareaInput";
+import DropdownInput from "../../Components/Requisitor/DropdownInput";
+import { AutoComplete } from "primereact/autocomplete";
+
+import { Dropdown } from "primereact/dropdown";
 import { DataTable } from "primereact/datatable";
 import { Column } from "primereact/column";
-import { Dropdown } from "primereact/dropdown";
-import { Calendar } from "primereact/calendar";
-import { ConfirmDialog, confirmDialog } from "primereact/confirmdialog";
-import { Toast } from "primereact/toast";
-import { InputTextarea } from "primereact/inputtextarea";
+import axios from "axios"; // Importar Axios
 import { Navbar } from "../../Navbar";
 import "./NuevaCompra.css";
 
 function NuevaCompra() {
-  const toast = useRef(null);
-  const [value, setValue] = useState("");
-  const [uploadedFiles, setUploadedFiles] = useState([]);
-
-  const onUpload = (event) => {
-    // Aquí puedes manejar la lógica cuando se cargan los archivos
-    setUploadedFiles(event.files);
-  };
-  const footer = (
-    <div>{/* <Button label="Guardar" icon="pi pi-check" /> */}</div>
-  );
-  const accept = () => {
-    toast.current.show({
-      severity: "info",
-      summary: "Confirmed",
-      detail: "",
-      life: 3000,
-    });
-    return redirect("../Solicitante");
-  };
-
-  const reject = () => {
-    toast.current.show({
-      severity: "warn",
-      summary: "Rejected",
-      detail: "You have rejected",
-      life: 3000,
-    });
-  };
-
-  const confirm1 = () => {
-    confirmDialog({
-      message: "Confirmar la solicitud de compra",
-      header: "Nueva Compra",
-      icon: "pi pi-exclamation-triangle",
-      defaultFocus: "accept",
-      accept,
-      reject,
-    });
-  };
-
-  const data = [
-    {
-      ID_Solicitud: 10,
-      No_Requisicion_SAP: "ABC123",
-      Fecha_Hora_Creacion: "2024-03-18 10:30:00",
-      Fecha_Vencimiento: "2024-04-10",
-      No_referencia: "REF001",
-      Centro_de_costo: "CC001",
-      Empresa: "Empresa A",
-      Comentarios: "Comentario 1",
-      No_OC_SAP: "OC123",
-      Sincronizado: true,
-      Adjunto1: "Archivo1.pdf",
-      Adjunto2: "Archivo2.pdf",
-      Notas_autorizacion: "Notas de autorización 1",
-      Notas_requisitor: "Notas del requisitor 1",
-    },
-    {
-      ID_Solicitud: 20,
-      No_Requisicion_SAP: "DEF456",
-      Fecha_Hora_Creacion: "2024-03-19 11:45:00",
-      Fecha_Vencimiento: "2024-04-12",
-      No_referencia: "REF002",
-      Centro_de_costo: "CC002",
-      Empresa: "Empresa B",
-      Comentarios: "Comentario 2",
-      No_OC_SAP: "OC456",
-      Sincronizado: false,
-      Adjunto1: "",
-      Adjunto2: "",
-      Notas_autorizacion: "Notas de autorización 2",
-      Notas_requisitor: "Notas del requisitor 2",
-    },
-    {
-      ID_Solicitud: 30,
-      No_Requisicion_SAP: "ABC123",
-      Fecha_Hora_Creacion: "2024-03-18 10:30:00",
-      Fecha_Vencimiento: "2024-04-10",
-      No_referencia: "REF001",
-      Centro_de_costo: "CC001",
-      Empresa: "Empresa A",
-      Comentarios: "Comentario 1",
-      No_OC_SAP: "OC123",
-      Sincronizado: true,
-      Adjunto1: "Archivo1.pdf",
-      Adjunto2: "Archivo2.pdf",
-      Notas_autorizacion: "Notas de autorización 1",
-      Notas_requisitor: "Notas del requisitor 1",
-    },
-    {
-      ID_Solicitud: 40,
-      No_Requisicion_SAP: "ABC123",
-      Fecha_Hora_Creacion: "2024-03-18 10:30:00",
-      Fecha_Vencimiento: "2024-04-10",
-      No_referencia: "REF001",
-      Centro_de_costo: "CC001",
-      Empresa: "Empresa A",
-      Comentarios: "Comentario 1",
-      No_OC_SAP: "OC123",
-      Sincronizado: true,
-      Adjunto1: "Archivo1.pdf",
-      Adjunto2: "Archivo2.pdf",
-      Notas_autorizacion: "Notas de autorización 1",
-      Notas_requisitor: "Notas del requisitor 1",
-    },
-    {
-      ID_Solicitud: 50,
-      No_Requisicion_SAP: "ABC123",
-      Fecha_Hora_Creacion: "2024-03-18 10:30:00",
-      Fecha_Vencimiento: "2024-04-10",
-      No_referencia: "REF001",
-      Centro_de_costo: "CC001",
-      Empresa: "Empresa A",
-      Comentarios: "Comentario 1",
-      No_OC_SAP: "OC123",
-      Sincronizado: true,
-      Adjunto1: "Archivo1.pdf",
-      Adjunto2: "Archivo2.pdf",
-      Notas_autorizacion: "Notas de autorización 1",
-      Notas_requisitor: "Notas del requisitor 1",
-    },
-    {
-      ID_Solicitud: 60,
-      No_Requisicion_SAP: "ABC123",
-      Fecha_Hora_Creacion: "2024-03-18 10:30:00",
-      Fecha_Vencimiento: "2024-04-10",
-      No_referencia: "REF001",
-      Centro_de_costo: "CC001",
-      Empresa: "Empresa A",
-      Comentarios: "Comentario 1",
-      No_OC_SAP: "OC123",
-      Sincronizado: true,
-      Adjunto1: "Archivo1.pdf",
-      Adjunto2: "Archivo2.pdf",
-      Notas_autorizacion: "Notas de autorización 1",
-      Notas_requisitor: "Notas del requisitor 1",
-    },
-  ];
-  const almacenOptions = [
-    { label: "Distribuidora Tonsa", value: "almacen1" },
-    { label: "Grupo Logistico MM", value: "almacen2" },
-    { label: "Distribuidora 3", value: "almacen3" },
-  ];
-
-  const [formData, setFormData] = React.useState({
+  const [formData, setFormData] = useState({
+    fecha: null,
     nombre: "",
     almacen: "",
     proveedor: "",
     cantidad: "",
     precio: "",
+    comentario: "",
+    archivoPDF: null,
   });
-  const handleInputChange = (event) => {
-    const { name, value } = event.target;
-    setFormData({ ...formData, [name]: value });
+
+  const [formErrors, setFormErrors] = useState({
+    fecha: false,
+    nombre: false,
+    almacen: false,
+    proveedor: false,
+    cantidad: false,
+    precio: false,
+    comentario: false,
+  });
+
+  const [companies, setCompanies] = useState([]);
+  const [materialeslData, setMaterialesData] = useState([]);
+  const [selectedItems, setSelectedItems] = useState([]);
+  const [filteredMaterials, setFilteredMaterials] = useState([]);
+
+
+  const token =
+    'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6IlJ1YmVuLkciLCJpYXQiOjE3MTMwNTYxOTYsImV4cCI6MTcxMzA3MDU5Nn0.pUaTtKZz4sJEn9LzvGgkUl3MDeEpKNlKNuQbzDsMv_4"';
+
+
+  const handleAlmacenChange12 = (e) => {
+    const selectedAlmacen = e.value; // Utilizamos e.value en lugar de e.target.value
+    console.log("selectedAlmacen", selectedAlmacen);
+    setSelectedMaterial(selectedAlmacen); // Actualizamos el material seleccionado
+
+    // Agregamos el material seleccionado a la lista de elementos seleccionados
+    setSelectedItems((prevSelectedItems) => [
+      ...prevSelectedItems,
+      selectedAlmacen,
+    ]);
   };
-  const handleDropdownChange = (name, value) => {
-    setFormData({ ...formData, [name]: value });
+
+  const [selectedMaterial, setSelectedMaterial] = useState(null);
+
+  const filterMaterials = (event) => {
+    const searchTerm = event.query.toLowerCase();
+    const filtered = materialeslData.filter((material) =>
+      material.Description.toLowerCase().includes(searchTerm)
+    );
+    console.log("*****************************************************");
+    console.log("event", filtered);
+    console.log(materialeslData);
+    console.log("*****************************************************");
+
+    setFilteredMaterials(filtered);
   };
-  const handleDateChange = (name, value) => {
-    setFormData({
-      ...formData,
-      [name]: value,
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const apiUrl = "http://localhost:3000/api/v1/GetCompanies";
+        const config = {
+          headers: {
+            "x-access-token": token,
+          },
+        };
+        const response = await axios.get(apiUrl, config);
+        console.log("Response:", response.data.data);
+        setCompanies(response.data.data);
+      } catch (error) {
+        console.error("Error al obtener datos de la API:", error);
+      }
+    };
+
+    fetchData();
+  }, []); // El array vacío indica que este efecto se ejecuta solo una vez, equivalente a componentDidMount
+  
+ 
+ 
+  const handleAlmacenChange = async (e) => {
+    const selectedAlmacen = e.target.value;
+    setFormData({ ...formData, almacen: selectedAlmacen });
+    console.log(
+      "Almacen seleccionado:111111111111111111111111",
+      selectedAlmacen.Id
+    );
+    try {
+      const apiUrl = `http://localhost:3000/api/v1/GetItemsByCompany/${selectedAlmacen.Id}`;
+      const config = {
+        headers: {
+          "x-access-token": token,
+        },
+      };
+      const response = await axios.get(apiUrl, config);
+      console.log("Additional Data Response:", response.data);
+      setMaterialesData(response.data.data);
+      // setShowAdditionalDropdown(true); // Mostrar el segundo DropdownInput aquí de recibir los datos
+    } catch (error) {
+      console.error("Error al obtener datos adicionales:", error);
+    }
+  };
+  const selectedCountryTemplate = (option, props) => {
+    if (option) {
+      return (
+        <div className="flex align-items-center">
+          <div>{option.Description}</div>
+        </div>
+      );
+    }
+
+    return <span>{props.placeholder}</span>;
+  };
+
+  const countryOptionTemplate = (option) => {
+    return (
+      <div className="flex align-items-center">
+        <div>{option.Description}</div>
+      </div>
+    );
+  };
+
+  const handleFileChange = (event) => {
+    console.log("Valor de event en handleUpload:", event);
+    const archivoPDF =
+      event.files && event.files.length > 0 ? event.files[0] : null;
+    console.log("Archivo seleccionado:", archivoPDF);
+    setFormData({ ...formData, archivoPDF });
+  };
+
+  const handleSubmit = async (event) => {
+    event.preventDefault();
+    if (validateForm()) {
+      // const token = "tu-token-aqui"; // Reemplaza "tu-token-aqui" con el token real
+      // const parametros = {
+      //   parametro1: valor1,
+      //   parametro2: valor2
+      //   // Agrega tantos parámetros como necesites
+      // };
+
+      // const config = {
+      //   headers: {
+      //     Authorization: `Bearer ${token}`
+      //   },
+      //   params: parametros
+      // };
+      // axios.post("http://endpoint", data)
+      // .then((response) => {
+      //   console.log("Datos guardados en el servidor:", response.data);
+
+      // })
+      // .catch((error) => {
+      //   console.error("Error al enviar datos al servidor:", error);
+      // });
+      // console.log("Datos válidos, enviando formulario:", formData);
+
+      try {
+        // Convertir el archivo PDF a base64
+        let archivoBase64 = null;
+        if (formData.archivoPDF) {
+          archivoBase64 = await convertirAPDFBase64(formData.archivoPDF);
+        }
+
+        // Crear objeto de datos para enviar al servidor
+        const data = {
+          fecha: formData.fecha,
+          nombre: formData.nombre,
+          archivoPDF: archivoBase64,
+        };
+
+        console.log("archivoBase64archivoBase64archivoBase64", data);
+
+        // Realizar la petición POST al servidor
+        // const response = await axios.post("http://endpoint", data);
+
+        // console.log("Respuesta del servidor:", response.data);
+      } catch (error) {
+        console.error("Error al enviar el formulario:", error);
+      }
+    } else {
+      // console.log("Datos inválidos, no se puede enviar el formulario.");
+    }
+  };
+
+  const convertirAPDFBase64 = (archivoPDF) => {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = () => {
+        resolve(reader.result);
+      };
+      reader.onerror = reject;
+      reader.readAsDataURL(archivoPDF);
     });
+  };
+
+  const validateForm = () => {
+    const errors = {};
+    let formIsValid = true;
+    // Validaciones de los campos del formulario
+    setFormErrors(errors);
+    return formIsValid;
   };
 
   return (
     <div>
       <Navbar />
       <div className="card flex justify-content-center">
-        <Card title="Nueva Compra" footer={footer} className="cardNuevaCompra">
-          <div className="botonEnviar">
-            <Toast ref={toast} />
-            <ConfirmDialog />
-            <Button label="Guardar" onClick={confirm1} icon="pi pi-check" />
-          </div>
-          <div className="botonCancelar">
-            <Button label="Cancelar" severity="danger"  icon="pi pi-times" />
-          </div>
-          <div className="p-field-group">
-            <div className="row">
-              <div className="p-field">
-                <label htmlFor="fecha">Fecha de Vencimiento:</label>
-                <Calendar
-                  id="fecha"
-                  name="fecha"
-                  value={formData.fecha}
-                  onChange={(e) => handleDateChange("fecha", e.value)}
-                  dateFormat="dd/mm/yy"
-                  placeholder="Seleccione una fecha"
-                />
+        <Card title="Nueva Compra" className="cardNuevaCompra">
+          <form onSubmit={handleSubmit}>
+            <div className="p-field-group">
+              <div className="row">
+                <div className="p-field">
+                  <DatesInput
+                    value={formData.fecha}
+                    onChange={(e) =>
+                      setFormData({ ...formData, fecha: e.value })
+                    }
+                    error={formErrors.fecha}
+                  />
+                </div>
+                <div className="p-field">
+                  <TextInput
+                    id="nombre"
+                    label="No. referencia:"
+                    value={formData.nombre}
+                    onChange={(e) =>
+                      setFormData({ ...formData, nombre: e.target.value })
+                    }
+                    error={formErrors.nombre}
+                  />
+                </div>
+                <div className="p-field">
+                  <DropdownInput
+                    id="almacen"
+                    ll
+                    label="No. referencia:"
+                    optionLabel="BusinessName"
+                    value={formData.almacen}
+                    placeholder="Seleccione una compania"
+                    options={Array.isArray(companies) ? companies : []}
+                    onChange={handleAlmacenChange}
+                    error={formErrors.nombre}
+                  />
+                </div>
               </div>
-              <div className="p-field">
-                <label htmlFor="nombre">No. referencia:</label>
-                <InputText
-                  id="nombre"
-                  name="nombre"
-                  value={formData.nombre}
-                  onChange={handleInputChange}
-                />
+              <div className="row">
+                <div className="p-field">
+                  <TextTareaInput
+                    id="comentario"
+                    label="Comentario:"
+                    value={formData.comentario}
+                    onChange={(e) =>
+                      setFormData({ ...formData, comentario: e.target.value })
+                    }
+                    rows={1}
+                    cols={10}
+                  />
+                </div>
+                <div className="p-field">
+                  <label htmlFor="proveedor">Subir adjuntos</label>
+                  <input
+                    id="pdf"
+                    type="file"
+                    accept="application/pdf"
+                    onChange={handleFileChange}
+                  />
+                </div>
               </div>
 
-              <div className="p-field">
-                <label htmlFor="almacen">Empresa:</label>
-                <Dropdown
-                  id="almacen"
-                  name="almacen"
-                  value={formData.almacen}
-                  options={almacenOptions}
-                  onChange={(e) => handleDropdownChange("almacen", e.value)}
-                  placeholder="Seleccione un almacén"
-                />
-              </div>
-            </div>
-            <div className="row">
-              <div className="p-field">
-                <label htmlFor="proveedor">Comentarios</label>
-                <InputTextarea
-                  value={value}
-                  onChange={(e) => setValue(e.target.value)}
-                  rows={1}
-                  cols={10}
-                />
-              </div>
-              <div className="p-field">
-                <label htmlFor="proveedor">Subir adjuntos</label>
+              <div className="row">
+                <div className="p-field">
+                  <label htmlFor="proveedor">Material </label>
+                  <AutoComplete
+                    value={selectedMaterial}
+                    suggestions={filteredMaterials}
+                    completeMethod={filterMaterials}
+                    field="Description"
+                    onChange={handleAlmacenChange12}
+                    placeholder="Buscar material..."
+                  />
+                </div>
 
-                <FileUpload
-                  mode="basic"
-                  name="demo[]"
-                  url="/api/upload"
-                  accept="image/*"
-                  customUpload
-                  onUpload={onUpload}
-                />
+                
               </div>
             </div>
+
+            <div className="botonEnviar">
+              <Button
+                label="Guardar"
+                type="submit"
+                icon="pi pi-check"
+                className="p-button-success"
+              />
+            </div>
+            <div className="botonCancelar">
+              <Button
+                label="Cancelar"
+                type="button"
+                onClick={() => console.log("Cancelado")}
+                className="p-button-danger"
+              />
+            </div>
+          </form>
+          <div className="table-container">
+            <DataTable value={selectedItems}>
+              <Column field="ItemCode" header="Codigo" />
+              <Column field="Description" header="Description" />
+              <Column field="unidad" header="Unidad" />
+              <Column field="cantiad" header="Cantidad" />
+            </DataTable>
           </div>
-          <DataTable
-            value={data}
-            scrollable
-            scrollHeight="200px"
-            tableStyle={{ minWidth: "50rem" }}
-          >
-            <Column field="No_Requisicion_SAP" header="Código" />
-            <Column field="Fecha_Hora_Creacion" header="Descripción" />
-            <Column field="Fecha_Vencimiento" header="Unidad" />
-            <Column field="Centro_de_costo" header="Cantidad" />
-          </DataTable>
         </Card>
       </div>
     </div>

@@ -1,4 +1,4 @@
-import React, { useState,useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { InputText } from "primereact/inputtext";
 import { Button } from "primereact/button";
 import { Toast } from "primereact/toast";
@@ -12,7 +12,6 @@ export const LoginPage = () => {
 
   const { name, password, onInputChange } = useForm({
     name: "",
-    email: "",
     password: "",
   });
 
@@ -22,25 +21,23 @@ export const LoginPage = () => {
     if (user) {
       const firstProfilePath = user.Profiles[0]?.Path;
       if (firstProfilePath) {
-        return navigate(firstProfilePath);;
+        return navigate(firstProfilePath);
       }
     }
-  }, [user,navigate]);
-  const onLoginPrueba = async (e) => { 
+  }, [user, navigate]);   
+  const onLoginPrueba = async (e) => {
+    console.log('ahhhhhhhhhhhh paaaaaaaaaaoaaoppapaa')
     e.preventDefault();
     try {
       const response = await axios.post("http://localhost:3000/api/v1/SignIn", {
         UserName: name,
         Password: password,
-        SecretKey: "O6XcIjRgEOvvRyO0QFHzf5jllsuzCiLEZj9YftaOwg"
+        SecretKey: "O6XcIjRgEOvvRyO0QFHzf5jllsuzCiLEZj9YftaOwg",
       });
-
-      const user = response.data.data; 
-       
-      console.log('Lo LOGRASTE, TOMA PERRROOO',user)
+      console.log(response)
+      const user = response.data.data;
       localStorage.setItem("user", JSON.stringify(user));
       const firstProfilePath = user.Profiles[0]?.Path;
-      console.log('OLAAAAAAAAAA', firstProfilePath)
       navigate(firstProfilePath);
     } catch (error) {
       setError("Credenciales incorrectas");
@@ -53,13 +50,10 @@ export const LoginPage = () => {
     }
   };
 
-
-
- return (
+  return (
     <div className="general">
       <Toast ref={(el) => (toast = el)} />
       <form onSubmit={onLoginPrueba}>
-    
         <div className="login-container">
           <h2>TeschConsulting</h2>
           <div className="p-inputgroup">
