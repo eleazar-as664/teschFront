@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect } from "react";
 import { Card } from "primereact/card";
 import { Button } from "primereact/button";
 import TextInput from "../../Components/Requisitor/TextInput";
@@ -7,9 +7,13 @@ import TextTareaInput from "../../Components/Requisitor/TextTareaInput";
 import DropdownInput from "../../Components/Requisitor/DropdownInput";
 import { AutoComplete } from "primereact/autocomplete";
 
-import { Dropdown } from "primereact/dropdown";
 import { DataTable } from "primereact/datatable";
 import { Column } from "primereact/column";
+import MaterialDialog from "../../Components/Requisitor/Materiales";
+import moment from "moment";
+
+import { FileUpload } from "primereact/fileupload";
+
 import axios from "axios"; // Importar Axios
 import { Navbar } from "../../Navbar";
 import "./NuevaCompra.css";
@@ -17,60 +21,69 @@ import "./NuevaCompra.css";
 function NuevaCompra() {
   const [formData, setFormData] = useState({
     fecha: null,
-    nombre: "",
-    almacen: "",
+    NumAtCard: "",
+    companies: "",
     proveedor: "",
     cantidad: "",
     precio: "",
-    comentario: "",
+    Comments: "",
     archivoPDF: null,
   });
 
   const [formErrors, setFormErrors] = useState({
     fecha: false,
-    nombre: false,
-    almacen: false,
+    NumAtCard: false,
+    companies: false,
     proveedor: false,
     cantidad: false,
     precio: false,
-    comentario: false,
+    Comments: false,
   });
 
-  const [companies, setCompanies] = useState([]);
+  const [companies, setCompanies] = useState([]); 
   const [materialeslData, setMaterialesData] = useState([]);
-  const [selectedItems, setSelectedItems] = useState([]);
-  const [filteredMaterials, setFilteredMaterials] = useState([]);
-
-
-  const token =
-    'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6IlJ1YmVuLkciLCJpYXQiOjE3MTMwNTYxOTYsImV4cCI6MTcxMzA3MDU5Nn0.pUaTtKZz4sJEn9LzvGgkUl3MDeEpKNlKNuQbzDsMv_4"';
-
-
-  const handleAlmacenChange12 = (e) => {
-    const selectedAlmacen = e.value; // Utilizamos e.value en lugar de e.target.value
-    console.log("selectedAlmacen", selectedAlmacen);
-    setSelectedMaterial(selectedAlmacen); // Actualizamos el material seleccionado
-
-    // Agregamos el material seleccionado a la lista de elementos seleccionados
-    setSelectedItems((prevSelectedItems) => [
-      ...prevSelectedItems,
-      selectedAlmacen,
-    ]);
-  };
-
+  const [selectedItems] = useState([]);
   const [selectedMaterial, setSelectedMaterial] = useState(null);
+  const [filteredMaterials, setFilteredMaterials] = useState([]);
+  const [dialogVisible, setDialogVisible] = useState(false);
+  const [searchValue, setSearchValue] = useState("");
+ 
+
 
   const filterMaterials = (event) => {
     const searchTerm = event.query.toLowerCase();
     const filtered = materialeslData.filter((material) =>
       material.Description.toLowerCase().includes(searchTerm)
     );
-    console.log("*****************************************************");
-    console.log("event", filtered);
-    console.log(materialeslData);
-    console.log("*****************************************************");
-
     setFilteredMaterials(filtered);
+  };
+
+ 
+
+  const token =
+    'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6IlJ1YmVuLkciLCJpYXQiOjE3MTMwNTYxOTYsImV4cCI6MTcxMzA3MDU5Nn0.pUaTtKZz4sJEn9LzvGgkUl3MDeEpKNlKNuQbzDsMv_4"';
+  const user = JSON.parse(localStorage.getItem("user"));
+  // const handleAlmacenChange12 = (selectedMaterial) => {
+  //   // Actualizar el material seleccionado
+  //   console.log("Material seleccionado:", selectedMaterial);
+  //   setSelectedMaterial(selectedMaterial);
+
+  //   console.log(selectedItems);
+  //   // // Agregamos el material seleccionado a la lista de elementos seleccionados
+  //   setSelectedItems((prevSelectedItems) => [
+  //     ...prevSelectedItems,
+  //     selectedMaterial,
+  //   ]);
+  // };
+  const handleAlmacenChange12 = (material) => {
+    console.log(material);
+    setSelectedMaterial(material);
+    setDialogVisible(true);
+  };
+
+  const handleDialogClose = () => {
+    setDialogVisible(false);
+    // Puedes realizar cualquier acción necesaria después de cerrar el diálogo
   };
 
   useEffect(() => {
@@ -92,9 +105,7 @@ function NuevaCompra() {
 
     fetchData();
   }, []); // El array vacío indica que este efecto se ejecuta solo una vez, equivalente a componentDidMount
-  
- 
- 
+
   const handleAlmacenChange = async (e) => {
     const selectedAlmacen = e.target.value;
     setFormData({ ...formData, almacen: selectedAlmacen });
@@ -112,30 +123,12 @@ function NuevaCompra() {
       const response = await axios.get(apiUrl, config);
       console.log("Additional Data Response:", response.data);
       setMaterialesData(response.data.data);
-      // setShowAdditionalDropdown(true); // Mostrar el segundo DropdownInput aquí de recibir los datos
+  
     } catch (error) {
       console.error("Error al obtener datos adicionales:", error);
     }
   };
-  const selectedCountryTemplate = (option, props) => {
-    if (option) {
-      return (
-        <div className="flex align-items-center">
-          <div>{option.Description}</div>
-        </div>
-      );
-    }
 
-    return <span>{props.placeholder}</span>;
-  };
-
-  const countryOptionTemplate = (option) => {
-    return (
-      <div className="flex align-items-center">
-        <div>{option.Description}</div>
-      </div>
-    );
-  };
 
   const handleFileChange = (event) => {
     console.log("Valor de event en handleUpload:", event);
@@ -147,29 +140,7 @@ function NuevaCompra() {
 
   const handleSubmit = async (event) => {
     event.preventDefault();
-    if (validateForm()) {
-      // const token = "tu-token-aqui"; // Reemplaza "tu-token-aqui" con el token real
-      // const parametros = {
-      //   parametro1: valor1,
-      //   parametro2: valor2
-      //   // Agrega tantos parámetros como necesites
-      // };
-
-      // const config = {
-      //   headers: {
-      //     Authorization: `Bearer ${token}`
-      //   },
-      //   params: parametros
-      // };
-      // axios.post("http://endpoint", data)
-      // .then((response) => {
-      //   console.log("Datos guardados en el servidor:", response.data);
-
-      // })
-      // .catch((error) => {
-      //   console.error("Error al enviar datos al servidor:", error);
-      // });
-      // console.log("Datos válidos, enviando formulario:", formData);
+    if (validateForm()) {     
 
       try {
         // Convertir el archivo PDF a base64
@@ -179,10 +150,30 @@ function NuevaCompra() {
         }
 
         // Crear objeto de datos para enviar al servidor
+        const momentDate = moment(formData.fecha);
+
+        // Formatear la nueva fecha
+        const formattedDate = momentDate.format("YYYY-MM-DD");
+        const PurchaseOrderRequestDetails = selectedItems.map((obj) => {
+          return {
+            Description: obj.Description,
+            BuyUnitMsr: obj.BuyUnitMsr,
+            Quantity: 0, //obj.Quantity,
+            TaxCodeId: null, //obj.TaxCodeId,
+            ItemId: obj.Id,
+            PurchaseRequestId: 0,
+          };
+        });
+        console.log(PurchaseOrderRequestDetails);
         const data = {
-          fecha: formData.fecha,
-          nombre: formData.nombre,
+          CreateDate: formattedDate,
+          DocDate: formattedDate,
+          UserId: user.UserId,
+          NumAtCard: formData.NumAtCard,
+          Comments: formData.Comments,
+          CompanyId: formData.companies.Id,
           archivoPDF: archivoBase64,
+          PurchaseOrderRequestDetails: selectedItems,
         };
 
         console.log("archivoBase64archivoBase64archivoBase64", data);
@@ -237,23 +228,23 @@ function NuevaCompra() {
                 </div>
                 <div className="p-field">
                   <TextInput
-                    id="nombre"
+                    id="NumAtCard"
                     label="No. referencia:"
-                    value={formData.nombre}
+                    value={formData.NumAtCard}
                     onChange={(e) =>
-                      setFormData({ ...formData, nombre: e.target.value })
+                      setFormData({ ...formData, NumAtCard: e.target.value })
                     }
-                    error={formErrors.nombre}
+                    error={formErrors.NumAtCard}
                   />
                 </div>
                 <div className="p-field">
                   <DropdownInput
-                    id="almacen"
+                    id="compañia"
                     ll
-                    label="No. referencia:"
+                    label="Compañia:"
                     optionLabel="BusinessName"
-                    value={formData.almacen}
-                    placeholder="Seleccione una compania"
+                    value={formData.companies}
+                    placeholder="Seleccione una compañia"
                     options={Array.isArray(companies) ? companies : []}
                     onChange={handleAlmacenChange}
                     error={formErrors.nombre}
@@ -265,39 +256,43 @@ function NuevaCompra() {
                   <TextTareaInput
                     id="comentario"
                     label="Comentario:"
-                    value={formData.comentario}
+                    value={formData.Comments}
                     onChange={(e) =>
-                      setFormData({ ...formData, comentario: e.target.value })
+                      setFormData({ ...formData, Comments: e.target.value })
                     }
                     rows={1}
                     cols={10}
                   />
                 </div>
                 <div className="p-field">
-                  <label htmlFor="proveedor">Subir adjuntos</label>
-                  <input
-                    id="pdf"
-                    type="file"
+                  <label htmlFor="proveedor">Archivo PDF </label>
+                  <FileUpload
+                    mode="basic"
+                    name="demo[]"
+                    url="/api/upload"
                     accept="application/pdf"
-                    onChange={handleFileChange}
+                    maxFileSize={1000000}
+                    onUpload={handleFileChange}
                   />
                 </div>
               </div>
 
               <div className="row">
-                <div className="p-field">
-                  <label htmlFor="proveedor">Material </label>
+                <div className="p-field" style={{ margin: "20px" }}>
                   <AutoComplete
-                    value={selectedMaterial}
+                    value={searchValue}
                     suggestions={filteredMaterials}
                     completeMethod={filterMaterials}
                     field="Description"
-                    onChange={handleAlmacenChange12}
+                    onChange={(e) => setSearchValue(e.value)}
+                    onSelect={(e) => {
+                      setSelectedMaterial(e.value);
+                      setSearchValue("");
+                      handleAlmacenChange12(e.value);
+                    }}
                     placeholder="Buscar material..."
                   />
                 </div>
-
-                
               </div>
             </div>
 
@@ -318,13 +313,41 @@ function NuevaCompra() {
               />
             </div>
           </form>
+          {selectedMaterial && (
+            <MaterialDialog
+              visible={dialogVisible}
+              material={selectedMaterial}
+              onClose={handleDialogClose}
+            />
+          )}
+
           <div className="table-container">
-            <DataTable value={selectedItems}>
+            <DataTable value={selectedItems} editMode="cell">
               <Column field="ItemCode" header="Codigo" />
               <Column field="Description" header="Description" />
-              <Column field="unidad" header="Unidad" />
-              <Column field="cantiad" header="Cantidad" />
+              <Column field="unidad" header="Unidad">
+               
+              </Column>
+              <Column
+                field="cantiad"
+                header="Cantidad"
+            
+                editorValidator={() => true}
+              />
             </DataTable>
+
+            {/* <Column
+                field="TaxCodeId"
+                header="Codigo Impuesto"
+                editor={(props) => (
+                  <Dropdown
+                  value={props.rowData[props.field]?.Name}// Acceder a la propiedad "Name" del objeto
+                  options={taxOptions}
+                  onChange={(e) => onEditorValueChange(props, e.value)}
+                  placeholder="Seleccione"
+                />
+                )}
+              /> */}
           </div>
         </Card>
       </div>
