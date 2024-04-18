@@ -1,15 +1,15 @@
 import React, { useRef, useState } from "react";
 import { BrowserRouter as router, Link } from "react-router-dom";
 import { useMountEffect } from "primereact/hooks";
-import { Navbar } from "../Navbar";
 import { DataTable } from "primereact/datatable";
 import { Column } from "primereact/column";
 import { Card } from "primereact/card";
-// import { ConfirmDialog, confirmDialog } from "primereact/confirmdialog";
 import { Button } from "primereact/button";
 import { useNavigate } from "react-router-dom";
 import { Dialog } from 'primereact/dialog';
+import { Layout } from '../Components/Layout/Layout';
 import "./Requisitor.css";
+import "../Components/Styles/Global.css";
 function Requisitor() {
   const msgs = useRef(null);
   const data = [
@@ -152,40 +152,50 @@ function Requisitor() {
 
 
   return (
-    <div className="card flex justify-content-center">
-      <Navbar />
-      <Card title="Grupo Hormadi" className="cardSolicitante">
+    <Layout>
+      <Card className="card-header">
+        <div class="row"> 
+        <div className="p-card-title">Solicitudes</div>
+           <div class="gorup-search">
+              <div className="p-field">
+                <Link to="./Requisitor/NuevaCompra">
+                    <Button
+                      label="Nueva Solicitud"
+                      severity="primary"
+                      raised
+                      icon="pi pi-plus-circle"
+                      iconPos="left"
+                      className="botonInsertarRequisitor"
+                    />
+                </Link>
+              </div>
+          </div>    
+        </div>
+      </Card>
+
+
+      <Card className="cardSolicitante">
       <Dialog
         header="Cancelar Solicitud"
         visible={visible}
-        style={{ width: '50vw' }}
+        style={{ width: '30vw' }}
         onHide={handleDialogCancel}
       >
         {rowDataToCancel && (
           <div>
             <p>¿Estás seguro que deseas cancelar la solicitud?</p>
             <p>Detalles de la solicitud: {rowDataToCancel.No_OC_SAP}</p>
+            <div class="row">
             <Button
               onClick={handleDialogCancel}
-              label="Cancelar"
+              label="Si"
               className="p-button-secondary"
             />
             {/* Agregar aquí el botón para confirmar la cancelación si es necesario */}
+            </div>
           </div>
         )}
       </Dialog>
-
-        <Link to="./Requisitor/NuevaCompra">
-          <Button
-            label="Nuevo"
-            severity="info"
-            raised
-            icon="pi pi-plus"
-            iconPos="right"
-            className="botonInsertarRequisitor"
-          />
-        </Link>
-
         <DataTable
           value={data}
           expandedRows={expandedRows}
@@ -217,12 +227,13 @@ function Requisitor() {
               <Button
                 onClick={() => redirectToEditar(rowData)}
                 label="Editar"
+                severity="success"                
               />
             )}
           ></Column>
         </DataTable>
       </Card>
-    </div>
+    </Layout>
   );
 }
 

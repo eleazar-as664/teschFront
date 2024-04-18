@@ -60,7 +60,7 @@ export const AppRouter = () => {
             element={
               <PrivateRoute
                 element={<Proveedor />}
-                allowedProfiles={["proveedor"]}
+                allowedProfiles={["Proveedor"]}
               />
             }
           />
@@ -69,7 +69,7 @@ export const AppRouter = () => {
             element={
               <PrivateRoute
                 element={<OrdenCompra />}
-                allowedProfiles={["proveedor"]}
+                allowedProfiles={["Proveedor"]}
               />
             }
           />

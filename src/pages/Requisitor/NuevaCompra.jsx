@@ -6,12 +6,12 @@ import DatesInput from "../../Components/Requisitor/DatesInput";
 import TextTareaInput from "../../Components/Requisitor/TextTareaInput";
 import DropdownInput from "../../Components/Requisitor/DropdownInput";
 import { AutoComplete } from "primereact/autocomplete";
+import { Layout } from '../../Components/Layout/Layout';
 
 import { Dropdown } from "primereact/dropdown";
 import { DataTable } from "primereact/datatable";
 import { Column } from "primereact/column";
 import axios from "axios"; // Importar Axios
-import { Navbar } from "../../Navbar";
 import "./NuevaCompra.css";
 
 function NuevaCompra() {
@@ -219,9 +219,7 @@ function NuevaCompra() {
   };
 
   return (
-    <div>
-      <Navbar />
-      <div className="card flex justify-content-center">
+    <Layout>
         <Card title="Nueva Compra" className="cardNuevaCompra">
           <form onSubmit={handleSubmit}>
             <div className="p-field-group">
@@ -327,8 +325,7 @@ function NuevaCompra() {
             </DataTable>
           </div>
         </Card>
-      </div>
-    </div>
+      </Layout>
   );
 }
 
