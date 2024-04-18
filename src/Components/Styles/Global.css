@@ -22,6 +22,12 @@
     --c-font-montserrat: 'Montserrat';
     /* sitio en general */
     --c-font-rubik: 'Rubik';
+
+    --theme-default: #7366ff;
+    --danger-color: #fc4438;
+    --info-color: #16c7f9;
+    --success-color: #54ba4a;
+    --secondary-color: #f73164;
 }
 
 .c-font-rubik {
@@ -66,6 +72,7 @@ body{
 .card-header .row{
     display: flex;
     justify-content: space-between;
+    align-items: center;
 }
 .gorup-search{
     display: flex;
@@ -73,4 +80,43 @@ body{
 
 .p-field{
     margin-left: 10px;
+}
+
+.p-button{
+    border-radius: 7px;
+}
+
+.p-button-primary{
+    background-color: var(--theme-default) !important;
+    border-color: var(--theme-default) !important;
+    padding: .375rem 1.75rem;
+    margin-right: 5px;
+}
+
+.p-button-danger{
+    background-color: var(--danger-color) !important;
+    border-color: var(--danger-color) !important;
+}
+
+.p-button-info{
+    background-color: var(--info-color) !important;
+    border-color: var(--info-color) !important;
+}
+
+.p-button-success{
+    background-color: var(--success-color) !important;
+    border-color: var(--success-color) !important;
+}
+
+.p-button-secondary{
+    background-color: var(--secondary-color) !important;
+    border-color: var(--secondary-color) !important;
+}
+
+.p-dialog-content button{
+   width: 30%;
+}
+
+.p-dialog-content .row{
+    justify-content: flex-end;
 }
