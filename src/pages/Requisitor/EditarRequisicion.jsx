@@ -1,276 +1,454 @@
-import React, { useRef, useState } from "react";
-import { redirect } from "react-router-dom";
+import React, { useState, useEffect } from "react";
+
+import TextInput from "../../Components/Requisitor/TextInput";
+import DatesInput from "../../Components/Requisitor/DatesInput";
+import TextTareaInput from "../../Components/Requisitor/TextTareaInput";
+import DropdownInput from "../../Components/Requisitor/DropdownInput";
+import MaterialDialog from "../../Components/Requisitor/Materiales";
+import { Layout } from "../../Components/Layout/Layout";
+
 import { Card } from "primereact/card";
+import { AutoComplete } from "primereact/autocomplete";
 import { Button } from "primereact/button";
-import { FileUpload } from "primereact/fileupload";
-import { InputText } from "primereact/inputtext";
+import { Dialog } from "primereact/dialog";
 import { DataTable } from "primereact/datatable";
 import { Column } from "primereact/column";
-import { Dropdown } from "primereact/dropdown";
-import { Calendar } from "primereact/calendar";
-import { ConfirmDialog, confirmDialog } from "primereact/confirmdialog";
 import { Toast } from "primereact/toast";
-import { InputTextarea } from "primereact/inputtextarea";
-import { Navbar } from "../../Navbar";
+import moment from "moment";
+import { useNavigate } from "react-router-dom";
+
+import axios from "axios";
 import "./NuevaCompra.css";
+
 function EditarRequisicion() {
+  const navigate = useNavigate();
+  const [formData, setFormData] = useState({
+    fecha: null,
+    NumAtCard: "",
+    companies: "",
+    proveedor: "",
+    cantidad: "",
+    precio: "",
+    Comments: "",
+    archivoPDF: null,
+  });
 
-    const detallesEditarRequisicion = JSON.parse(localStorage.getItem('datosRequisitor'));
-    console.log('Holaa datosRequisitor', detallesEditarRequisicion)
+  const [formErrors, setFormErrors] = useState({
+    fecha: false,
+    NumAtCard: false,
+    companies: false,
+    proveedor: false,
+    cantidad: false,
+    precio: false,
+    Comments: false,
+  });
 
-
-    const toast = useRef(null);
-    const [value, setValue] = useState("");
-    const [uploadedFiles, setUploadedFiles] = useState([]);
-  
-    const onUpload = (event) => {
-      // Aquí puedes manejar la lógica cuando se cargan los archivos
-      setUploadedFiles(event.files);
-    };
-    const footer = (
-      <div>{/* <Button label="Guardar" icon="pi pi-check" /> */}</div>
+  const [companies, setCompanies] = useState([]);
+  const [materialeslData, setMaterialesData] = useState([]);
+  const [selectedItems, setSelectedItems] = useState([]);
+  const [selectedMaterial, setSelectedMaterial] = useState(null);
+  const [filteredMaterials, setFilteredMaterials] = useState([]);
+  const [dialogVisible, setDialogVisible] = useState(false);
+  const [dialogVisibleNuevaCompra, setDialogVisibleNuevaCompra] =
+    useState(false);
+  const [searchValue, setSearchValue] = useState("");
+  const [contadorId, setContadorId] = useState(1);
+  const [materialToEdit, setMaterialToEdit] = useState(null);
+  const filterMaterials = (event) => {
+    const searchTerm = event.query.toLowerCase();
+    const filtered = materialeslData.filter((material) =>
+      material.Description.toLowerCase().includes(searchTerm)
     );
-    const accept = () => {
-      toast.current.show({
-        severity: "info",
-        summary: "Confirmed",
-        detail: "",
-        life: 3000,
-      });
-      return redirect("../Solicitante");
-    };
-  
-    const reject = () => {
-      toast.current.show({
+    setFilteredMaterials(filtered);
+  };
+  const handleEdit = (rowData) => {
+    setMaterialToEdit(rowData);
+    setDialogVisible(true);
+  };
+  const token =
+    'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6IlJ1YmVuLkciLCJpYXQiOjE3MTMwNTYxOTYsImV4cCI6MTcxMzA3MDU5Nn0.pUaTtKZz4sJEn9LzvGgkUl3MDeEpKNlKNuQbzDsMv_4"';
+  const user = JSON.parse(localStorage.getItem("user"));
+  const datosRequisitor = JSON.parse(localStorage.getItem("datosRequisitor"));
+  let toast;
+  const handleAlmacenChange12 = (material) => {
+    setSelectedMaterial(material);
+    setDialogVisible(true); // Mostrar el MaterialDialog al seleccionar un material
+  };
+
+  const handleDialogClose = () => {
+    setDialogVisible(false);
+  };
+  const fetchData = async () => {
+    try {
+      const usuario = user.UserId;
+      const apiUrl = `http://localhost:3000/api/v1/GetCompaniesForUser/${usuario}`;
+      const config = {
+        headers: {
+          "x-access-token": token,
+        },
+      };
+      const response = await axios.get(apiUrl, config);
+      setCompanies(response.data.data);
+
+      setFormData((prevState) => ({
+        ...prevState,
+        companies: response.data.data[0],
+      }));
+      let IdUsuario = response.data.data[0].Id;
+      const apiUrlGetItemsByCompany = `http://localhost:3000/api/v1/GetItemsByCompany/${IdUsuario}`;
+      const resp = await axios.get(apiUrlGetItemsByCompany, config);
+      setMaterialesData(resp.data.data);
+    } catch (error) {
+      console.error("Error al obtener datos de la API:", error);
+    }
+  };
+
+  const getDatosCompra = async () => {
+    try {
+      const idSolicitud = datosRequisitor.PurchaseRequestId;
+
+      const apiUrl = `http://localhost:3000/api/v1/GetSinglePurchaseRequest/${idSolicitud}`;
+      const config = {
+        headers: {
+          "x-access-token": token,
+        },
+      };
+      const response = await axios.get(apiUrl, config);
+
+      console.log("Response:getDatosCompra", response.data.data);
+
+      setFormData(response.data.data);
+    } catch (error) {
+      console.error("Error al obtener datos de la API:", error);
+    }
+  };
+  useEffect(() => {
+    getDatosCompra();
+    fetchData();
+  }, [selectedItems]); // El array vacío indica que este efecto se ejecuta solo una vez, equivalente a componentDidMount
+
+  const handleAlmacenChange = async (e) => {
+    const selectedAlmacen = e.target.value;
+    setFormData({ ...formData, almacen: selectedAlmacen });
+
+    try {
+      const apiUrl = `http://localhost:3000/api/v1/GetItemsByCompany/${selectedAlmacen.Id}`;
+      const config = {
+        headers: {
+          "x-access-token": token,
+        },
+      };
+      const response = await axios.get(apiUrl, config);
+      setMaterialesData(response.data.data);
+    } catch (error) {
+      console.error("Error al obtener datos adicionales:", error);
+    }
+  };
+
+  const handleFileChange = (event) => {
+    const archivoPDF = event.target.files[0]; // Obtener el primer archivo seleccionado
+    setFormData((prevFormData) => ({
+      ...prevFormData,
+      archivoPDF: archivoPDF,
+    }));
+    console.log("Archivo seleccionado:", archivoPDF);
+    console.log("FormData actualizado:", formData);
+  };
+  const handleSubmit = async (event) => {
+    event.preventDefault();
+
+    if (validateForm()) {
+      try {
+        const requestData = buildRequestData();
+        const response = await sendFormData(requestData, formData.archivoPDF);
+        handleSuccessResponse(response);
+      } catch (error) {
+        handleErrorResponse(error);
+      }
+    } else {
+      toast.show({
         severity: "warn",
-        summary: "Rejected",
-        detail: "You have rejected",
+        summary: "Notificación",
+        detail: "El formulario tiene que ser completado, para ser enviado",
         life: 3000,
       });
+    }
+  };
+
+  const buildRequestData = () => {
+    const momentDate = moment(formData.fecha);
+    const formattedDate = momentDate.format("YYYY-MM-DD");
+    const PurchaseOrderRequestDetails = selectedItems.map((obj) => ({
+      Description: obj.Description,
+      BuyUnitMsr: obj.BuyUnitMsr,
+      Quantity: obj.Quantity,
+      TaxCodeId: obj.TaxCode,
+      ItemId: obj.Id,
+      PurchaseRequestId: 0,
+    }));
+
+    return {
+      CreateDate: formattedDate,
+      DocDate: formattedDate,
+      DocDueDate: formattedDate,
+      UserId: user.UserId,
+      NumAtCard: formData.NumAtCard,
+      Comments: formData.Comments,
+      CompanyId: formData.companies.Id,
+      PurchaseOrderRequestDetails,
     };
-  
-    const confirm1 = () => {
-      confirmDialog({
-        message: "Confirmar la solicitud de compra",
-        header: "Nueva Compra",
-        icon: "pi pi-exclamation-triangle",
-        defaultFocus: "accept",
-        accept,
-        reject,
-      });
+  };
+  const sendFormData = async (data, pdf) => {
+    const formData = new FormData();
+
+    // Agregar los datos al FormData
+    formData.append("data", JSON.stringify(data));
+
+    // Agregar el documento al FormData
+    formData.append("FilesToUpload", pdf);
+
+    // Configurar los encabezados
+    const config = {
+      headers: {
+        "x-access-token": token,
+        "Content-Type": "multipart/form-data",
+      },
     };
-  
-    const data = [
-      {
-        ID_Solicitud: 10,
-        No_Requisicion_SAP: "ABC123",
-        Fecha_Hora_Creacion: "2024-03-18 10:30:00",
-        Fecha_Vencimiento: "2024-04-10",
-        No_referencia: "REF001",
-        Centro_de_costo: "CC001",
-        Empresa: "Empresa A",
-        Comentarios: "Comentario 1",
-        No_OC_SAP: "OC123",
-        Sincronizado: true,
-        Adjunto1: "Archivo1.pdf",
-        Adjunto2: "Archivo2.pdf",
-        Notas_autorizacion: "Notas de autorización 1",
-        Notas_requisitor: "Notas del requisitor 1",
-      },
-      {
-        ID_Solicitud: 20,
-        No_Requisicion_SAP: "DEF456",
-        Fecha_Hora_Creacion: "2024-03-19 11:45:00",
-        Fecha_Vencimiento: "2024-04-12",
-        No_referencia: "REF002",
-        Centro_de_costo: "CC002",
-        Empresa: "Empresa B",
-        Comentarios: "Comentario 2",
-        No_OC_SAP: "OC456",
-        Sincronizado: false,
-        Adjunto1: "",
-        Adjunto2: "",
-        Notas_autorizacion: "Notas de autorización 2",
-        Notas_requisitor: "Notas del requisitor 2",
-      },
-      {
-        ID_Solicitud: 30,
-        No_Requisicion_SAP: "ABC123",
-        Fecha_Hora_Creacion: "2024-03-18 10:30:00",
-        Fecha_Vencimiento: "2024-04-10",
-        No_referencia: "REF001",
-        Centro_de_costo: "CC001",
-        Empresa: "Empresa A",
-        Comentarios: "Comentario 1",
-        No_OC_SAP: "OC123",
-        Sincronizado: true,
-        Adjunto1: "Archivo1.pdf",
-        Adjunto2: "Archivo2.pdf",
-        Notas_autorizacion: "Notas de autorización 1",
-        Notas_requisitor: "Notas del requisitor 1",
-      },
-      {
-        ID_Solicitud: 40,
-        No_Requisicion_SAP: "ABC123",
-        Fecha_Hora_Creacion: "2024-03-18 10:30:00",
-        Fecha_Vencimiento: "2024-04-10",
-        No_referencia: "REF001",
-        Centro_de_costo: "CC001",
-        Empresa: "Empresa A",
-        Comentarios: "Comentario 1",
-        No_OC_SAP: "OC123",
-        Sincronizado: true,
-        Adjunto1: "Archivo1.pdf",
-        Adjunto2: "Archivo2.pdf",
-        Notas_autorizacion: "Notas de autorización 1",
-        Notas_requisitor: "Notas del requisitor 1",
-      },
-      {
-        ID_Solicitud: 50,
-        No_Requisicion_SAP: "ABC123",
-        Fecha_Hora_Creacion: "2024-03-18 10:30:00",
-        Fecha_Vencimiento: "2024-04-10",
-        No_referencia: "REF001",
-        Centro_de_costo: "CC001",
-        Empresa: "Empresa A",
-        Comentarios: "Comentario 1",
-        No_OC_SAP: "OC123",
-        Sincronizado: true,
-        Adjunto1: "Archivo1.pdf",
-        Adjunto2: "Archivo2.pdf",
-        Notas_autorizacion: "Notas de autorización 1",
-        Notas_requisitor: "Notas del requisitor 1",
-      },
-      {
-        ID_Solicitud: 60,
-        No_Requisicion_SAP: "ABC123",
-        Fecha_Hora_Creacion: "2024-03-18 10:30:00",
-        Fecha_Vencimiento: "2024-04-10",
-        No_referencia: "REF001",
-        Centro_de_costo: "CC001",
-        Empresa: "Empresa A",
-        Comentarios: "Comentario 1",
-        No_OC_SAP: "OC123",
-        Sincronizado: true,
-        Adjunto1: "Archivo1.pdf",
-        Adjunto2: "Archivo2.pdf",
-        Notas_autorizacion: "Notas de autorización 1",
-        Notas_requisitor: "Notas del requisitor 1",
-      },
-    ];
-    const almacenOptions = [
-      { label: "Distribuidora Tonsa", value: "almacen1" },
-      { label: "Grupo Logistico MM", value: "almacen2" },
-      { label: "Distribuidora 3", value: "almacen3" },
-    ];
-  
-    const [formData, setFormData] = React.useState({
-      nombre: "",
-      almacen: "",
-      proveedor: "",
-      cantidad: "",
-      precio: "",
-    });
-    const handleInputChange = (event) => {
-      const { name, value } = event.target;
-      setFormData({ ...formData, [name]: value });
-    };
-    const handleDropdownChange = (name, value) => {
-      setFormData({ ...formData, [name]: value });
-    };
-    const handleDateChange = (name, value) => {
-      setFormData({
-        ...formData,
-        [name]: value,
-      });
-    };
-  
+    console.log("Data:", data);
+    console.log("FilesToUpload:", pdf);
+
+    console.log("Data:", data);
+    console.log("FilesToUpload:", pdf);
+    const response = await axios.post(
+      "http://localhost:3000/api/v1/CreatePurchaseRequest",
+      formData,
+      config
+    );
+    return response.data;
+  };
+
+  const handleSuccessResponse = (response) => {
+    console.log("Respuesta del servidor:", response);
+    setDialogVisibleNuevaCompra(true);
+    // Aquí podrías manejar la respuesta exitosa, por ejemplo, mostrar un mensaje de éxito al usuario
+  };
+
+  const handleErrorResponse = (error) => {
+    console.error("Error al enviar el formulario:", error);
+  };
+  const validateForm = () => {
+    const errors = {};
+    let formIsValid = true;
+
+    if (!formData.fecha) {
+      errors.fecha = "La fecha es obligatoria.";
+      formIsValid = false;
+    }
+
+    if (!formData.NumAtCard.trim()) {
+      errors.NumAtCard = "El número de referencia es obligatorio.";
+      formIsValid = false;
+    }
+
+    if (!formData.companies) {
+      errors.companies = "Seleccione una compañía.";
+      formIsValid = false;
+    }
+
+    setFormErrors(errors);
+    return formIsValid;
+  };
+
+  const handleGuardarMaterial = (materialModificado) => {
+    const materialConId = { ...materialModificado, idTeficador: contadorId };
+    setContadorId(contadorId + 1);
+    setSelectedItems([...selectedItems, materialConId]);
+  };
+
+  const handleEditarMaterial = (materialModificado) => {
+    // Encontrar el índice del material modificado en la lista selectedItems
+    console.clear();
+    console.log("materialModificadssssssssssso", materialModificado);
+    const index = selectedItems.findIndex(
+      (item) => item.idTeficador === materialModificado.idTeficador
+    );
+
+    if (index !== -1) {
+      // Si se encuentra el material en la lista, actualizarlo
+      const updatedItems = [...selectedItems];
+      updatedItems[index] = materialModificado;
+      setSelectedItems(updatedItems);
+    } else {
+      console.error("No se encontró el material en la lista seleccionada.");
+    }
+
+    console.log("Material modificado:", materialModificado);
+    console.log("selectedItems:", selectedItems);
+  };
+
+  const handleDelete = (rowData) => {
+    const updatedItems = selectedItems.filter((item) => item !== rowData);
+    setSelectedItems(updatedItems);
+    console.log("selectedItems:", selectedItems);
+    console.log("Elemento eliminado:", rowData);
+  };
+
+  const handleEnviarNavigate = () => {
+    setDialogVisibleNuevaCompra(false); // Cierra el modal
+    navigate("/Requisitor"); // Navega a la ruta "/Requisitor"
+  };
+
   return (
-    <div>
-      <Navbar />
-      <div className="card flex justify-content-center">
-      <Card title="Editar Solicitud" footer={footer} className="cardNuevaCompra">
-          <div className="botonEnviar">
-            <Toast ref={toast} />
-            <ConfirmDialog />
-            <Button label="Guardar" onClick={confirm1} icon="pi pi-check" />
-          </div>
-          <div className="botonCancelar">
-            <Button label="Cancelar" severity="danger"  icon="pi pi-times" />
-          </div>
+    <Layout>
+      <Card title="Editar Requisición" className="cardNuevaCompra">
+        <Toast ref={(el) => (toast = el)} />
+
+        <form onSubmit={handleSubmit}>
           <div className="p-field-group">
             <div className="row">
               <div className="p-field">
-                <label htmlFor="fecha">Fecha de Vencimiento:</label>
-                <Calendar
-                  id="fecha"
-                  name="fecha"
+                <DatesInput
                   value={formData.fecha}
-                  onChange={(e) => handleDateChange("fecha", e.value)}
-                  dateFormat="dd/mm/yy"
-                  placeholder="Seleccione una fecha"
+                  onChange={(e) => setFormData({ ...formData, fecha: e.value })}
+                  error={formErrors.fecha}
                 />
               </div>
               <div className="p-field">
-                <label htmlFor="nombre">No. referencia:</label>
-                <InputText
-                  id="nombre"
-                  name="nombre"
-                  value={formData.nombre}
-                  onChange={handleInputChange}
+                <TextInput
+                  id="NumAtCard"
+                  label="No. referencia:"
+                  value={formData.NumAtCard}
+                  onChange={(e) =>
+                    setFormData({ ...formData, NumAtCard: e.target.value })
+                  }
+                  error={formErrors.NumAtCard}
                 />
               </div>
-
               <div className="p-field">
-                <label htmlFor="almacen">Empresa:</label>
-                <Dropdown
-                  id="almacen"
-                  name="almacen"
-                  value={formData.almacen}
-                  options={almacenOptions}
-                  onChange={(e) => handleDropdownChange("almacen", e.value)}
-                  placeholder="Seleccione un almacén"
+                <DropdownInput
+                  id="compañia"
+                  label="Compañia:"
+                  optionLabel="BusinessName"
+                  value={formData.companies}
+                  placeholder="Seleccione una compañia"
+                  options={Array.isArray(companies) ? companies : []}
+                  onChange={handleAlmacenChange}
+                  error={formErrors.nombre}
+                  disabled={companies.length <= 1}
                 />
               </div>
             </div>
             <div className="row">
               <div className="p-field">
-                <label htmlFor="proveedor">Comentarios</label>
-                <InputTextarea
-                  value={value}
-                  onChange={(e) => setValue(e.target.value)}
+                <TextTareaInput
+                  id="comentario"
+                  label="Comentario:"
+                  value={formData.Comments}
+                  onChange={(e) =>
+                    setFormData({ ...formData, Comments: e.target.value })
+                  }
                   rows={1}
                   cols={10}
                 />
               </div>
               <div className="p-field">
-                <label htmlFor="proveedor">Subir adjuntos</label>
+                <label htmlFor="proveedor">Archivo PDF </label>
+                <input type="file" onChange={handleFileChange} />
+              </div>
+            </div>
 
-                <FileUpload
-                  mode="basic"
-                  name="demo[]"
-                  url="/api/upload"
-                  accept="image/*"
-                  customUpload
-                  onUpload={onUpload}
+            <div className="row">
+              <div className="p-field" style={{ margin: "20px" }}>
+                <AutoComplete
+                  value={searchValue}
+                  suggestions={filteredMaterials}
+                  completeMethod={filterMaterials}
+                  field="Description"
+                  onChange={(e) => setSearchValue(e.value)}
+                  onSelect={(e) => {
+                    setSelectedMaterial(e.value);
+                    setSearchValue("");
+                    handleAlmacenChange12(e.value);
+                  }}
+                  placeholder="Buscar material..."
                 />
               </div>
             </div>
           </div>
-          <DataTable
-            value={data}
-            scrollable
-            scrollHeight="200px"
-            tableStyle={{ minWidth: "50rem" }}
-          >
-            <Column field="No_Requisicion_SAP" header="Código" />
-            <Column field="Fecha_Hora_Creacion" header="Descripción" />
-            <Column field="Fecha_Vencimiento" header="Unidad" />
-            <Column field="Centro_de_costo" header="Cantidad" />
+
+          <div className="botonEnviar">
+            <Button
+              label="Guardar"
+              type="submit"
+              icon="pi pi-check"
+              className="p-button-success"
+            />
+          </div>
+          <div className="botonCancelar">
+            <Button
+              label="Cancelar"
+              type="button"
+              onClick={handleEnviarNavigate}
+              className="p-button-danger"
+            />
+          </div>
+        </form>
+        {selectedMaterial && (
+          <MaterialDialog
+            visible={dialogVisible}
+            material={selectedMaterial}
+            onClose={handleDialogClose}
+            onSave={handleGuardarMaterial}
+          />
+        )}
+        {materialToEdit && (
+          <MaterialDialog
+            visible={dialogVisible}
+            material={materialToEdit}
+            onClose={handleDialogClose}
+            onSave={handleEditarMaterial}
+          />
+        )}
+        <Dialog
+          visible={dialogVisibleNuevaCompra}
+          onHide={handleEnviarNavigate}
+          header="Éxito"
+          modal
+          footer={<Button label="Cerrar" onClick={handleEnviarNavigate} />}
+        >
+          <div>¡La operación se completó con éxito!</div>
+        </Dialog>
+        <div className="table-container">
+          <DataTable value={selectedItems} scrollHeight="400px">
+            <Column field="ItemCode" header="Codigo" />
+            <Column field="Description" header="Description" />
+            <Column field="BuyUnitMsr" header="Unidad"></Column>
+            <Column field="Quantity" header="Cantidad" />
+            <Column field="IVAName" header="Impuesto" />
+            <Column
+              field=""
+              header="Impuesto"
+              body={(rowData) => (
+                <div>
+                  <Button
+                    icon="pi pi-pencil"
+                    rounded
+                    outlined
+                    onClick={() => handleEdit(rowData)}
+                    className="p-button-warning"
+                  />
+                  <Button
+                    icon="pi pi-trash"
+                    onClick={() => handleDelete(rowData)}
+                    className="p-button-danger"
+                  />
+                </div>
+              )}
+            />
           </DataTable>
-        </Card>
-      </div>
-    </div>
+        </div>
+      </Card>
+    </Layout>
   );
 }
 

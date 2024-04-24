@@ -1,8 +1,8 @@
 import { Route, Routes } from "react-router-dom";
-
 import { DashboardPage, LoginPage } from "../pages";
 import NuevaCompra from "../pages/Requisitor/NuevaCompra";
 import EditarRequisicion from "../pages/Requisitor/EditarRequisicion";
+import DetalleCompra from "../pages/Requisitor/DetalleCompra";
 import Requisitor from "../pages/Requisitor";
 import Proveedor from "../pages/Proveedor";
 import OrdenCompra from "../pages/Proveedor/OrdenCompra"
@@ -51,7 +51,16 @@ export const AppRouter = () => {
             element={
               <PrivateRoute
                 element={<EditarRequisicion />}
-                allowedProfiles={["solicitante"]}
+                allowedProfiles={["Requisitor"]}
+              />
+            }
+          />
+           <Route
+            path="Requisitor/Requisitor/DetalleCompra"
+            element={
+              <PrivateRoute
+                element={<DetalleCompra />}
+                allowedProfiles={["Requisitor"]}
               />
             }
           />

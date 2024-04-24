@@ -3,12 +3,14 @@ import { Dialog } from "primereact/dialog";
 import { Button } from "primereact/button";
 import { Dropdown } from "primereact/dropdown";
 import { InputText } from "primereact/inputtext";
+import { InputNumber } from "primereact/inputnumber";
 import axios from "axios";
 
-function MaterialDialog({ visible, material, onClose }) {
+function MaterialDialog({ visible, material, onClose, onSave }) {
   const [updatedMaterial, setUpdatedMaterial] = useState({});
   const [selectedIVA, setSelectedIVA] = useState(null);
   const [ivaOptions, setIvaOptions] = useState([]);
+  const [validationErrors, setValidationErrors] = useState({});
   const token =
     'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6IlJ1YmVuLkciLCJpYXQiOjE3MTMwNTYxOTYsImV4cCI6MTcxMzA3MDU5Nn0.pUaTtKZz4sJEn9LzvGgkUl3MDeEpKNlKNuQbzDsMv_4"';
 
@@ -41,16 +43,67 @@ function MaterialDialog({ visible, material, onClose }) {
   };
 
   const handleSave = () => {
-    console.log("Material modificado:", updatedMaterial);
-    onClose();
+    if (validateForm()) {
+      setSelectedIVA([]);
+
+      onSave(updatedMaterial); // Llama a la función onSave con el material modificado
+      onClose(); // Cierra el diálogo
+    }
   };
 
   const handleIVAChange = (selectedOption) => {
     setSelectedIVA(selectedOption);
     setUpdatedMaterial((prevState) => ({
       ...prevState,
-      IVA: selectedOption.TaxCode, 
+      TaxCode: selectedOption.Id,
+      IVAName: selectedOption.Name,
     }));
+  };
+
+  const handleCantidadChange = (event) => {
+    const newValue = event.value;
+    if (!isNaN(newValue) && newValue !== null) {
+      // Verifica si el nuevo valor no es NaN ni null
+      setUpdatedMaterial((prevState) => ({
+        ...prevState,
+        Quantity: newValue,
+      }));
+    }
+  };
+
+  const validateForm = () => {
+    const errors = {};
+
+    if (
+      !updatedMaterial.Description ||
+      updatedMaterial.Description.trim() === ""
+    ) {
+      errors.Description = "La descripción es obligatoria.";
+    }
+
+    if (
+      !updatedMaterial.BuyUnitMsr ||
+      updatedMaterial.BuyUnitMsr.trim() === ""
+    ) {
+      errors.BuyUnitMsr = "La unidad es obligatoria.";
+    }
+    if (
+      typeof updatedMaterial.Quantity !== "number" ||
+      updatedMaterial.Quantity === null ||
+      updatedMaterial.Quantity === undefined
+    ) {
+      errors.Quantity = "La cantidad debe ser un número.";
+    }
+    if (!selectedIVA || !selectedIVA.TaxCode) {
+      errors.TaxCodeId = "Seleccione un valor de IVA.";
+    }
+
+    // Verificar si hay errores
+    const formIsValid = Object.keys(errors).length === 0;
+
+    setValidationErrors(errors);
+
+    return formIsValid;
   };
 
   return (
@@ -82,44 +135,59 @@ function MaterialDialog({ visible, material, onClose }) {
               value={updatedMaterial.Description || ""}
               onChange={handleInputChange}
             />
+            {validationErrors.Description && (
+              <small className="p-error">{validationErrors.Description}</small>
+            )}
           </div>
 
           <div className="p-field">
             <label htmlFor="unidad">Unidad</label>
             <InputText
               id="unidad"
-              name="Unidad"
-              value={updatedMaterial.Unidad || ""}
+              name="BuyUnitMsr"
+              value={updatedMaterial.BuyUnitMsr || ""}
               onChange={handleInputChange}
             />
+            {validationErrors.BuyUnitMsr && (
+              <small className="p-error">{validationErrors.BuyUnitMsr}</small>
+            )}
           </div>
         </div>
 
         <div className="row">
           <div className="p-field">
             <label htmlFor="cantidad">Cantidad</label>
-            <InputText
+            <InputNumber
               id="cantidad"
-              name="Cantidad"
-              value={updatedMaterial.Cantidad || ""}
-              onChange={handleInputChange}
+              name="Quantity"
+              value={updatedMaterial.Quantity || ""}
+              onChange={handleCantidadChange}
+              mode="decimal"
+              min={0}
+              max={1000}
+              className={validationErrors.Quantity ? "p-invalid" : ""}
             />
+            {validationErrors.Quantity && (
+              <small className="p-error">{validationErrors.Quantity}</small>
+            )}
           </div>
 
           <div className="p-field">
             <label htmlFor="iva">IVA</label>
-            {ivaOptions.length > 0 ? (
-              <Dropdown
-                id="iva"
-                name="IVA"
-                value={selectedIVA}
-                options={ivaOptions}
-                optionLabel="Name"
-                onChange={(e) => handleIVAChange(e.value)}
-                placeholder="Seleccione IVA"
-              />
-            ) : (
-              <div>Cargando opciones de IVA...</div>
+
+            <Dropdown
+              id="iva"
+              name="IVA"
+              value={selectedIVA}
+              options={ivaOptions}
+              optionLabel="Name"
+              onChange={(e) => handleIVAChange(e.value)}
+              placeholder="Seleccione IVA"
+              className={validationErrors.TaxCodeId ? "p-invalid" : ""}
+            />
+
+            {validationErrors.TaxCodeId && (
+              <small className="p-error">{validationErrors.TaxCodeId}</small>
             )}
           </div>
         </div>
