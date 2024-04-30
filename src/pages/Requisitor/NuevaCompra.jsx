@@ -103,7 +103,7 @@ function NuevaCompra() {
     };
 
     fetchData();
-  }, []); // El array vacío indica que este efecto se ejecuta solo una vez, equivalente a componentDidMount
+  }, [user.UserId]); // El array vacío indica que este efecto se ejecuta solo una vez, equivalente a componentDidMount
 
   const handleAlmacenChange = async (e) => {
     const selectedAlmacen = e.target.value;
@@ -123,7 +123,7 @@ function NuevaCompra() {
     }
   };
 
-  // const handleSubmit = async (event) => {
+  
   //   event.preventDefault();
   //   if (validateForm()) {
   //     try {
@@ -184,7 +184,7 @@ function NuevaCompra() {
       }
     } else {
       console.log("El formulario contiene errores y no puede ser enviado.");
-      console.clear("*******************formData***************************");
+      console.log("*******************formData***************************");
       console.log(formData);
       toast.show({
         severity: "warn",
@@ -198,8 +198,8 @@ function NuevaCompra() {
   const buildRequestData = () => {
     const momentDate = moment(formData.fecha);
     const formattedDate = momentDate.format("YYYY-MM-DD");
-    console.clear();
-    console.clear("*******************formData***************************");
+    console.log();
+    console.log("*******************formData**********VERIFI CANDO MATERIALES :BORRAR*********************");
     console.log(formData);
 
     const PurchaseOrderRequestDetails = selectedItems.map((obj) => ({
@@ -238,6 +238,15 @@ function NuevaCompra() {
         "Content-Type": "multipart/form-data",
       },
     };
+    if(data.PurchaseOrderRequestDetails.length === 0){
+      toast.show({
+        severity: "warn",
+        summary: "Notificación",
+        detail: "El formulario tiene que ser completado, para ser enviado",
+        life: 3000,
+      });
+     
+    }
     console.log("Data:", data);
     console.log("FilesToUpload:", pdf);
 

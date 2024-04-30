@@ -15,7 +15,6 @@ import "../Components/Styles/Global.css";
 function Requisitor() {
   const msgs = useRef(null);
 
-
   const [selectedItem, setSelectedItem] = useState(null);
   const [data1, setData] = useState([]);
   const [visible, setVisible] = useState(false);
@@ -28,10 +27,13 @@ function Requisitor() {
 
   const handleDialogCancel = () => {
     const purchaseRequestId = rowDataToCancel.PurchaseRequestId;
-  
-    axios.delete(`http://localhost:3000/api/v1/DeletePurchaseRequest/${purchaseRequestId}`)
-      .then(response => {
-        console.log('Solicitud de compra cancelada con éxito');
+
+    axios
+      .delete(
+        `http://localhost:3000/api/v1/DeletePurchaseRequest/${purchaseRequestId}`
+      )
+      .then((response) => {
+        console.log("Solicitud de compra cancelada con éxito");
         fetchData();
         toast.show({
           severity: "success",
@@ -41,11 +43,11 @@ function Requisitor() {
         });
         // Realizar cualquier acción adicional después de cancelar la solicitud, como actualizar la lista de solicitudes de compra
       })
-      .catch(error => {
-        console.error('Error al cancelar la solicitud de compra:', error);
+      .catch((error) => {
+        console.error("Error al cancelar la solicitud de compra:", error);
         // Manejar el error, como mostrar un mensaje al usuario
       });
-    console.log("handleDialogCancel",rowDataToCancel.PurchaseRequestId  );
+    console.log("handleDialogCancel", rowDataToCancel.PurchaseRequestId);
     setRowDataToCancel(null);
     setVisible(false); // Esto cierra el Dialog
   };
@@ -55,38 +57,24 @@ function Requisitor() {
   const token = localStorage.getItem("token");
   const fetchData = async () => {
     try {
-      const apiUrl = `http://localhost:3000/api/v1/GetPurchaseRequestsByUser/${user.UserId}`;
+      console.clear();
+      console.log(user.UserId);
+      const IdUsuario = user.UserId;
+      const apiUrl = `http://localhost:3000/api/v1/GetPurchaseRequestsHeadersByUser/${IdUsuario}`;
       const config = {
         headers: {
           "x-access-token": token,
         },
       };
       const response = await axios.get(apiUrl, config);
-      const purchaseRequests = response.data.data.purchaseRequests;
-      console.log(purchaseRequests);
-
-      // Mapear los purchaseRequests y extraer los detalles necesarios
-      const data = purchaseRequests.map((request) => {
-        return {
-          PurchaseRequestId: request.purchaseRequestHeader.PurchaseRequestId,
-          Company: request.purchaseRequestHeader.Company,
-          Comments: request.purchaseRequestHeader.Comments,
-          DocDate: request.purchaseRequestHeader.DocDate,
-          StatusSAP: request.purchaseRequestHeader.StatusSAP,
-          NumAtCard: request.purchaseRequestHeader.NumAtCard,
-          // Aquí puedes agregar más propiedades del objeto `purchaseRequestHeader` según tus necesidades
-        };
-      });
-      console.log("Responseasaaaaaaaaaaaaaaaaaaaaaaaaaa:", data);
-
-      setData(data);
+      console.log(response.data.data.purchaseRequestsHeaders);
+      setData(response.data.data.purchaseRequestsHeaders);
     } catch (error) {
       console.error("Error al obtener datos de la API:", error);
     }
   };
   useEffect(() => {
-    
-
+    localStorage.removeItem("datosRequisitor");
     fetchData();
   }, []);
   useMountEffect(() => {
@@ -105,7 +93,7 @@ function Requisitor() {
 
   const redirectToEditar = (datos) => {
     const rowData = datos;
-    localStorage.removeItem("datosRequisitor");
+    
     localStorage.setItem("datosRequisitor", JSON.stringify(rowData));
     navigate("./Requisitor/EditarRequisicion");
   };
@@ -122,7 +110,7 @@ function Requisitor() {
     //   empresa: rowData.empresa,
     //   // Añade más propiedades según sea necesario
     // };
-    // localStorage.setItem("selectedItem", JSON.stringify(selectedItem));
+    localStorage.setItem("datosRequisitor", JSON.stringify(rowData));
 
     // Redirigir a la página de detalles
     navigate("./Requisitor/DetalleCompra");
@@ -131,7 +119,7 @@ function Requisitor() {
   return (
     <Layout>
       <Card className="card-header">
-      <Toast ref={(el) => (toast = el)} />
+        <Toast ref={(el) => (toast = el)} />
         <div class="row">
           <div className="p-card-title">Solicitudes</div>
           <div class="gorup-search">
@@ -156,7 +144,7 @@ function Requisitor() {
           header="Cancelar Solicitud"
           visible={visible}
           style={{ width: "30vw" }}
-          onHide={() =>setVisible(false)}
+          onHide={() => setVisible(false)}
         >
           {rowDataToCancel && (
             <div>
@@ -177,7 +165,7 @@ function Requisitor() {
           value={data1}
           selectionMode="single"
           selection={selectedItem}
-          onRowClick={handleRowClick} 
+          onRowClick={handleRowClick}
           scrollable
           scrollHeight="400px"
           stripedRows
@@ -210,7 +198,6 @@ function Requisitor() {
             )}
           ></Column>
         </DataTable>
-        
       </Card>
     </Layout>
   );

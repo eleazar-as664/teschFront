@@ -65,8 +65,8 @@ function EditarRequisicion() {
     setMaterialToEdit(rowData);
     setDialogVisible(true);
   };
-  const token =
-    'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6IlJ1YmVuLkciLCJpYXQiOjE3MTMwNTYxOTYsImV4cCI6MTcxMzA3MDU5Nn0.pUaTtKZz4sJEn9LzvGgkUl3MDeEpKNlKNuQbzDsMv_4"';
+  const token = JSON.parse(localStorage.getItem("user")).Token;
+
   const user = JSON.parse(localStorage.getItem("user"));
   const datosRequisitor = JSON.parse(localStorage.getItem("datosRequisitor"));
   let toast;
@@ -78,72 +78,99 @@ function EditarRequisicion() {
   const handleDialogClose = () => {
     setDialogVisible(false);
   };
-  const fetchData = async () => {
-    try {
-      const usuario = user.UserId;
-      const apiUrl = `http://localhost:3000/api/v1/GetCompaniesForUser/${usuario}`;
-      const config = {
-        headers: {
-          "x-access-token": token,
-        },
-      };
-      const response = await axios.get(apiUrl, config);
-      setCompanies(response.data.data);
 
-      setFormData((prevState) => ({
-        ...prevState,
-        companies: response.data.data[0],
-      }));
-      let IdUsuario = response.data.data[0].Id;
-      const apiUrlGetItemsByCompany = `http://localhost:3000/api/v1/GetItemsByCompany/${IdUsuario}`;
-      const resp = await axios.get(apiUrlGetItemsByCompany, config);
-      setMaterialesData(resp.data.data);
-    } catch (error) {
-      console.error("Error al obtener datos de la API:", error);
-    }
-  };
-
-  const getDatosCompra = async () => {
-    try {
-      const idSolicitud = datosRequisitor.PurchaseRequestId;
-
-      const apiUrl = `http://localhost:3000/api/v1/GetSinglePurchaseRequest/${idSolicitud}`;
-      const config = {
-        headers: {
-          "x-access-token": token,
-        },
-      };
-      const response = await axios.get(apiUrl, config);
-
-      console.log("Response:getDatosCompra", response.data.data);
-
-      setFormData(response.data.data);
-    } catch (error) {
-      console.error("Error al obtener datos de la API:", error);
-    }
-  };
   useEffect(() => {
+    const getDatosCompra = async () => {
+      try {
+        const idSolicitud = datosRequisitor.PurchaseRequestId;
+
+        const apiUrl = `http://localhost:3000/api/v1/GetSinglePurchaseRequest/${idSolicitud}`;
+        const config = {
+          headers: {
+            "x-access-token": token,
+          },
+        };
+        const response = await axios.get(apiUrl, config);
+
+        console.log(
+          "Response:getDatosCompraaaaaaaaaaaaaaaaaaaaaaaa",
+          response.data.data
+        );
+        const detalesRequisicion = response.data.data;
+
+        // <Column field="ItemCode" header="Codigo" />
+        const newSelectedItems = detalesRequisicion.Detail.map(
+          (item, index) => ({
+            id: index, // Puedes usar el índice como un identificador único si no tienes uno en tus datos
+            ItemCode: item.ItemCode,
+            Description: item.Description,
+            BuyUnitMsr: item.BuyUnitMsr,
+            Quantity: item.Quantity,
+            IVAName: item.TaxCode,
+          })
+        );
+
+        console.log("**********************************", newSelectedItems);
+
+        // Actualizar selectedItems con todos los objetos de Detail
+        setSelectedItems(newSelectedItems);
+        setFormData({
+          ...formData,
+          Comments: detalesRequisicion.Comments,
+          NumAtCard: detalesRequisicion.NumAtCard,
+          fecha: detalesRequisicion.CreateDate,
+        });
+        setFormData(response.data.data);
+      } catch (error) {
+        console.error("Error al obtener datos de la API:", error);
+      }
+    };
     getDatosCompra();
+  }, [ datosRequisitor.PurchaseRequestId, token]); // El array vacío indica que este efecto se ejecuta solo una vez, equivalente a componentDidMount
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const apiUrl = `http://localhost:3000/api/v1/GetCompaniesForUser/${user.UserId}`;
+        const config = {
+          headers: {
+            "x-access-token": token,
+          },
+        };
+        const response = await axios.get(apiUrl, config);
+        setCompanies(response.data.data);
+
+        setFormData((prevState) => ({
+          ...prevState,
+          companies: response.data.data[0],
+        }));
+        const apiUrlGetItemsByCompany = `http://localhost:3000/api/v1/GetItemsByCompany/${response.data.data[0].Id}`;
+        const resp = await axios.get(apiUrlGetItemsByCompany, config);
+
+        setMaterialesData(resp.data.data);
+      } catch (error) {
+        console.error("Error al obtener datos de la API:", error);
+      }
+    };
+
     fetchData();
-  }, [selectedItems]); // El array vacío indica que este efecto se ejecuta solo una vez, equivalente a componentDidMount
+  }, [selectedItems, user.UserId, token]);
+  // const handleAlmacenChange = async (e) => {
+  //   const selectedAlmacen = e.target.value;
+  //   setFormData({ ...formData, almacen: selectedAlmacen });
 
-  const handleAlmacenChange = async (e) => {
-    const selectedAlmacen = e.target.value;
-    setFormData({ ...formData, almacen: selectedAlmacen });
-
-    try {
-      const apiUrl = `http://localhost:3000/api/v1/GetItemsByCompany/${selectedAlmacen.Id}`;
-      const config = {
-        headers: {
-          "x-access-token": token,
-        },
-      };
-      const response = await axios.get(apiUrl, config);
-      setMaterialesData(response.data.data);
-    } catch (error) {
-      console.error("Error al obtener datos adicionales:", error);
-    }
-  };
+  //   try {
+  //     const apiUrl = `http://localhost:3000/api/v1/GetItemsByCompany/${selectedAlmacen.Id}`;
+  //     const config = {
+  //       headers: {
+  //         "x-access-token": token,
+  //       },
+  //     };
+  //     const response = await axios.get(apiUrl, config);
+  //     setMaterialesData(response.data.data);
+  //   } catch (error) {
+  //     console.error("Error al obtener datos adicionales:", error);
+  //   }
+  // };
 
   const handleFileChange = (event) => {
     const archivoPDF = event.target.files[0]; // Obtener el primer archivo seleccionado
@@ -219,8 +246,8 @@ function EditarRequisicion() {
 
     console.log("Data:", data);
     console.log("FilesToUpload:", pdf);
-    const response = await axios.post(
-      "http://localhost:3000/api/v1/CreatePurchaseRequest",
+    const response = await axios.put(
+      "http://localhost:3000/api/v1/UpdatePurchaseRequest",
       formData,
       config
     );
@@ -324,7 +351,7 @@ function EditarRequisicion() {
                   error={formErrors.NumAtCard}
                 />
               </div>
-              <div className="p-field">
+              {/* <div className="p-field">
                 <DropdownInput
                   id="compañia"
                   label="Compañia:"
@@ -336,7 +363,7 @@ function EditarRequisicion() {
                   error={formErrors.nombre}
                   disabled={companies.length <= 1}
                 />
-              </div>
+              </div> */}
             </div>
             <div className="row">
               <div className="p-field">
@@ -351,10 +378,10 @@ function EditarRequisicion() {
                   cols={10}
                 />
               </div>
-              <div className="p-field">
+              {/* <div className="p-field">
                 <label htmlFor="proveedor">Archivo PDF </label>
                 <input type="file" onChange={handleFileChange} />
-              </div>
+              </div> */}
             </div>
 
             <div className="row">
@@ -427,7 +454,7 @@ function EditarRequisicion() {
             <Column field="IVAName" header="Impuesto" />
             <Column
               field=""
-              header="Impuesto"
+              header=""
               body={(rowData) => (
                 <div>
                   <Button

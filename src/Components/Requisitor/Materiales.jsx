@@ -17,8 +17,11 @@ function MaterialDialog({ visible, material, onClose, onSave }) {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        setUpdatedMaterial(material);
-        console.log("Material actualizado:", material.CompanyId);
+        setUpdatedMaterial(material)
+
+        console.log('***************************material.CompanyId************************************')
+        console.log("Material actualizado:", material);
+        console.log('***************************material.CompanyId************************************')
 
         if (material.CompanyId) {
           const apiUrl = `http://localhost:3000/api/v1/GetTaxes/${material.CompanyId}`;
