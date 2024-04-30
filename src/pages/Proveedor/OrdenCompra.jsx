@@ -220,12 +220,18 @@ function NuevaCompra() {
 
   return (
       <Layout>
-        <div class="body-ordenConpra">
-        <Card title="Orden De Compra" className="cardOrdenCompra">
+        <div class="body-ordenCompra">
+        <Card className="card-header">
+            <div class="row"> 
+                <div className="p-card-title">Orden de compra</div>
+            </div>
+        </Card>
+
+        <Card className="cardOrdenCompra">
           <div className="p-grid p-nogutter">
             <div className="p-col">
               <div className="row">
-                <div className="p-field">No. ORDEN: 123123</div>
+                <div className="p-field">No. Orden: 123123</div>
 
                 <div className="p-field">Nombre creador: ANGEL START</div>
               </div>

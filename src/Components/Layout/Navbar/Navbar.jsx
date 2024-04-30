@@ -142,7 +142,7 @@ export const Navbar = () => {
     filteredItems10 = filteredItems10.concat(requisitorItems);
   }
 
-  if (user.Profiles.some(profile => profile.Name === "Solicitante")) {
+  if (user.Profiles.some(profile => profile.Name === "Proveedor")) {
       const solicitanteItems = items10.filter(   
       (item) => item.id === "1" || item.id === "2" || item.id === "5" || item.id === "11"  || item.id === "6" || item.id === "22"
     );

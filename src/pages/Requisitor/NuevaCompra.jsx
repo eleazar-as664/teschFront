@@ -13,6 +13,7 @@ import { Button } from "primereact/button";
 import { Dialog } from "primereact/dialog";
 import { DataTable } from "primereact/datatable";
 import { Column } from "primereact/column";
+import { InputText } from 'primereact/inputtext';
 import { Toast } from "primereact/toast";
 import moment from "moment";
 import { useNavigate } from "react-router-dom";
@@ -336,9 +337,13 @@ function NuevaCompra() {
 
   return (
     <Layout>
-      <Card title="Nueva Compra" className="cardNuevaCompra">
+      <Card className="card-header">
+        <div class="row"> 
+            <div className="p-card-title">Nueva Solicitud</div>
+        </div>
+      </Card>
+      <Card>
         <Toast ref={(el) => (toast = el)} />
-
         <form onSubmit={handleSubmit}>
           <div className="p-field-group">
             <div className="row">
@@ -352,7 +357,7 @@ function NuevaCompra() {
               <div className="p-field">
                 <TextInput
                   id="NumAtCard"
-                  label="No. referencia:"
+                  label="Referencia:"
                   value={formData.NumAtCard}
                   onChange={(e) =>
                     setFormData({ ...formData, NumAtCard: e.target.value })
@@ -378,16 +383,17 @@ function NuevaCompra() {
               <div className="p-field">
                 <TextTareaInput
                   id="comentario"
-                  label="Comentario:"
+                  label="Comentarios"
                   value={formData.Comments}
+                  style={"flex-grow: 2;"}
                   onChange={(e) =>
                     setFormData({ ...formData, Comments: e.target.value })
                   }
-                  rows={1}
+                  rows={3}
                   cols={10}
                 />
               </div>
-              <div className="p-field">
+              <div className="p-field upload-file">
                 <label htmlFor="proveedor">Archivo PDF </label>
                 <input type="file" onChange={handleFileChange} />
               </div>
@@ -399,7 +405,7 @@ function NuevaCompra() {
                   value={searchValue}
                   suggestions={filteredMaterials}
                   completeMethod={filterMaterials}
-                  field="Description"
+                  field="Descripcion"
                   onChange={(e) => setSearchValue(e.value)}
                   onSelect={(e) => {
                     setSelectedMaterial(e.value);
@@ -409,25 +415,27 @@ function NuevaCompra() {
                   placeholder="Buscar material..."
                 />
               </div>
+              <div className="p-field button-conteiner">
+                      <div className="botonEnviar">
+                    <Button
+                      label="Guardar"
+                      type="submit"
+                      icon="pi pi-check"
+                      className="p-button-primary"
+                    />
+                  </div>
+                  <div className="botonCancelar">
+                    <Button
+                      label="Cancelar"
+                      type="button"
+                      onClick={handleEnviarNavigate}
+                      className="p-button-secondary"
+                    />
+                  </div>
+              </div>
             </div>
           </div>
 
-          <div className="botonEnviar">
-            <Button
-              label="Guardar"
-              type="submit"
-              icon="pi pi-check"
-              className="p-button-success"
-            />
-          </div>
-          <div className="botonCancelar">
-            <Button
-              label="Cancelar"
-              type="button"
-              onClick={handleEnviarNavigate}
-              className="p-button-danger"
-            />
-          </div>
         </form>
         {selectedMaterial && (
           <MaterialDialog

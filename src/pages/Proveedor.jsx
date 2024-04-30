@@ -222,7 +222,7 @@ function Proveedor() {
                 label={
                   <i
                     className="pi pi-file-pdf"
-                    style={{ fontSize: "24px" }}
+                    style={{ fontSize: "24px", color: "#f73164" }}
                   />                  
                 }
                 text

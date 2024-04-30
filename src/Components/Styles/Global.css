@@ -22,12 +22,15 @@
     --c-font-montserrat: 'Montserrat';
     /* sitio en general */
     --c-font-rubik: 'Rubik';
-
-    --theme-default: #7366ff;
+/* 
+    --theme-default: #7366ff; */
     --danger-color: #fc4438;
     --info-color: #16c7f9;
     --success-color: #54ba4a;
     --secondary-color: #f73164;
+
+    --theme-default: #204e5a;
+    --theme-secondary: #854253;
 }
 
 .c-font-rubik {
@@ -64,11 +67,12 @@ body{
     letter-spacing: .5px;
     margin-bottom: 30px;
 }
-
+.card-header{
+    width: 100%;
+}
 .card-header .p-card-body{
     padding: 8px 18px;
 }
-
 .card-header .row{
     display: flex;
     justify-content: space-between;
@@ -77,11 +81,37 @@ body{
 .gorup-search{
     display: flex;
 }
-
 .p-field{
     margin-left: 10px;
+    margin-bottom: 10px;
+    flex-grow: 4;
 }
-
+.upload-file{
+    margin-left: 20px;
+}
+.p-dropdown.p-component.p-inputwrapper,
+.p-inputtext.p-component{
+    font-feature-settings: var(--font-feature-settings, normal);
+    font-size: 1rem;
+    color: #4b5563;
+    background: #ffffff;
+    padding: 0.75rem 0.75rem;
+    border: 1px solid #d1d5db;
+    transition: background-color 0.2s, color 0.2s, border-color 0.2s, box-shadow 0.2s;
+    appearance: none;
+    border-radius: 6px;
+    outline-color: transparent;
+}
+.p-dropdown.p-component.p-inputwrapper,
+.p-inputtext.p-component:enabled:focus {
+    outline: 0 none;
+    outline-offset: 0;
+    box-shadow: 0 0 0 0.2rem #a5f3fc;
+    border-color: #06b6d4;
+}
+.p-dropdown-label{
+    padding: 0px;
+}
 .p-button{
     border-radius: 7px;
 }
@@ -109,14 +139,27 @@ body{
 }
 
 .p-button-secondary{
-    background-color: var(--secondary-color) !important;
-    border-color: var(--secondary-color) !important;
+    background-color: var(--theme-secondary) !important;
+    border-color: var(--theme-secondary) !important;
+    padding: .375rem 1.75rem;
+    margin-right: 5px;
 }
 
 .p-dialog-content button{
    width: 30%;
 }
 
+.button-conteiner{
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    margin: 20px;
+}
+
 .p-dialog-content .row{
     justify-content: flex-end;
+}
+
+.p-card-title{
+    margin: 0px;
 }

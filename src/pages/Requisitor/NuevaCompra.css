@@ -1,38 +1,18 @@
 
-/* .cardNuevaCompra {
-    width: 1250px;
-    margin: 20px auto;
-    position: relative;
-    left: 30px;
-    padding: 20px;
-    border-radius: 5px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-} */
-
 .p-inputtext,
 .p-dropdown,
 .p-calendar {
     width: 100%;
 }
 .botonEnviar{
-    width: 10%;  
-    padding: 1px;
-    align-self: flex-end; 
-    margin-top: auto;
-    margin-left: auto; 
+    margin-right: 5px; 
 }
 .botonCancelar{
-    width: 10%;  
-    align-self: flex-end; 
-    margin: 0rem;
-    padding: 1px;
-    margin-top: auto;
-    margin-left: auto; 
+    margin-right: 5px; 
 }
 
 .row {
     display: flex;
-    align-items: baseline;
 }
 
 
