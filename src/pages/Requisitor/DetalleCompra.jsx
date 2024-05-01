@@ -8,230 +8,18 @@ import { InputText } from "primereact/inputtext";
 import { FileUpload } from "primereact/fileupload";
 import { Layout } from "../../Components/Layout/Layout";
 import { Toast } from "primereact/toast";
+import { Divider } from "primereact/divider";
 import axios from "axios";
 function DetalleCompra() {
-  const data = [
-    {
-      ID_Solicitud: 10,
-      No_Requisicion_SAP: "ABC123",
-      Fecha_Hora_Creacion: "2024-03-18 10:30:00",
-      Fecha_Vencimiento: "2024-04-10",
-      No_referencia: "REF001",
-      Centro_de_costo: "CC001",
-      Empresa: "Empresa A",
-      Comentarios: "Comentario 1",
-      No_OC_SAP: "OC123",
-      Sincronizado: true,
-      Adjunto1: "Archivo1.pdf",
-      Adjunto2: "Archivo2.pdf",
-      Notas_autorizacion: "Notas de autorización 1",
-      Notas_requisitor: "Notas del requisitor 1",
-    },
-    {
-      ID_Solicitud: 20,
-      No_Requisicion_SAP: "DEF456",
-      Fecha_Hora_Creacion: "2024-03-19 11:45:00",
-      Fecha_Vencimiento: "2024-04-12",
-      No_referencia: "REF002",
-      Centro_de_costo: "CC002",
-      Empresa: "Empresa B",
-      Comentarios: "Comentario 2",
-      No_OC_SAP: "OC456",
-      Sincronizado: false,
-      Adjunto1: "",
-      Adjunto2: "",
-      Notas_autorizacion: "Notas de autorización 2",
-      Notas_requisitor: "Notas del requisitor 2",
-    },
-    {
-      ID_Solicitud: 30,
-      No_Requisicion_SAP: "ABC123",
-      Fecha_Hora_Creacion: "2024-03-18 10:30:00",
-      Fecha_Vencimiento: "2024-04-10",
-      No_referencia: "REF001",
-      Centro_de_costo: "CC001",
-      Empresa: "Empresa A",
-      Comentarios: "Comentario 1",
-      No_OC_SAP: "OC123",
-      Sincronizado: true,
-      Adjunto1: "Archivo1.pdf",
-      Adjunto2: "Archivo2.pdf",
-      Notas_autorizacion: "Notas de autorización 1",
-      Notas_requisitor: "Notas del requisitor 1",
-    },
-    {
-      ID_Solicitud: 40,
-      No_Requisicion_SAP: "ABC123",
-      Fecha_Hora_Creacion: "2024-03-18 10:30:00",
-      Fecha_Vencimiento: "2024-04-10",
-      No_referencia: "REF001",
-      Centro_de_costo: "CC001",
-      Empresa: "Empresa A",
-      Comentarios: "Comentario 1",
-      No_OC_SAP: "OC123",
-      Sincronizado: true,
-      Adjunto1: "Archivo1.pdf",
-      Adjunto2: "Archivo2.pdf",
-      Notas_autorizacion: "Notas de autorización 1",
-      Notas_requisitor: "Notas del requisitor 1",
-    },
-    {
-      ID_Solicitud: 50,
-      No_Requisicion_SAP: "ABC123",
-      Fecha_Hora_Creacion: "2024-03-18 10:30:00",
-      Fecha_Vencimiento: "2024-04-10",
-      No_referencia: "REF001",
-      Centro_de_costo: "CC001",
-      Empresa: "Empresa A",
-      Comentarios: "Comentario 1",
-      No_OC_SAP: "OC123",
-      Sincronizado: true,
-      Adjunto1: "Archivo1.pdf",
-      Adjunto2: "Archivo2.pdf",
-      Notas_autorizacion: "Notas de autorización 1",
-      Notas_requisitor: "Notas del requisitor 1",
-    },
-    {
-      ID_Solicitud: 60,
-      No_Requisicion_SAP: "ABC123",
-      Fecha_Hora_Creacion: "2024-03-18 10:30:00",
-      Fecha_Vencimiento: "2024-04-10",
-      No_referencia: "REF001",
-      Centro_de_costo: "CC001",
-      Empresa: "Empresa A",
-      Comentarios: "Comentario 1",
-      No_OC_SAP: "OC123",
-      Sincronizado: true,
-      Adjunto1: "Archivo1.pdf",
-      Adjunto2: "Archivo2.pdf",
-      Notas_autorizacion: "Notas de autorización 1",
-      Notas_requisitor: "Notas del requisitor 1",
-    },
-  ];
-  const dataq = [
-    {
-      ID_Solicitud: 10,
-      No_Requisicion_SAP: "ABC123",
-      Fecha_Hora_Creacion: "2024-03-18 10:30:00",
-      Fecha_Vencimiento: "2024-04-10",
-      No_referencia: "REF001",
-      Centro_de_costo: "CC001",
-      Empresa: "Empresa A",
-      Comentarios: "Comentario 1",
-      No_OC_SAP: "OC123",
-      Sincronizado: true,
-      Adjunto1: "Archivo1.pdf",
-      Adjunto2: "Archivo2.pdf",
-      Notas_autorizacion: "Notas de autorización 1",
-      Notas_requisitor: "Notas del requisitor 1",
-    },
-    {
-      ID_Solicitud: 20,
-      No_Requisicion_SAP: "DEF456",
-      Fecha_Hora_Creacion: "2024-03-19 11:45:00",
-      Fecha_Vencimiento: "2024-04-12",
-      No_referencia: "REF002",
-      Centro_de_costo: "CC002",
-      Empresa: "Empresa B",
-      Comentarios: "Comentario 2",
-      No_OC_SAP: "OC456",
-      Sincronizado: false,
-      Adjunto1: "",
-      Adjunto2: "",
-      Notas_autorizacion: "Notas de autorización 2",
-      Notas_requisitor: "Notas del requisitor 2",
-    },
-    {
-      ID_Solicitud: 30,
-      No_Requisicion_SAP: "ABC123",
-      Fecha_Hora_Creacion: "2024-03-18 10:30:00",
-      Fecha_Vencimiento: "2024-04-10",
-      No_referencia: "REF001",
-      Centro_de_costo: "CC001",
-      Empresa: "Empresa A",
-      Comentarios: "Comentario 1",
-      No_OC_SAP: "OC123",
-      Sincronizado: true,
-      Adjunto1: "Archivo1.pdf",
-      Adjunto2: "Archivo2.pdf",
-      Notas_autorizacion: "Notas de autorización 1",
-      Notas_requisitor: "Notas del requisitor 1",
-    },
-    {
-      ID_Solicitud: 40,
-      No_Requisicion_SAP: "ABC123",
-      Fecha_Hora_Creacion: "2024-03-18 10:30:00",
-      Fecha_Vencimiento: "2024-04-10",
-      No_referencia: "REF001",
-      Centro_de_costo: "CC001",
-      Empresa: "Empresa A",
-      Comentarios: "Comentario 1",
-      No_OC_SAP: "OC123",
-      Sincronizado: true,
-      Adjunto1: "Archivo1.pdf",
-      Adjunto2: "Archivo2.pdf",
-      Notas_autorizacion: "Notas de autorización 1",
-      Notas_requisitor: "Notas del requisitor 1",
-    },
-    {
-      ID_Solicitud: 50,
-      No_Requisicion_SAP: "ABC123",
-      Fecha_Hora_Creacion: "2024-03-18 10:30:00",
-      Fecha_Vencimiento: "2024-04-10",
-      No_referencia: "REF001",
-      Centro_de_costo: "CC001",
-      Empresa: "Empresa A",
-      Comentarios: "Comentario 1",
-      No_OC_SAP: "OC123",
-      Sincronizado: true,
-      Adjunto1: "Archivo1.pdf",
-      Adjunto2: "Archivo2.pdf",
-      Notas_autorizacion: "Notas de autorización 1",
-      Notas_requisitor: "Notas del requisitor 1",
-    },
-    {
-      ID_Solicitud: 60,
-      No_Requisicion_SAP: "ABC123",
-      Fecha_Hora_Creacion: "2024-03-18 10:30:00",
-      Fecha_Vencimiento: "2024-04-10",
-      No_referencia: "REF001",
-      Centro_de_costo: "CC001",
-      Empresa: "Empresa A",
-      Comentarios: "Comentario 1",
-      No_OC_SAP: "OC123",
-      Sincronizado: true,
-      Adjunto1: "Archivo1.pdf",
-      Adjunto2: "Archivo2.pdf",
-      Notas_autorizacion: "Notas de autorización 1",
-      Notas_requisitor: "Notas del requisitor 1",
-    },
-  ];
-  const [note, setNote] = useState("");
-  const [notes, setNotes] = useState([]);
-  const [comment, setComment] = useState("");
-  const [comments, setComments] = useState([]);
   const [files, setFiles] = useState([]);
-  const [rowDataToCancel, setRowDataToCancel] = useState(null);
-  const toast = useRef(null);
+
+  let toast;
   const datosRequisitor = JSON.parse(localStorage.getItem("datosRequisitor"));
   const user = JSON.parse(localStorage.getItem("user"));
   const token = JSON.parse(localStorage.getItem("user")).Token;
-
-  // Simular archivos pre-cargados
-  const archivosPreCargados = [
-    {
-      fileExtension: "pdf",
-      fileName: "Articulos (29).pdf",
-      src: "http://localhost:3000/api/v1/Attachments/PurchaseOrder-13/Articulos (29).pdf",
-    },
-    {
-      fileExtension: "pdf",
-      fileName: "Articulos (29).pdf",
-      src: "http://localhost:3000/api/v1/Attachments/PurchaseOrder-11/TeshWebV5.jpg",
-      //C:\Users\eleazar.sanchez\Pictures\TestFile\PurchaseOrder-11\TeshWebV5.jpg
-    },
-    // Agrega más archivos aquí si los tienes
-  ];
+  const [materialesSolicitados, setMaterialesSolicitados] = useState([]);
+  const [notas, setNotas] = useState([]);
+  const [notasAgregar, setNotasAgregar] = useState("");
   // Agregar event listener al cambio de archivos
   const getDatosFiles = async () => {
     try {
@@ -251,109 +39,139 @@ function DetalleCompra() {
       );
       const detalesRequisicion = response.data.data;
 
-      console.log("*****************************", detalesRequisicion);
       setFiles(detalesRequisicion);
-      // <Column field="ItemCode" header="Codigo" />
-    //   const newSelectedItems = detalesRequisicion.Detail.map(
-    //     (item, index) => ({
-    //       id: index, // Puedes usar el índice como un identificador único si no tienes uno en tus datos
-    //       ItemCode: item.ItemCode,
-    //       Description: item.Description,
-    //       BuyUnitMsr: item.BuyUnitMsr,
-    //       Quantity: item.Quantity,
-    //       IVAName: item.TaxCode,
-    //     })
-    //   );
+    } catch (error) {
+      console.error("Error al obtener datos de la API:", error);
+    }
+  };
+  const getDatosCompra = async () => {
+    try {
+      const idSolicitud = datosRequisitor.PurchaseRequestId;
 
-    //   console.log("**********************************", newSelectedItems);
+      const apiUrl = `http://localhost:3000/api/v1/GetSinglePurchaseRequest/${idSolicitud}`;
+      const config = {
+        headers: {
+          "x-access-token": token,
+        },
+      };
+      const response = await axios.get(apiUrl, config);
 
-    //   // Actualizar selectedItems con todos los objetos de Detail
-    //   setSelectedItems(newSelectedItems);
-    //   setFormData({
-    //     ...formData,
-    //     Comments: detalesRequisicion.Comments,
-    //     NumAtCard: detalesRequisicion.NumAtCard,
-    //     fecha: detalesRequisicion.CreateDate,
-    //   });
-    //   setFormData(response.data.data);
+      const detalesRequisicion = response.data.data;
 
+      const newSelectedItems = detalesRequisicion.Detail.map((item, index) => ({
+        id: index,
+        ItemCode: item.ItemCode,
+        Description: item.Description,
+        BuyUnitMsr: item.BuyUnitMsr,
+        Quantity: item.Quantity,
+        IVAName: item.TaxCode,
+      }));
+      const notas = detalesRequisicion.Notes.map((item, index) => ({
+        id: index,
+        CreateDate: item.CreateDate,
+        FirstName: item.FirstName,
+        Notes: item.Notes,
+        UserName: item.UserName,
+        LastName: item.LastName,
+      }));
+
+      setNotas(notas);
+
+      setMaterialesSolicitados(newSelectedItems);
     } catch (error) {
       console.error("Error al obtener datos de la API:", error);
     }
   };
   useEffect(() => {
     // Mostrar los archivos pre-cargados cuando la página se carga
+
     getDatosFiles();
-    
+    getDatosCompra();
   }, []);
 
-  const uploadFiles = () => {
-    // Aquí puedes agregar la lógica para subir los archivos al servidor
-    // Por simplicidad, aquí solo mostramos los nombres de los archivos
-    console.log("Archivos seleccionados:");
-  }; 
+  useEffect(() => {}, [materialesSolicitados,getDatosCompra,getDatosFiles]);
 
-  useEffect(() => {
-    const storedComments = JSON.parse(localStorage.getItem("comments"));
-    if (storedComments) {
-      setComments(storedComments);
-    }
-  }, []);
-
-  const handleInputChange = (event) => {
-    setComment(event.target.value);
+  const handleInputChange = (e) => {
+    setNotasAgregar(e.target.value);
   };
 
-  const handleSubmit = () => {
-    if (comment.trim() !== "") {
-      const newComments = [comment, ...comments];
-      setComments(newComments);
-      localStorage.setItem("comments", JSON.stringify(newComments));
-      setComment("");
-    }
+  const handleAddNote = async () => {
+    console.clear();
+    console.log("notas:", notasAgregar);
+    const data = {
+      PurchaseRequestId: datosRequisitor.PurchaseRequestId,
+      UserId: user.UserId,
+      Notes: notasAgregar,
+    };
+    console.log("data:", data);
+    try {
+      const apiUrl = `http://localhost:3000/api/v1/CreatePurchaseRequestNote`;
+      const config = {
+        headers: {
+          "x-access-token": token,
+        },
+      };
+      const response = await axios.post(apiUrl, data, config);
+      getDatosCompra();
+
+      console.log("Response:", response.data.data);
+      toast.show({
+        severity: "success",
+        summary: "Notificación",
+        detail: "Nota agregada con exito",
+        life: 2000,
+      });
+    } catch (error) {}
+    console.log("error:");
+    // setCompanies(response.data.data);
   };
-  const handleNoteChange = (e) => {
-    setNote(e.target.value);
-  };
-  const handleAddNote = () => {
-    if (note.trim() !== "") {
-      setNotes([...notes, note]);
-      setNote("");
-    }
-  };
-  const cancelarSolicitud = (rowData) => {
-    // setRowDataToCancel(rowData);
-    // setVisible(true); // Esto abre el Dialog
+  const eliminarFiles = (rowData) => {
+    axios
+      .delete(
+        `http://localhost:3000/api/v1/DeleteAttachmentsFromPurchaseRequest/${rowData.AttachId}/${rowData.LineId}`
+      )
+      .then((response) => {
+        getDatosFiles();
+        toast.show({
+          severity: "warn",
+          summary: "Notificación",
+          detail: "Archivo eliminado con exito",
+          life: 3000,
+        });
+        console.log("Response:", response.data.data);
+      })
+      .catch((error) => {
+        console.error("Error al cancelar la solicitud de compra:", error);
+        // Manejar el error, como mostrar un mensaje al usuario
+      });
   };
   const handleFileSelect = (event) => {
     const archivoPDF = event.files[0]; // Obtener el primer archivo seleccionado
-    toast.current.show({
-        severity: "info",
-        summary: "Success",
-        detail: "File Uploaded",
-      });
+
+    toast.show({
+      severity: "success",
+      summary: "Notificación",
+      detail: "archivo agregado con exito",
+      life: 2000,
+    });
     console.log("Archivo seleccionado:", archivoPDF);
     try {
-                const requestData = {
-                    PurchaseRequestId: datosRequisitor.PurchaseRequestId,
-                    UserId: user.UserId,
-                }
-                const response =  sendFormData(requestData, archivoPDF);
-                handleSuccessResponse(response);
-              } catch (error) {
-                handleErrorResponse(error);
-              }
-    
+      const requestData = {
+        PurchaseRequestId: datosRequisitor.PurchaseRequestId,
+        UserId: user.UserId,
+      };
+      const response = sendFormData(requestData, archivoPDF);
+      handleSuccessResponse(response);
+    } catch (error) {
+      handleErrorResponse(error);
+    }
   };
-
 
   const sendFormData = async (data, pdf) => {
     const formData = new FormData();
 
-    // Agregar los datos al FormData
     formData.append("data", JSON.stringify(data));
 
-    // Agregar el documento al FormData
     formData.append("FilesToUpload", pdf);
 
     // Configurar los encabezados
@@ -363,29 +181,18 @@ function DetalleCompra() {
         "Content-Type": "multipart/form-data",
       },
     };
-    // if(data.PurchaseOrderRequestDetails.length === 0){
-    //   toast.show({
-    //     severity: "warn",
-    //     summary: "Notificación",
-    //     detail: "El formulario tiene que ser completado, para ser enviado",
-    //     life: 3000,
-    //   });
-     
-    // }
-    console.log("Data:", data);
-    console.log("FilesToUpload:", pdf);
 
-    console.log("Data:", data);
-    console.log("FilesToUpload:", pdf);
     const response = await axios.post(
       "http://localhost:3000/api/v1/AddAttachmentsToPurchaseRequest",
       formData,
       config
     );
+    getDatosFiles();
     return response.data;
   };
 
   const handleSuccessResponse = (response) => {
+   
     console.log("Respuesta del servidor:", response);
     // Aquí podrías manejar la respuesta exitosa, por ejemplo, mostrar un mensaje de éxito al usuario
   };
@@ -393,10 +200,11 @@ function DetalleCompra() {
   const handleErrorResponse = (error) => {
     console.error("Error al enviar el formulario:", error);
   };
+
   return (
     <Layout>
       <div class="body-ordenConpra">
-      <Toast ref={toast}></Toast>
+        <Toast ref={(el) => (toast = el)} />
         <Card title="Detalle de compra" className="cardOrdenCompra">
           <div className="p-grid p-nogutter">
             <div className="p-col">
@@ -408,53 +216,49 @@ function DetalleCompra() {
             </div>
           </div>
           <DataTable
-            value={dataq}
+            value={materialesSolicitados}
             scrollable
             scrollHeight="200px"
             tableStyle={{ minWidth: "50rem" }}
           >
-            <Column field="No_Requisicion_SAP" header="Código" />
-            <Column field="Fecha_Hora_Creacion" header="Descripción" />
-            <Column field="Fecha_Vencimiento" header="Unidad" />
-            <Column field="Centro_de_costo" header="Cantidad" />
+            <Column field="ItemCode" header="Código" />
+            <Column field="Description" header="Descripción" />
+            <Column field="BuyUnitMsr" header="Unidad" />
+            <Column field="Quantity" header="Cantidad" />
           </DataTable>
         </Card>
 
         <Card title="Notas" className="adjuntos">
           <div className="p-inputgroup">
             <InputText
-              value={comment}
+              value={notasAgregar}
               onChange={handleInputChange}
               placeholder="Escribe un comentario"
             />
-            <Button label="Enviar" onClick={handleSubmit} />
+            <Button label="Enviar" onClick={handleAddNote} />
           </div>
           <div>
-            {comments.map((comment, index) => (
-              <div key={index} className="comment">
-                {comment}
-              </div>
-            ))}
+            <div>
+              {notas.map((nota, index) => (
+                <div key={index}>
+                  <Divider align="center">
+                    {`Nota ${index + 1}: ${nota.FirstName} ${nota.LastName}`}
+                  </Divider>
+                  <p>Código: {nota.Code}</p>
+                  <p>
+                    Fecha de Creación:{" "}
+                    {new Date(nota.CreateDate).toLocaleDateString()}
+                  </p>
+                  <p>Notas: {nota.Notes}</p>
+                </div>
+              ))}
+            </div>
           </div>
         </Card>
         <Card title="Adjuntos" className="adjuntosaa">
           <div className="p-inputgroup">
             <div className="card">
               <div>
-                {/* <input
-                  type="file"
-                  onChange={(e) =>
-                    setFiles([
-                      ...files,
-                      ...Array.from(e.target.files).map((file) => file.name),
-                    ])
-                  }
-                  multiple
-                />
-                <button onClick={uploadFiles}>Subir Archivosssssss</button> */}
-             
-
-             
                 <FileUpload
                   mode="basic"
                   name="demo[]"
@@ -465,7 +269,7 @@ function DetalleCompra() {
                   auto
                   chooseLabel="Agregar"
                 />
-                {/* {displayFiles(files)} */}
+
                 <DataTable value={files}>
                   <Column field="FileName" header="Nombre" />
                   <Column
@@ -481,11 +285,11 @@ function DetalleCompra() {
                     )}
                   />
                   <Column
-                    header="Cancelar"
+                    header=""
                     body={(rowData) => (
                       <Button
-                        onClick={() => cancelarSolicitud(rowData)}
-                        label="Cancelar"
+                        onClick={() => eliminarFiles(rowData)}
+                        label="Eliminar"
                         severity="danger"
                       />
                     )}
@@ -494,13 +298,7 @@ function DetalleCompra() {
               </div>
             </div>
           </div>
-          <div>
-            {comments.map((comment, index) => (
-              <div key={index} className="comment">
-                |{comment}
-              </div>
-            ))}
-          </div>
+          <div></div>
         </Card>
       </div>
     </Layout>

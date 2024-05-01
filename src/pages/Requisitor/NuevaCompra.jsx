@@ -15,6 +15,7 @@ import { DataTable } from "primereact/datatable";
 import { Column } from "primereact/column";
 import { InputText } from 'primereact/inputtext';
 import { Toast } from "primereact/toast";
+import { FileUpload } from "primereact/fileupload";
 import moment from "moment";
 import { useNavigate } from "react-router-dom";
 
@@ -55,6 +56,7 @@ function NuevaCompra() {
   const [searchValue, setSearchValue] = useState("");
   const [contadorId, setContadorId] = useState(1);
   const [materialToEdit, setMaterialToEdit] = useState(null);
+  const [archivosSeleccionados, setArchivosSeleccionados] = useState([]);
   const filterMaterials = (event) => {
     const searchTerm = event.query.toLowerCase();
     const filtered = materialeslData.filter((material) =>
@@ -124,7 +126,6 @@ function NuevaCompra() {
     }
   };
 
-  
   //   event.preventDefault();
   //   if (validateForm()) {
   //     try {
@@ -178,7 +179,7 @@ function NuevaCompra() {
     if (validateForm()) {
       try {
         const requestData = buildRequestData();
-        const response = await sendFormData(requestData, formData.archivoPDF);
+        const response = await sendFormData(requestData, archivosSeleccionados);
         handleSuccessResponse(response);
       } catch (error) {
         handleErrorResponse(error);
@@ -199,9 +200,7 @@ function NuevaCompra() {
   const buildRequestData = () => {
     const momentDate = moment(formData.fecha);
     const formattedDate = momentDate.format("YYYY-MM-DD");
-    console.log();
-    console.log("*******************formData**********VERIFI CANDO MATERIALES :BORRAR*********************");
-    console.log(formData);
+    
 
     const PurchaseOrderRequestDetails = selectedItems.map((obj) => ({
       Description: obj.Description,
@@ -223,36 +222,34 @@ function NuevaCompra() {
       PurchaseOrderRequestDetails,
     };
   };
-  const sendFormData = async (data, pdf) => {
+  const sendFormData = async (data, pdfFiles) => {
     const formData = new FormData();
 
     // Agregar los datos al FormData
     formData.append("data", JSON.stringify(data));
+    if (Array.isArray(pdfFiles) && pdfFiles.length > 0) {
+      // Agregar los archivos al FormData
+      pdfFiles.forEach((archivo, index) => {
+        // Cambiado pdf a archivo
+        formData.append(`FilesToUpload[${index}]`, archivo); // Cambiado pdf a archivo
+      });
+    }
 
-    // Agregar el documento al FormData
-    formData.append("FilesToUpload", pdf);
-
-    // Configurar los encabezados
     const config = {
       headers: {
         "x-access-token": token,
         "Content-Type": "multipart/form-data",
       },
     };
-    if(data.PurchaseOrderRequestDetails.length === 0){
+    if (data.PurchaseOrderRequestDetails.length === 0) {
       toast.show({
         severity: "warn",
         summary: "Notificación",
         detail: "El formulario tiene que ser completado, para ser enviado",
         life: 3000,
       });
-     
     }
-    console.log("Data:", data);
-    console.log("FilesToUpload:", pdf);
 
-    console.log("Data:", data);
-    console.log("FilesToUpload:", pdf);
     const response = await axios.post(
       "http://localhost:3000/api/v1/CreatePurchaseRequest",
       formData,
@@ -335,6 +332,29 @@ function NuevaCompra() {
     navigate("/Requisitor"); // Navega a la ruta "/Requisitor"
   };
 
+  const handleFileSelect = (event) => {
+    const archivoPDF = event.files[0]; // Obtener el primer archivo seleccionado
+    console.log("Verificar que estemos mandando varios pdf*********");
+    setArchivosSeleccionados([...archivosSeleccionados, archivoPDF]);
+    console.log("Archivo seleccionado:", archivosSeleccionados);
+    // toast.current.show({
+    //   severity: "info",
+    //   summary: "Success",
+
+    //   detail: "File Uploaded",
+    // });
+    console.log("Archivo seleccionado:", archivoPDF);
+    // try {
+    //   const requestData = {
+    //     PurchaseRequestId: datosRequisitor.PurchaseRequestId,
+    //     UserId: user.UserId,
+    //   };
+    //   const response = sendFormData(requestData, archivoPDF);
+    //   handleSuccessResponse(response);
+    // } catch (error) {
+    //   handleErrorResponse(error);
+    // }
+  };
   return (
     <Layout>
       <Card className="card-header">
@@ -394,6 +414,16 @@ function NuevaCompra() {
                 />
               </div>
               <div className="p-field upload-file">
+                <FileUpload
+                  mode="basic"
+                  name="demo[]"
+                  multiple
+                  accept="image/*,.pdf"
+                  maxFileSize={1000000}
+                  onSelect={handleFileSelect}
+                  auto
+                  chooseLabel="Agregar"
+                />
                 <label htmlFor="proveedor">Archivo PDF </label>
                 <input type="file" onChange={handleFileChange} />
               </div>
