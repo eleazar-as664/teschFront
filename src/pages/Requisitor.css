@@ -8,3 +8,12 @@
   left: 75rem;
   margin: 1rem;
 } */
+td button{
+  width: revert-layer !important;
+  border-radius: 50% !important;
+  margin: 5px;
+}
+
+button .p-button-icon{
+  margin: 0px !important;
+}

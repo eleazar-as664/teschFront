@@ -14,6 +14,9 @@ import { Dialog } from "primereact/dialog";
 import { DataTable } from "primereact/datatable";
 import { Column } from "primereact/column";
 import { Toast } from "primereact/toast";
+import { InputText } from "primereact/inputtext";
+import { FileUpload } from "primereact/fileupload";
+import { Avatar } from 'primereact/avatar';
 import moment from "moment";
 import { useNavigate } from "react-router-dom";
 
@@ -327,45 +330,56 @@ function EditarRequisicion() {
 
   return (
     <Layout>
-      <Card title="Editar Requisición" className="cardNuevaCompra">
+     <div class="body-ordenCompra">
+      <Card className="card-header">
+        <div class="row"> 
+            <div className="p-card-title">Editar de Solicitud</div>
+        </div>
+      </Card>
+      <Card className="cardNuevaCompra">
         <Toast ref={(el) => (toast = el)} />
 
         <form onSubmit={handleSubmit}>
           <div className="p-field-group">
-            <div className="row">
-              <div className="p-field">
-                <DatesInput
-                  value={formData.fecha}
-                  onChange={(e) => setFormData({ ...formData, fecha: e.value })}
-                  error={formErrors.fecha}
-                />
-              </div>
-              <div className="p-field">
-                <TextInput
-                  id="NumAtCard"
-                  label="No. referencia:"
-                  value={formData.NumAtCard}
-                  onChange={(e) =>
-                    setFormData({ ...formData, NumAtCard: e.target.value })
-                  }
-                  error={formErrors.NumAtCard}
-                />
-              </div>
-              {/* <div className="p-field">
-                <DropdownInput
-                  id="compañia"
-                  label="Compañia:"
-                  optionLabel="BusinessName"
-                  value={formData.companies}
-                  placeholder="Seleccione una compañia"
-                  options={Array.isArray(companies) ? companies : []}
-                  onChange={handleAlmacenChange}
-                  error={formErrors.nombre}
-                  disabled={companies.length <= 1}
-                />
-              </div> */}
+          <div className="row">
+            <div className="p-col">
+            <Avatar image="https://primefaces.org/cdn/primereact/images/avatar/amyelsner.png" className="mr-2" shape="circle" />
             </div>
-            <div className="row">
+            <div className="p-col-field">
+            
+               <div className="p-field">
+                  <span className="field-name">Angel Star </span>  
+                </div>
+
+                <div className="p-field">
+                  <span className="field-name">Red company, Inc. </span>  
+                </div>
+
+                <div className="p-field">
+                  28/02/2023
+                </div>
+            </div>  
+            <div className="p-col-field-right"> 
+              <div className="row">         
+                  <div className="p-field">
+                    <DatesInput
+                      value={formData.fecha}
+                      onChange={(e) => setFormData({ ...formData, fecha: e.value })}
+                      error={formErrors.fecha}
+                    />
+                  </div>
+                  <div className="p-field">
+                    <TextInput
+                      id="NumAtCard"
+                      label="No. referencia:"
+                      value={formData.NumAtCard}
+                      onChange={(e) =>
+                        setFormData({ ...formData, NumAtCard: e.target.value })
+                      }
+                      error={formErrors.NumAtCard}
+                    />
+                  </div>
+               </div>
               <div className="p-field">
                 <TextTareaInput
                   id="comentario"
@@ -378,13 +392,10 @@ function EditarRequisicion() {
                   cols={10}
                 />
               </div>
-              {/* <div className="p-field">
-                <label htmlFor="proveedor">Archivo PDF </label>
-                <input type="file" onChange={handleFileChange} />
-              </div> */}
             </div>
-
-            <div className="row">
+            </div>
+          </div>
+          <div className="row">
               <div className="p-field" style={{ margin: "20px" }}>
                 <AutoComplete
                   value={searchValue}
@@ -400,24 +411,25 @@ function EditarRequisicion() {
                   placeholder="Buscar material..."
                 />
               </div>
-            </div>
-          </div>
 
-          <div className="botonEnviar">
-            <Button
-              label="Guardar"
-              type="submit"
-              icon="pi pi-check"
-              className="p-button-success"
-            />
-          </div>
-          <div className="botonCancelar">
-            <Button
-              label="Cancelar"
-              type="button"
-              onClick={handleEnviarNavigate}
-              className="p-button-danger"
-            />
+            <div className="p-field button-conteiner">
+              <div className="botonEnviar">
+                <Button
+                  label="Guardar"
+                  type="submit"
+                  icon="pi pi-check"
+                  className="p-button-primary"
+                />
+              </div>
+              <div className="botonCancelar">
+                <Button
+                  label="Cancelar"
+                  type="button"
+                  onClick={handleEnviarNavigate}
+                  className="p-button-secondary"
+                />
+              </div>
+            </div>
           </div>
         </form>
         {selectedMaterial && (
@@ -460,9 +472,8 @@ function EditarRequisicion() {
                   <Button
                     icon="pi pi-pencil"
                     rounded
-                    outlined
                     onClick={() => handleEdit(rowData)}
-                    className="p-button-warning"
+                    className="p-button-success"
                   />
                   <Button
                     icon="pi pi-trash"
@@ -475,6 +486,82 @@ function EditarRequisicion() {
           </DataTable>
         </div>
       </Card>
+      <div className="body-right">
+        <Card title="Notas">
+          <div className="p-inputgroup">
+            <InputText
+              // value={notasAgregar}
+              // onChange={handleInputChange}
+              placeholder="Escribe un comentario"
+            />
+            <Button label="Enviar" />
+          </div>
+          <div>
+            <div className="note-list">
+              {/* {notas.map((nota, index) => (
+                <div key={index}>
+                  <Divider align="center">
+                    {`Nota ${index + 1}: ${nota.FirstName} ${nota.LastName}`}
+                  </Divider>
+                  <p>Código: {nota.Code}</p>
+                  <p>
+                    Fecha de Creación:{" "}
+                    {new Date(nota.CreateDate).toLocaleDateString()}
+                  </p>
+                  <p>Notas: {nota.Notes}</p>
+                </div>
+              ))} */}
+            </div>
+          </div>
+        </Card>
+
+        <Card title="Adjuntos" className="adjuntosaa">
+          <div className="p-field-group">
+            <div className="row align-right">
+                <FileUpload
+                  mode="basic"
+                  name="demo[]"
+                  multiple
+                  accept="image/*,.pdf"
+                  maxFileSize={1000000}
+                  // onSelect={handleFileSelect}
+                  auto
+                  chooseLabel="Agregar"
+                  className="upload-field-detail"
+                />
+              </div>
+              <div className="row">
+                <div className="p-col-field">
+                <DataTable >
+                  <Column field="FileName" header="Nombre" />
+                  <Column
+                    header="Acción"
+                    body={(rowData) => (
+                      <a
+                        href={rowData.SRC}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                      >
+                        Ver
+                      </a>
+                    )}
+                  />
+                  <Column
+                    header=""
+                    body={(rowData) => (
+                      <Button
+                        // onClick={() => eliminarFiles(rowData)}
+                        icon="pi pi-times" rounded severity="danger" aria-label="Cancel"
+                      />
+                    )}
+                  ></Column>
+                </DataTable>
+                </div>
+              </div>
+          </div>
+        </Card>
+        </div>
+      </div>
     </Layout>
   );
 }

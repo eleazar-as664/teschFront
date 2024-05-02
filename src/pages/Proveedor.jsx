@@ -190,19 +190,6 @@ function Proveedor() {
         </div>
       </Card>
       <Card title="" className="cardProveedor">
-        {/* <Link to="./Requisitor/NuevaCompra">
-          <Button
-            label="Nuevo"
-            severity="info"
-            raised
-            icon="pi pi-plus"
-            iconPos="right"
-            className="botonInsertar"
-          />
-        </Link> 
-        
-         
-      */}
         <DataTable
           value={arrayObjetos}
           selectionMode="single"
@@ -212,7 +199,8 @@ function Proveedor() {
           scrollHeight="400px"
         >
           <Column field="orden" header="Orden" style={{ width: '10%'}}></Column>
-          <Column field="empresa" header="Empresa/fechaRequerida" style={{ width: '40%'}} ></Column>
+          <Column field="empresa" header="Empresa/Fecha Solicitud" style={{ width: '40%'}} ></Column>
+          <Column field="empresa" header="Fecha Requerida" style={{ width: '40%'}} ></Column>
           <Column field="estatus" header="Estatus" style={{ width: '10%'}}></Column>
           <Column
             header="Descargar"
@@ -222,7 +210,7 @@ function Proveedor() {
                 label={
                   <i
                     className="pi pi-file-pdf"
-                    style={{ fontSize: "24px" }}
+                    style={{ fontSize: "24px", color: "#f73164" }}
                   />                  
                 }
                 text

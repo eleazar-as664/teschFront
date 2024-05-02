@@ -9,8 +9,8 @@
     bottom: 6px;
 }
 
-td .p-button-text{
-    text-align: left;
+button span .pi{
+    margin: 0px;
 }
 
 .p-fileupload-choose{

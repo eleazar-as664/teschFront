@@ -167,7 +167,7 @@ function Requisitor() {
         <div class="row">
           <div className="p-card-title">Solicitudes</div>
           <div class="gorup-search">
-            <div className="p-field">
+            <div>
               <Link to="./Requisitor/NuevaCompra">
                 <Button
                   label="Nueva Solicitud"
@@ -253,7 +253,7 @@ function Requisitor() {
           stripedRows
           tableStyle={{ minWidth: "50rem" }}
         >
-          <Column sortable field="PurchaseRequestId" header="No." />
+          <Column sortable field="PurchaseRequestId" header="No." style={{ width: '10%' }}/>
           <Column field="Company" header="Empresa/No.SAP" />
           <Column
             header="Enviar"
@@ -270,24 +270,23 @@ function Requisitor() {
           <Column field="StatusSAP" header="Estatus" />
           <Column field="NumAtCard" header="Referencia" />
           <Column
-            header="Cancelar"
             body={(rowData) => (
+              <div>
               <Button
                 onClick={() => cancelarSolicitud(rowData)}
-                label="Cancelar"
-                severity="danger"
+                // label="Cancelar"
+                // severity="secondary"
+                icon="pi pi-times" rounded severity="danger" aria-label="Cancel"
               />
-            )}
-          ></Column>
-          <Column
-            header="Editar"
-            body={(rowData) => (
-              <Button
+                            <Button
                 onClick={() => redirectToEditar(rowData)}
-                label="Editar"
-                severity="success"
+                // label="Editar"
+                // severity="success"
+                icon="pi pi-pencil" rounded severity="success" aria-label="Search"
               />
+              </div>
             )}
+            style={{ width: '10%' }}
           ></Column>
         </DataTable>
       </Card>

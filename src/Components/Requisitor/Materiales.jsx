@@ -116,8 +116,8 @@ function MaterialDialog({ visible, material, onClose, onSave }) {
       header="Modificar Material"
       modal
       footer={
-        <div>
-          <Button label="Guardar" icon="pi pi-check" onClick={handleSave} />
+        <div class="row">
+          <Button label="Aceptar" icon="pi pi-check" onClick={handleSave} className="p-button-primary"/>
           <Button
             label="Cancelar"
             icon="pi pi-times"
@@ -142,39 +142,37 @@ function MaterialDialog({ visible, material, onClose, onSave }) {
               <small className="p-error">{validationErrors.Description}</small>
             )}
           </div>
-
-          <div className="p-field">
-            <label htmlFor="unidad">Unidad</label>
-            <InputText
-              id="unidad"
-              name="BuyUnitMsr"
-              value={updatedMaterial.BuyUnitMsr || ""}
-              onChange={handleInputChange}
-            />
-            {validationErrors.BuyUnitMsr && (
-              <small className="p-error">{validationErrors.BuyUnitMsr}</small>
-            )}
           </div>
-        </div>
-
-        <div className="row">
-          <div className="p-field">
-            <label htmlFor="cantidad">Cantidad</label>
-            <InputNumber
-              id="cantidad"
-              name="Quantity"
-              value={updatedMaterial.Quantity || ""}
-              onChange={handleCantidadChange}
-              mode="decimal"
-              min={0}
-              max={1000}
-              className={validationErrors.Quantity ? "p-invalid" : ""}
-            />
-            {validationErrors.Quantity && (
-              <small className="p-error">{validationErrors.Quantity}</small>
-            )}
-          </div>
-
+          <div className="row">
+              <div className="p-field">
+                <label htmlFor="cantidad">Cantidad</label>
+                <InputNumber
+                  id="cantidad"
+                  name="Quantity"
+                  value={updatedMaterial.Quantity || ""}
+                  onChange={handleCantidadChange}
+                  mode="decimal"
+                  min={0}
+                  max={1000}
+                  className={validationErrors.Quantity ? "p-invalid" : ""}
+                  style= {{display: "contents"}}
+                />
+                {validationErrors.Quantity && (
+                  <small className="p-error">{validationErrors.Quantity}</small>
+                )}
+              </div>
+              <div className="p-field">
+                <label htmlFor="unidad">Unidad</label>
+                <InputText
+                  id="unidad"
+                  name="BuyUnitMsr"
+                  value={updatedMaterial.BuyUnitMsr || ""}
+                  onChange={handleInputChange}
+                />
+                {validationErrors.BuyUnitMsr && (
+                  <small className="p-error">{validationErrors.BuyUnitMsr}</small>
+                )}
+              </div>
           <div className="p-field">
             <label htmlFor="iva">IVA</label>
 

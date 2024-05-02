@@ -5,6 +5,7 @@ import { Button } from "primereact/button";
 import { DataTable } from "primereact/datatable";
 import { Column } from "primereact/column";
 import { InputText } from 'primereact/inputtext';
+import { FileUpload } from "primereact/fileupload";
 import "./OrdenCompra.css";
 import { Layout } from "../../Components/Layout/Layout";
 
@@ -220,46 +221,64 @@ function NuevaCompra() {
 
   return (
       <Layout>
-        <div class="body-ordenConpra">
-        <Card title="Orden De Compra" className="cardOrdenCompra">
+        <div class="body-ordenCompra">
+        <Card className="card-header">
+            <div class="row"> 
+                <div className="p-card-title">Orden de compra</div>
+            </div>
+        </Card>
+
+        <Card className="cardOrdenCompra">
           <div className="p-grid p-nogutter">
-            <div className="p-col">
-              <div className="row">
-                <div className="p-field">No. ORDEN: 123123</div>
-
-                <div className="p-field">Nombre creador: ANGEL START</div>
+            <div className="row">
+              <div className="p-col-field">
+                  <div className="p-field">
+                    <span className="field-name">No. Orden: </span>  
+                     123123
+                  </div>
+                  <div className="p-field">
+                    <span className="field-name">Fecha: </span>  
+                     01/01/2023
+                  </div>
+                  <div className="p-field">
+                    <span className="field-name">Solicitó: </span>
+                    ANGEL START
+                  </div>
+              </div>
+              <div className="p-col-field">
+                  <div className="p-field">
+                     <span className="field-name">Empresa: </span> 
+                      Red company, Inc.
+                  </div>
+                  <div className="p-field">
+                     <span className="field-name">Fecha Entrega: </span> 
+                      01/01/2023
+                  </div>
+                  <div className="p-field">
+                     <span className="field-name">Comentarios: </span> 
+                      Lorem ipsum dolor sit amet, consectetur
+                      adipiscing elit.
+                  </div>
               </div>
             </div>
-            <div className="p-col">
-              <div className="row">
-                <div className="p-field">
-                  <p>FECHA REQUERIDA: 01/01/2023</p>
-                </div>
-                <div className="p-field">
-                  {" "}
-                  <p>
-                    COMENTARIOS: Lorem ipsum dolor sit amet, consectetur
-                    adipiscing elit.
-                  </p>
-                </div>
-              </div>
-            </div>
-            <div className="p-col">
-              <div className="row">
-                <div className="p-field">
-                  <Button
-                    label="PDF"
-                    style={{ width: "80px", height: "40px" }}
-                  />
-                </div>
-
-                <div className="p-field">
-                  {" "}
-                  <Button
-                    label="XML"
-                    style={{ width: "80px", height: "40px" }}
-                  />
-                </div>
+            <div className="row">
+              <div className="p-field button-conteiner upload-field-detail">            
+                <FileUpload 
+                    mode="basic" 
+                    name="demo[]" 
+                    url="/api/upload" 
+                    accept="image/*" 
+                    maxFileSize={1000000} 
+                    chooseLabel="Agregar factura PDF"
+                />
+                <FileUpload 
+                    mode="basic" 
+                    name="demo[]" 
+                    url="/api/upload" 
+                    accept="image/*" 
+                    maxFileSize={1000000} 
+                    chooseLabel="Agregar factura XML"                    
+                />                
               </div>
             </div>
           </div>

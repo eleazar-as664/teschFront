@@ -9,6 +9,7 @@ import { FileUpload } from "primereact/fileupload";
 import { Layout } from "../../Components/Layout/Layout";
 import { Toast } from "primereact/toast";
 import { Divider } from "primereact/divider";
+import { Avatar } from 'primereact/avatar';
 import axios from "axios";
 function DetalleCompra() {
   const [files, setFiles] = useState([]);
@@ -203,15 +204,47 @@ function DetalleCompra() {
 
   return (
     <Layout>
-      <div class="body-ordenConpra">
+    <div class="body-ordenCompra">
+      <Card className="card-header">
+        <div class="row"> 
+            <div className="p-card-title">Detalle de Solicitud</div>
+        </div>
+      </Card>
         <Toast ref={(el) => (toast = el)} />
-        <Card title="Detalle de compra" className="cardOrdenCompra">
+        <Card className="cardOrdenCompra">
           <div className="p-grid p-nogutter">
+          <div className="row">
             <div className="p-col">
-              <div className="row">
-                <div className="p-field">Fecha Requerida: 01/01/2023</div>
+            <Avatar image="https://primefaces.org/cdn/primereact/images/avatar/amyelsner.png" className="mr-2" shape="circle" />
+            </div>
+              <div className="p-col-field">
+                <div className="p-field">
+                  <span className="field-name">Angel Star </span>  
+                </div>
 
-                <div className="p-field">Referencia:0110111</div>
+                <div className="p-field">
+                  <span className="field-name">Red company, Inc. </span>  
+                </div>
+
+                <div className="p-field">
+                  28/02/2023
+                </div>
+              </div>
+
+              <div className="p-col-field">
+                <div className="p-field">
+                  <span className="field-name">Fecha de entrega: </span>  
+                  02/02/2023
+                </div>
+
+                <div className="p-field">
+                   <span className="field-name">Referencia: </span>
+                   222222
+                </div>
+                <div className="p-field">
+                   <span className="field-name">Comentarios: </span>
+                </div>
+
               </div>
             </div>
           </div>
@@ -228,7 +261,8 @@ function DetalleCompra() {
           </DataTable>
         </Card>
 
-        <Card title="Notas" className="adjuntos">
+        <div className="body-right">
+        <Card title="Notas">
           <div className="p-inputgroup">
             <InputText
               value={notasAgregar}
@@ -238,7 +272,7 @@ function DetalleCompra() {
             <Button label="Enviar" onClick={handleAddNote} />
           </div>
           <div>
-            <div>
+            <div className="note-list">
               {notas.map((nota, index) => (
                 <div key={index}>
                   <Divider align="center">
@@ -255,10 +289,10 @@ function DetalleCompra() {
             </div>
           </div>
         </Card>
+
         <Card title="Adjuntos" className="adjuntosaa">
-          <div className="p-inputgroup">
-            <div className="card">
-              <div>
+          <div className="p-field-group">
+            <div className="row align-right">
                 <FileUpload
                   mode="basic"
                   name="demo[]"
@@ -268,8 +302,11 @@ function DetalleCompra() {
                   onSelect={handleFileSelect}
                   auto
                   chooseLabel="Agregar"
+                  className="upload-field-detail"
                 />
-
+              </div>
+              <div className="row">
+                <div className="p-col-field">
                 <DataTable value={files}>
                   <Column field="FileName" header="Nombre" />
                   <Column
@@ -289,17 +326,16 @@ function DetalleCompra() {
                     body={(rowData) => (
                       <Button
                         onClick={() => eliminarFiles(rowData)}
-                        label="Eliminar"
-                        severity="danger"
+                        icon="pi pi-times" rounded severity="danger" aria-label="Cancel"
                       />
                     )}
                   ></Column>
                 </DataTable>
+                </div>
               </div>
-            </div>
           </div>
-          <div></div>
         </Card>
+        </div>
       </div>
     </Layout>
   );
