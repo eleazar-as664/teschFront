@@ -1,5 +1,4 @@
 import React, { Children } from 'react'
-import { Card } from "primereact/card";
 import { Navbar } from "./Navbar/Navbar";
 import "../Styles/Global.css";
 import "./Layout.css";

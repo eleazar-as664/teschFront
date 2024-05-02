@@ -26,7 +26,7 @@
     --theme-default: #7366ff; */
     --danger-color: #fc4438;
     --info-color: #16c7f9;
-    --success-color: #54ba4a;
+    --success-color: #22c55e;
     --secondary-color: #f73164;
 
     --theme-default: #204e5a;
@@ -102,13 +102,19 @@ body{
     border-radius: 6px;
     outline-color: transparent;
 }
-.p-dropdown.p-component.p-inputwrapper,
 .p-inputtext.p-component:enabled:focus {
     outline: 0 none;
     outline-offset: 0;
     box-shadow: 0 0 0 0.2rem #a5f3fc;
     border-color: #06b6d4;
 }
+.p-dropdown:not(.p-disabled).p-focus {
+    outline: 0 none;
+    outline-offset: 0;
+    box-shadow: 0 0 0 0.2rem #a5f3fc;
+    border-color: #06b6d4;
+  }
+
 .p-dropdown-label{
     padding: 0px;
 }
@@ -145,6 +151,7 @@ body{
     margin-right: 5px;
 }
 
+.p-dialog-footer button,
 .p-dialog-content button{
    width: 30%;
 }
@@ -156,10 +163,106 @@ body{
     margin: 20px;
 }
 
+.p-dialog-footer .row,
 .p-dialog-content .row{
     justify-content: flex-end;
 }
 
 .p-card-title{
     margin: 0px;
+}
+
+.p-inputtext {
+    font-family: var(--c-font-rubik);
+}
+
+.text-input{
+    flex-grow: 2;
+}
+
+.body-ordenCompra {
+    display: flex;
+    justify-content: space-between;
+    flex-direction: row;
+    flex-wrap: wrap;
+}
+.cardNuevaCompra{
+    width: 70%;
+}
+.body-right{
+    display: flex;
+    width: 28%;
+    flex-direction: column;
+}
+.p-col-field-right{
+    flex-grow: 4;
+}
+
+.p-col-field{
+    flex-grow: 1;
+}
+.field-name{
+    font-weight: 500;
+}
+.p-col .p-avatar{
+    width: 50px;
+    height: 50px;
+    margin: 10px;
+}
+
+.p-grid.p-nogutter{
+    margin-bottom: 20px;
+}
+
+.p-fileupload.p-fileupload-advanced{
+    display: flex;
+}
+
+.p-fileupload-content{
+    width: 100%;
+    padding: 1rem 0.5rem;
+}
+.field-upload-container{
+    width: 66.66%;
+    padding-top: 17px;
+    padding-left: 1%;
+}
+
+/* .p-fileupload-content div{
+    display: flex;
+} */
+.p-fileupload-row img{
+    display: none;
+}
+.p-fileupload .p-fileupload-row > div {
+padding: 8px;
+}
+.p-fileupload-content > div{
+    display: flex;
+}
+.p-fileupload-row button{
+    width: auto;
+    background-color: unset !important;
+    border-color: white !important;;
+}
+.p-fileupload-row > div:last-child {
+    text-align: left;
+}
+.upload-field-detail .p-fileupload-choose{
+    margin-left: 10px;
+    background-color: var(--theme-default) !important;
+    border: var(--theme-default) !important;
+    color: white;
+    width: auto;
+    padding: 0.5rem 1rem;
+    display: inline-flex;
+}
+.align-right{
+    justify-content: flex-end;
+    margin-bottom: 15px;
+}
+.note-list{
+    max-height: 200px;
+    overflow-x: hidden;
+    overflow-y: scroll;
 }

@@ -4,7 +4,7 @@ import { Calendar } from "primereact/calendar";
 const DatesInput = ({ value, onChange, error }) => {
   return (
     <div className="p-field">
-      <label>Fecha de Vencimiento:</label>
+      <label>Fecha de entrega:</label>
       <Calendar
         value={value}
         onChange={onChange}
