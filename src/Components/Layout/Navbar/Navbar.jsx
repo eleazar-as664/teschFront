@@ -1,16 +1,25 @@
-import React from "react";
+import React ,{useState, useEffect} from "react";
 import { Link, Outlet, useLocation, useNavigate } from "react-router-dom";
 import { Button } from "primereact/button";
 import { TieredMenu } from "primereact/tieredmenu";
 import { Menubar } from "primereact/menubar";
 import { Avatar } from 'primereact/avatar';
 import { Toast } from "primereact/toast";
+import moment from 'moment';
 
 import "./Navbar.css";
 
 export const Navbar = () => {
   const navigate = useNavigate();
+  const [currentDate, setCurrentDate] = useState('');
+  const user = JSON.parse(localStorage.getItem("user"));
+  useEffect(() => {
+    // Obtener la fecha actual usando Moment.js
+    const today = moment().format('YYYY-MM-DD');
+    setCurrentDate(today);
+  }, []);
 
+  
   const onLogout = () => {
     localStorage.removeItem("user");
     navigate("/login", {
@@ -26,7 +35,7 @@ export const Navbar = () => {
   }
   const items = [
     {
-      label: "Fecha",
+      label: "Fecha: " + currentDate,
       icon: "pi pi-calendar",
     },
     {
@@ -39,8 +48,9 @@ export const Navbar = () => {
               <li className="w-full p-link flex-row">
                   <Avatar image="https://primefaces.org/cdn/primereact/images/avatar/amyelsner.png" className="mr-2" shape="circle" />
                   <div className="flex-column user-data">
-                      <span className="name-user">Angel star</span>
-                      <span className="text-sm">Admin</span>
+                      <span className="name-user">{user.FirstName + " " + user.LastName}</span>
+                      <span className="text-sm">{user.Profiles[0].Name  }</span>
+                     
                   </div>
               </li>
           );
@@ -132,7 +142,7 @@ export const Navbar = () => {
   ];
 
   let filteredItems10 = [];
-  const user = JSON.parse(localStorage.getItem("user"));
+
 
 
   if (user.Profiles.some(profile => profile.Name === "Requisitor")) {

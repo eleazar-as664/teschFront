@@ -1,5 +1,5 @@
 import React, { useRef, useState, useEffect } from "react";
-import { BrowserRouter as router, Link } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { useMountEffect } from "primereact/hooks";
 import { DataTable } from "primereact/datatable";
 import { Column } from "primereact/column";
@@ -18,13 +18,50 @@ function Requisitor() {
   const [selectedItem, setSelectedItem] = useState(null);
   const [data1, setData] = useState([]);
   const [visible, setVisible] = useState(false);
+  const [visibleEnviarSAP, setVisibleEnviarSAP] = useState(false);
   const [rowDataToCancel, setRowDataToCancel] = useState(null);
+
+  const [rowDataToEnviarSap, setRowDataToEnviarSap] = useState(null);
   let toast;
+  const navigate = useNavigate();
+  const user = JSON.parse(localStorage.getItem("user"));
+  const token = JSON.parse(localStorage.getItem("user")).Token
   const cancelarSolicitud = (rowData) => {
     setRowDataToCancel(rowData);
     setVisible(true); // Esto abre el Dialog
   };
 
+  const handleDialogEnviarSap = async () => {
+    const purchaseRequestId = rowDataToEnviarSap.PurchaseRequestId;
+    console.log(purchaseRequestId);
+    console.log(token)
+    
+    try {
+      const apiUrl = `http://localhost:3000/api/v1/SAPSyncSendSinglePurchaseRequest/${purchaseRequestId}`;
+      const config = {
+        headers: {
+          "x-access-token": token,
+        },
+      };
+      const response = await axios.get(apiUrl, config); 
+      console.log(response);
+      fetchData();
+          toast.show({
+            severity: "success",
+            summary: "Notificación",
+            detail: "Se envio correctamente la solicitud a SAP",
+            life: 2000,
+          });
+    } catch (error) {
+
+      
+    }
+   
+   
+    console.log("handleDialogCancel", rowDataToEnviarSap.PurchaseRequestId);
+    setRowDataToEnviarSap(null);
+    setVisibleEnviarSAP(false); // Esto cierra el Dialog
+  };
   const handleDialogCancel = () => {
     const purchaseRequestId = rowDataToCancel.PurchaseRequestId;
 
@@ -52,9 +89,6 @@ function Requisitor() {
     setVisible(false); // Esto cierra el Dialog
   };
 
-  const navigate = useNavigate();
-  const user = JSON.parse(localStorage.getItem("user"));
-  const token = localStorage.getItem("token");
   const fetchData = async () => {
     try {
       console.clear();
@@ -77,6 +111,9 @@ function Requisitor() {
     localStorage.removeItem("datosRequisitor");
     fetchData();
   }, []);
+
+  useEffect(() => {}, [fetchData]);
+
   useMountEffect(() => {
     if (msgs.current) {
       msgs.current.clear();
@@ -93,7 +130,7 @@ function Requisitor() {
 
   const redirectToEditar = (datos) => {
     const rowData = datos;
-    
+
     localStorage.setItem("datosRequisitor", JSON.stringify(rowData));
     navigate("./Requisitor/EditarRequisicion");
   };
@@ -115,7 +152,14 @@ function Requisitor() {
     // Redirigir a la página de detalles
     navigate("./Requisitor/DetalleCompra");
   };
-
+  const enviarSolicitudSap = (rowData) => {
+    console.clear();
+    console.log(rowData);
+    setRowDataToEnviarSap(rowData);
+    setVisibleEnviarSAP(true); // Esto abre el Dialog
+    // localStorage.setItem("datosRequisitor", JSON.stringify(rowData));
+    // navigate("./Requisitor/EnviarSap");
+  };
   return (
     <Layout>
       <Card className="card-header">
@@ -138,7 +182,45 @@ function Requisitor() {
           </div>
         </div>
       </Card>
+      <Dialog
+        header="Enviar a SAP"
+        visible={visibleEnviarSAP}
+        style={{ width: "30vw" }}
+        onHide={() => setVisibleEnviarSAP(false)}
+      >
+        {rowDataToEnviarSap && (
+          <div className="">
+            <div className="p-field-group">
+              <div className="row">
+                <div className="p-field">
+                  <p>Nombre: {user.FirstName}</p>
+                </div>
+                <div className="p-field">
+                  <p>
+                    Numero de Solicitud: {rowDataToEnviarSap.PurchaseRequestId}
+                  </p>
+                </div>
+              </div>
+              <div className="row">
+                <div className="p-field">
+                  <p>Fecha Requerida: {rowDataToEnviarSap.DocDate}</p>
+                </div>
+                <div className="p-field">
+                  <p>Referencia: {rowDataToEnviarSap.NumAtCard}</p>
+                </div>
+              </div>
+            </div>
 
+            <div class="row">
+              <Button
+                onClick={handleDialogEnviarSap}
+                label="Enviar"
+                className="p-button-secondary"
+              />
+            </div>
+          </div>
+        )}
+      </Dialog>
       <Card className="cardSolicitante">
         <Dialog
           header="Cancelar Solicitud"
@@ -173,6 +255,16 @@ function Requisitor() {
         >
           <Column sortable field="PurchaseRequestId" header="No." />
           <Column field="Company" header="Empresa/No.SAP" />
+          <Column
+            header="Enviar"
+            body={(rowData) => (
+              <Button
+                onClick={() => enviarSolicitudSap(rowData)}
+                label="Enviar"
+                severity="info"
+              />
+            )}
+          ></Column>
           <Column field="DocDate" header="F.Creación" />
 
           <Column field="StatusSAP" header="Estatus" />
