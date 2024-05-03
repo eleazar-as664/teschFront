@@ -13,7 +13,7 @@ import { Button } from "primereact/button";
 import { Dialog } from "primereact/dialog";
 import { DataTable } from "primereact/datatable";
 import { Column } from "primereact/column";
-import { InputText } from 'primereact/inputtext';
+import { InputText } from "primereact/inputtext";
 import { Toast } from "primereact/toast";
 import { FileUpload } from "primereact/fileupload";
 import moment from "moment";
@@ -201,7 +201,6 @@ function NuevaCompra() {
     const momentDate = moment(formData.fecha);
     const formattedDate = momentDate.format("YYYY-MM-DD");
 
-
     const PurchaseOrderRequestDetails = selectedItems.map((obj) => ({
       Description: obj.Description,
       BuyUnitMsr: obj.BuyUnitMsr,
@@ -359,7 +358,7 @@ function NuevaCompra() {
     <Layout>
       <Card className="card-header">
         <div class="row">
-            <div className="p-card-title">Nueva Solicitud</div>
+          <div className="p-card-title">Nueva Solicitud</div>
         </div>
       </Card>
       <Card>
@@ -367,69 +366,68 @@ function NuevaCompra() {
         <form onSubmit={handleSubmit}>
           <div className="p-field-group">
             <div className="row">
-               <div className="p-field">
-                  <DropdownInput
-                    id="compañia"
-                    label="Compañia:"
-                    optionLabel="BusinessName"
-                    value={formData.companies}
-                    placeholder="Seleccione una compañia"
-                    options={Array.isArray(companies) ? companies : []}
-                    onChange={handleAlmacenChange}
-                    error={formErrors.nombre}
-                    disabled={companies.length <= 1}
-                  />
-                </div>
-                <div className="p-field">
-                  <DatesInput
-                    value={formData.fecha}
-                    onChange={(e) => setFormData({ ...formData, fecha: e.value })}
-                    error={formErrors.fecha}
-                  />
-                </div>
-                <div className="p-field">
-                  <TextInput
-                    id="NumAtCard"
-                    label="Referencia:"
-                    value={formData.NumAtCard}
-                    onChange={(e) =>
-                      setFormData({ ...formData, NumAtCard: e.target.value })
-                    }
-                    error={formErrors.NumAtCard}
-                  />
-                 </div>       
-            </div>  
-            <div className="row">         
-                <div className="p-field" style={{ width: "31.9%"}}>
-                      <TextTareaInput
-                        id="comentario"
-                        label="Comentarios"
-                        value={formData.Comments}
-                        onChange={(e) =>
-                          setFormData({ ...formData, Comments: e.target.value })
-                        }
-                        rows={3}
-                        cols={10}                        
-                      />
-                 </div>
+              <div className="p-field">
+                <DropdownInput
+                  id="compañia"
+                  label="Compañia:"
+                  optionLabel="BusinessName"
+                  value={formData.companies}
+                  placeholder="Seleccione una compañia"
+                  options={Array.isArray(companies) ? companies : []}
+                  onChange={handleAlmacenChange}
+                  error={formErrors.nombre}
+                  disabled={companies.length <= 1}
+                />
+              </div>
+              <div className="p-field">
+                <DatesInput
+                  value={formData.fecha}
+                  onChange={(e) => setFormData({ ...formData, fecha: e.value })}
+                  error={formErrors.fecha}
+                />
+              </div>
+              <div className="p-field">
+                <TextInput
+                  id="NumAtCard"
+                  label="Referencia:"
+                  value={formData.NumAtCard}
+                  onChange={(e) =>
+                    setFormData({ ...formData, NumAtCard: e.target.value })
+                  }
+                  error={formErrors.NumAtCard}
+                />
+              </div>
+            </div>
+            <div className="row">
+              <div className="p-field" style={{ width: "31.9%" }}>
+                <TextTareaInput
+                  id="comentario"
+                  label="Comentarios"
+                  value={formData.Comments}
+                  onChange={(e) =>
+                    setFormData({ ...formData, Comments: e.target.value })
+                  }
+                  rows={3}
+                  cols={10}
+                />
+              </div>
 
-                <div className="p-field field-upload-container">
-                  <FileUpload
-                      name="demo[]"
-                      showButtons={false}
-                      auto="true"
-                      url={'/api/upload'}
-                      multiple accept="image/*"
-                      maxFileSize={1000000}
-                      chooseLabel={
-                        <i
-                          className="pi pi-upload"
-                          style={{ fontSize: "24px" }}
-                        />
-                      }
-                      emptyTemplate={<p className="m-0">Coloque sus archivos.</p>} />
+              <div className="p-field field-upload-container">
+                <FileUpload
+                  name="demo[]"
+                  showButtons={false}
+                  auto="true"
+                  url={"/api/upload"}
+                  multiple
+                  accept="image/*"
+                  maxFileSize={1000000}
+                  chooseLabel={
+                    <i className="pi pi-upload" style={{ fontSize: "24px" }} />
+                  }
+                  emptyTemplate={<p className="m-0">Coloque sus archivos.</p>}
+                />
 
-                    {/* <FileUpload
+                {/* <FileUpload
                       mode="basic"
                       name="demo[]"
                       multiple
@@ -441,8 +439,7 @@ function NuevaCompra() {
                     />
                     <label htmlFor="proveedor">Archivo PDF </label>
                     <input type="file" onChange={handleFileChange} /> */}
-                 </div>
-
+              </div>
             </div>
 
             <div className="row">
@@ -451,7 +448,7 @@ function NuevaCompra() {
                   value={searchValue}
                   suggestions={filteredMaterials}
                   completeMethod={filterMaterials}
-                  field="Descripcion"
+                  field="Description"
                   onChange={(e) => setSearchValue(e.value)}
                   onSelect={(e) => {
                     setSelectedMaterial(e.value);
@@ -462,26 +459,25 @@ function NuevaCompra() {
                 />
               </div>
               <div className="p-field button-conteiner">
-                      <div className="botonEnviar">
-                    <Button
-                      label="Guardar"
-                      type="submit"
-                      icon="pi pi-check"
-                      className="p-button-primary"
-                    />
-                  </div>
-                  <div className="botonCancelar">
-                    <Button
-                      label="Cancelar"
-                      type="button"
-                      onClick={handleEnviarNavigate}
-                      className="p-button-secondary"
-                    />
-                  </div>
+                <div className="botonEnviar">
+                  <Button
+                    label="Guardar"
+                    type="submit"
+                    icon="pi pi-check"
+                    className="p-button-primary"
+                  />
+                </div>
+                <div className="botonCancelar">
+                  <Button
+                    label="Cancelar"
+                    type="button"
+                    onClick={handleEnviarNavigate}
+                    className="p-button-secondary"
+                  />
+                </div>
               </div>
             </div>
           </div>
-
         </form>
         {selectedMaterial && (
           <MaterialDialog
@@ -522,7 +518,6 @@ function NuevaCompra() {
                   <Button
                     icon="pi pi-pencil"
                     rounded
-                    
                     onClick={() => handleEdit(rowData)}
                     className="p-button-success"
                   />

@@ -17,11 +17,15 @@ function MaterialDialog({ visible, material, onClose, onSave }) {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        setUpdatedMaterial(material)
+        setUpdatedMaterial(material);
 
-        console.log('***************************material.CompanyId************************************')
+        console.log(
+          "***************************material.CompanyId************************************"
+        );
         console.log("Material actualizado:", material);
-        console.log('***************************material.CompanyId************************************')
+        console.log(
+          "***************************material.CompanyId************************************"
+        );
 
         if (material.CompanyId) {
           const apiUrl = `http://localhost:3000/api/v1/GetTaxes/${material.CompanyId}`;
@@ -65,6 +69,7 @@ function MaterialDialog({ visible, material, onClose, onSave }) {
 
   const handleCantidadChange = (event) => {
     const newValue = event.value;
+    console.log("newValue", newValue);
     if (!isNaN(newValue) && newValue !== null) {
       // Verifica si el nuevo valor no es NaN ni null
       setUpdatedMaterial((prevState) => ({
@@ -117,7 +122,12 @@ function MaterialDialog({ visible, material, onClose, onSave }) {
       modal
       footer={
         <div class="row">
-          <Button label="Aceptar" icon="pi pi-check" onClick={handleSave} className="p-button-primary"/>
+          <Button
+            label="Aceptar"
+            icon="pi pi-check"
+            onClick={handleSave}
+            className="p-button-primary"
+          />
           <Button
             label="Cancelar"
             icon="pi pi-times"
@@ -142,37 +152,36 @@ function MaterialDialog({ visible, material, onClose, onSave }) {
               <small className="p-error">{validationErrors.Description}</small>
             )}
           </div>
+        </div>
+        <div className="row">
+          <div className="p-field">
+            <label htmlFor="cantidad">Cantidad</label>
+            <InputNumber
+              id="cantidad"
+              name="Quantity"
+              value={updatedMaterial.Quantity || ""}
+              onChange={handleCantidadChange}
+              min={0}
+              max={10000}
+              className={validationErrors.Quantity ? "p-invalid" : ""}
+              style={{ display: "contents" }}
+            />
+            {validationErrors.Quantity && (
+              <small className="p-error">{validationErrors.Quantity}</small>
+            )}
           </div>
-          <div className="row">
-              <div className="p-field">
-                <label htmlFor="cantidad">Cantidad</label>
-                <InputNumber
-                  id="cantidad"
-                  name="Quantity"
-                  value={updatedMaterial.Quantity || ""}
-                  onChange={handleCantidadChange}
-                  mode="decimal"
-                  min={0}
-                  max={1000}
-                  className={validationErrors.Quantity ? "p-invalid" : ""}
-                  style= {{display: "contents"}}
-                />
-                {validationErrors.Quantity && (
-                  <small className="p-error">{validationErrors.Quantity}</small>
-                )}
-              </div>
-              <div className="p-field">
-                <label htmlFor="unidad">Unidad</label>
-                <InputText
-                  id="unidad"
-                  name="BuyUnitMsr"
-                  value={updatedMaterial.BuyUnitMsr || ""}
-                  onChange={handleInputChange}
-                />
-                {validationErrors.BuyUnitMsr && (
-                  <small className="p-error">{validationErrors.BuyUnitMsr}</small>
-                )}
-              </div>
+          <div className="p-field">
+            <label htmlFor="unidad">Unidad</label>
+            <InputText
+              id="unidad"
+              name="BuyUnitMsr"
+              value={updatedMaterial.BuyUnitMsr || ""}
+              onChange={handleInputChange}
+            />
+            {validationErrors.BuyUnitMsr && (
+              <small className="p-error">{validationErrors.BuyUnitMsr}</small>
+            )}
+          </div>
           <div className="p-field">
             <label htmlFor="iva">IVA</label>
 

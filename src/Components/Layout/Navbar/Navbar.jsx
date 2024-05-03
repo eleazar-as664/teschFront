@@ -35,7 +35,7 @@ export const Navbar = () => {
   }
   const items = [
     {
-      label: "Fecha: " + currentDate,
+      label:  currentDate,
       icon: "pi pi-calendar",
     },
     {
