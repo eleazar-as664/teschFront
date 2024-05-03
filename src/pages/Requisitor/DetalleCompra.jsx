@@ -10,6 +10,7 @@ import { Layout } from "../../Components/Layout/Layout";
 import { Toast } from "primereact/toast";
 import { Divider } from "primereact/divider";
 import { Avatar } from 'primereact/avatar';
+import routes from "../../utils/routes";
 import axios from "axios";
 function DetalleCompra() {
   const [files, setFiles] = useState([]);
@@ -26,7 +27,7 @@ function DetalleCompra() {
     try {
       const idSolicitud = datosRequisitor.PurchaseRequestId;
 
-      const apiUrl = `http://localhost:3000/api/v1/GetPurchaseRequestFiles/${idSolicitud}`;
+      const apiUrl = `${routes.BASE_URL_SERVER}/api/v1/GetPurchaseRequestFiles/${idSolicitud}`;
       const config = {
         headers: {
           "x-access-token": token,
@@ -34,10 +35,6 @@ function DetalleCompra() {
       };
       const response = await axios.get(apiUrl, config);
 
-      console.log(
-        "Response:getDatosCompraaaaaaaaaaaaaaaaaaaaaaaa",
-        response.data.data
-      );
       const detalesRequisicion = response.data.data;
 
       setFiles(detalesRequisicion);
@@ -49,7 +46,7 @@ function DetalleCompra() {
     try {
       const idSolicitud = datosRequisitor.PurchaseRequestId;
 
-      const apiUrl = `http://localhost:3000/api/v1/GetSinglePurchaseRequest/${idSolicitud}`;
+      const apiUrl = `${routes.BASE_URL_SERVER}/api/v1/GetSinglePurchaseRequest/${idSolicitud}`;
       const config = {
         headers: {
           "x-access-token": token,
@@ -106,7 +103,7 @@ function DetalleCompra() {
     };
     console.log("data:", data);
     try {
-      const apiUrl = `http://localhost:3000/api/v1/CreatePurchaseRequestNote`;
+      const apiUrl = `${routes.BASE_URL_SERVER}/api/v1/CreatePurchaseRequestNote`;
       const config = {
         headers: {
           "x-access-token": token,
@@ -129,7 +126,7 @@ function DetalleCompra() {
   const eliminarFiles = (rowData) => {
     axios
       .delete(
-        `http://localhost:3000/api/v1/DeleteAttachmentsFromPurchaseRequest/${rowData.AttachId}/${rowData.LineId}`
+        `${routes.BASE_URL_SERVER}/api/v1/DeleteAttachmentsFromPurchaseRequest/${rowData.AttachId}/${rowData.LineId}`
       )
       .then((response) => {
         getDatosFiles();
@@ -184,7 +181,7 @@ function DetalleCompra() {
     };
 
     const response = await axios.post(
-      "http://localhost:3000/api/v1/AddAttachmentsToPurchaseRequest",
+      `${routes.BASE_URL_SERVER}/api/v1/AddAttachmentsToPurchaseRequest`,
       formData,
       config
     );

@@ -4,6 +4,7 @@ import { Button } from "primereact/button";
 import { Dropdown } from "primereact/dropdown";
 import { InputText } from "primereact/inputtext";
 import { InputNumber } from "primereact/inputnumber";
+import routes from "../../utils/routes";
 import axios from "axios";
 
 function MaterialDialog({ visible, material, onClose, onSave }) {
@@ -19,16 +20,8 @@ function MaterialDialog({ visible, material, onClose, onSave }) {
       try {
         setUpdatedMaterial(material);
 
-        console.log(
-          "***************************material.CompanyId************************************"
-        );
-        console.log("Material actualizado:", material);
-        console.log(
-          "***************************material.CompanyId************************************"
-        );
-
         if (material.CompanyId) {
-          const apiUrl = `http://localhost:3000/api/v1/GetTaxes/${material.CompanyId}`;
+          const apiUrl = `${routes.BASE_URL_SERVER}/api/v1/GetTaxes/${material.CompanyId}`;
           const config = { headers: { "x-access-token": token } };
           const response = await axios.get(apiUrl, config);
           setIvaOptions(response.data.data);

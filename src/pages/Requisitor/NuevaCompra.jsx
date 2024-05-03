@@ -6,6 +6,7 @@ import TextTareaInput from "../../Components/Requisitor/TextTareaInput";
 import DropdownInput from "../../Components/Requisitor/DropdownInput";
 import MaterialDialog from "../../Components/Requisitor/Materiales";
 import { Layout } from "../../Components/Layout/Layout";
+import routes from "../../utils/routes";
 
 import { Card } from "primereact/card";
 import { AutoComplete } from "primereact/autocomplete";
@@ -13,7 +14,6 @@ import { Button } from "primereact/button";
 import { Dialog } from "primereact/dialog";
 import { DataTable } from "primereact/datatable";
 import { Column } from "primereact/column";
-import { InputText } from "primereact/inputtext";
 import { Toast } from "primereact/toast";
 import { FileUpload } from "primereact/fileupload";
 import moment from "moment";
@@ -84,7 +84,7 @@ function NuevaCompra() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const apiUrl = `http://localhost:3000/api/v1/GetCompaniesForUser/${user.UserId}`;
+        const apiUrl = `${routes.BASE_URL_SERVER}/api/v1/GetCompaniesForUser/${user.UserId}`;
         const config = {
           headers: {
             "x-access-token": token,
@@ -97,7 +97,7 @@ function NuevaCompra() {
           ...prevState,
           companies: response.data.data[0],
         }));
-        const apiUrlGetItemsByCompany = `http://localhost:3000/api/v1/GetItemsByCompany/${response.data.data[0].Id}`;
+        const apiUrlGetItemsByCompany = `${routes.BASE_URL_SERVER}/api/v1/GetItemsByCompany/${response.data.data[0].Id}`;
         const resp = await axios.get(apiUrlGetItemsByCompany, config);
         setMaterialesData(resp.data.data);
       } catch (error) {
@@ -113,7 +113,7 @@ function NuevaCompra() {
     setFormData({ ...formData, almacen: selectedAlmacen });
 
     try {
-      const apiUrl = `http://localhost:3000/api/v1/GetItemsByCompany/${selectedAlmacen.Id}`;
+      const apiUrl = `${routes.BASE_URL_SERVER}/api/v1/GetItemsByCompany/${selectedAlmacen.Id}`;
       const config = {
         headers: {
           "x-access-token": token,
@@ -250,7 +250,7 @@ function NuevaCompra() {
     }
 
     const response = await axios.post(
-      "http://localhost:3000/api/v1/CreatePurchaseRequest",
+      `${routes.BASE_URL_SERVER}/api/v1/CreatePurchaseRequest`,
       formData,
       config
     );
@@ -327,6 +327,8 @@ function NuevaCompra() {
   };
 
   const handleEnviarNavigate = () => {
+    console.clear();
+
     setDialogVisibleNuevaCompra(false); // Cierra el modal
     navigate("/Requisitor"); // Navega a la ruta "/Requisitor"
   };
@@ -417,7 +419,7 @@ function NuevaCompra() {
                   name="demo[]"
                   showButtons={false}
                   auto="true"
-                  url={"/api/upload"}
+                  onSelect={handleFileSelect}
                   multiple
                   accept="image/*"
                   maxFileSize={1000000}

@@ -3,7 +3,7 @@ import React, { useState, useEffect } from "react";
 import TextInput from "../../Components/Requisitor/TextInput";
 import DatesInput from "../../Components/Requisitor/DatesInput";
 import TextTareaInput from "../../Components/Requisitor/TextTareaInput";
-import DropdownInput from "../../Components/Requisitor/DropdownInput";
+
 import MaterialDialog from "../../Components/Requisitor/Materiales";
 import { Layout } from "../../Components/Layout/Layout";
 
@@ -16,12 +16,13 @@ import { Column } from "primereact/column";
 import { Toast } from "primereact/toast";
 import { InputText } from "primereact/inputtext";
 import { FileUpload } from "primereact/fileupload";
-import { Avatar } from 'primereact/avatar';
+import { Avatar } from "primereact/avatar";
 import moment from "moment";
 import { useNavigate } from "react-router-dom";
 
 import axios from "axios";
 import "./NuevaCompra.css";
+import routes from "../../utils/routes";
 
 function EditarRequisicion() {
   const navigate = useNavigate();
@@ -87,7 +88,7 @@ function EditarRequisicion() {
       try {
         const idSolicitud = datosRequisitor.PurchaseRequestId;
 
-        const apiUrl = `http://localhost:3000/api/v1/GetSinglePurchaseRequest/${idSolicitud}`;
+        const apiUrl = `${routes.BASE_URL_SERVER}/api/v1/GetSinglePurchaseRequest/${idSolicitud}`;
         const config = {
           headers: {
             "x-access-token": token,
@@ -129,11 +130,11 @@ function EditarRequisicion() {
       }
     };
     getDatosCompra();
-  }, [ datosRequisitor.PurchaseRequestId, token]); // El array vacío indica que este efecto se ejecuta solo una vez, equivalente a componentDidMount
+  }, [datosRequisitor.PurchaseRequestId, token]); // El array vacío indica que este efecto se ejecuta solo una vez, equivalente a componentDidMount
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const apiUrl = `http://localhost:3000/api/v1/GetCompaniesForUser/${user.UserId}`;
+        const apiUrl = `${routes.BASE_URL_SERVER}/api/v1/GetCompaniesForUser/${user.UserId}`;
         const config = {
           headers: {
             "x-access-token": token,
@@ -146,7 +147,7 @@ function EditarRequisicion() {
           ...prevState,
           companies: response.data.data[0],
         }));
-        const apiUrlGetItemsByCompany = `http://localhost:3000/api/v1/GetItemsByCompany/${response.data.data[0].Id}`;
+        const apiUrlGetItemsByCompany = `${routes.BASE_URL_SERVER}/api/v1/GetItemsByCompany/${response.data.data[0].Id}`;
         const resp = await axios.get(apiUrlGetItemsByCompany, config);
 
         setMaterialesData(resp.data.data);
@@ -250,7 +251,7 @@ function EditarRequisicion() {
     console.log("Data:", data);
     console.log("FilesToUpload:", pdf);
     const response = await axios.put(
-      "http://localhost:3000/api/v1/UpdatePurchaseRequest",
+      `${routes.BASE_URL_SERVER}/api/v1/UpdatePurchaseRequest`,
       formData,
       config
     );
@@ -330,72 +331,78 @@ function EditarRequisicion() {
 
   return (
     <Layout>
-     <div class="body-ordenCompra">
-      <Card className="card-header">
-        <div class="row"> 
+      <div class="body-ordenCompra">
+        <Card className="card-header">
+          <div class="row">
             <div className="p-card-title">Editar de Solicitud</div>
-        </div>
-      </Card>
-      <Card className="cardNuevaCompra">
-        <Toast ref={(el) => (toast = el)} />
+          </div>
+        </Card>
+        <Card className="cardNuevaCompra">
+          <Toast ref={(el) => (toast = el)} />
 
-        <form onSubmit={handleSubmit}>
-          <div className="p-field-group">
-          <div className="row">
-            <div className="p-col">
-            <Avatar image="https://primefaces.org/cdn/primereact/images/avatar/amyelsner.png" className="mr-2" shape="circle" />
-            </div>
-            <div className="p-col-field">
-            
-               <div className="p-field">
-                  <span className="field-name">Angel Star </span>  
+          <form onSubmit={handleSubmit}>
+            <div className="p-field-group">
+              <div className="row">
+                <div className="p-col">
+                  <Avatar
+                    image="https://primefaces.org/cdn/primereact/images/avatar/amyelsner.png"
+                    className="mr-2"
+                    shape="circle"
+                  />
                 </div>
-
-                <div className="p-field">
-                  <span className="field-name">Red company, Inc. </span>  
-                </div>
-
-                <div className="p-field">
-                  28/02/2023
-                </div>
-            </div>  
-            <div className="p-col-field-right"> 
-              <div className="row">         
+                <div className="p-col-field">
                   <div className="p-field">
-                    <DatesInput
-                      value={formData.fecha}
-                      onChange={(e) => setFormData({ ...formData, fecha: e.value })}
-                      error={formErrors.fecha}
-                    />
+                    <span className="field-name">Angel Star </span>
+                  </div>
+
+                  <div className="p-field">
+                    <span className="field-name">Red company, Inc. </span>
+                  </div>
+
+                  <div className="p-field">28/02/2023</div>
+                </div>
+                <div className="p-col-field-right">
+                  <div className="row">
+                    <div className="p-field">
+                      <DatesInput
+                        value={formData.fecha}
+                        onChange={(e) =>
+                          setFormData({ ...formData, fecha: e.value })
+                        }
+                        error={formErrors.fecha}
+                      />
+                    </div>
+                    <div className="p-field">
+                      <TextInput
+                        id="NumAtCard"
+                        label="No. referencia:"
+                        value={formData.NumAtCard}
+                        onChange={(e) =>
+                          setFormData({
+                            ...formData,
+                            NumAtCard: e.target.value,
+                          })
+                        }
+                        error={formErrors.NumAtCard}
+                      />
+                    </div>
                   </div>
                   <div className="p-field">
-                    <TextInput
-                      id="NumAtCard"
-                      label="No. referencia:"
-                      value={formData.NumAtCard}
+                    <TextTareaInput
+                      id="comentario"
+                      label="Comentario:"
+                      value={formData.Comments}
                       onChange={(e) =>
-                        setFormData({ ...formData, NumAtCard: e.target.value })
+                        setFormData({ ...formData, Comments: e.target.value })
                       }
-                      error={formErrors.NumAtCard}
+                      rows={1}
+                      cols={10}
                     />
                   </div>
-               </div>
-              <div className="p-field">
-                <TextTareaInput
-                  id="comentario"
-                  label="Comentario:"
-                  value={formData.Comments}
-                  onChange={(e) =>
-                    setFormData({ ...formData, Comments: e.target.value })
-                  }
-                  rows={1}
-                  cols={10}
-                />
+                </div>
               </div>
             </div>
-            </div>
-          </div>
-          <div className="row">
+            <div className="row">
               <div className="p-field" style={{ margin: "20px" }}>
                 <AutoComplete
                   value={searchValue}
@@ -412,93 +419,93 @@ function EditarRequisicion() {
                 />
               </div>
 
-            <div className="p-field button-conteiner">
-              <div className="botonEnviar">
-                <Button
-                  label="Guardar"
-                  type="submit"
-                  icon="pi pi-check"
-                  className="p-button-primary"
-                />
-              </div>
-              <div className="botonCancelar">
-                <Button
-                  label="Cancelar"
-                  type="button"
-                  onClick={handleEnviarNavigate}
-                  className="p-button-secondary"
-                />
-              </div>
-            </div>
-          </div>
-        </form>
-        {selectedMaterial && (
-          <MaterialDialog
-            visible={dialogVisible}
-            material={selectedMaterial}
-            onClose={handleDialogClose}
-            onSave={handleGuardarMaterial}
-          />
-        )}
-        {materialToEdit && (
-          <MaterialDialog
-            visible={dialogVisible}
-            material={materialToEdit}
-            onClose={handleDialogClose}
-            onSave={handleEditarMaterial}
-          />
-        )}
-        <Dialog
-          visible={dialogVisibleNuevaCompra}
-          onHide={handleEnviarNavigate}
-          header="Éxito"
-          modal
-          footer={<Button label="Cerrar" onClick={handleEnviarNavigate} />}
-        >
-          <div>¡La operación se completó con éxito!</div>
-        </Dialog>
-        <div className="table-container">
-          <DataTable value={selectedItems} scrollHeight="400px">
-            <Column field="ItemCode" header="Codigo" />
-            <Column field="Description" header="Description" />
-            <Column field="BuyUnitMsr" header="Unidad"></Column>
-            <Column field="Quantity" header="Cantidad" />
-            <Column field="IVAName" header="Impuesto" />
-            <Column
-              field=""
-              header=""
-              body={(rowData) => (
-                <div>
+              <div className="p-field button-conteiner">
+                <div className="botonEnviar">
                   <Button
-                    icon="pi pi-pencil"
-                    rounded
-                    onClick={() => handleEdit(rowData)}
-                    className="p-button-success"
-                  />
-                  <Button
-                    icon="pi pi-trash"
-                    onClick={() => handleDelete(rowData)}
-                    className="p-button-danger"
+                    label="Guardar"
+                    type="submit"
+                    icon="pi pi-check"
+                    className="p-button-primary"
                   />
                 </div>
-              )}
+                <div className="botonCancelar">
+                  <Button
+                    label="Cancelar"
+                    type="button"
+                    onClick={handleEnviarNavigate}
+                    className="p-button-secondary"
+                  />
+                </div>
+              </div>
+            </div>
+          </form>
+          {selectedMaterial && (
+            <MaterialDialog
+              visible={dialogVisible}
+              material={selectedMaterial}
+              onClose={handleDialogClose}
+              onSave={handleGuardarMaterial}
             />
-          </DataTable>
-        </div>
-      </Card>
-      <div className="body-right">
-        <Card title="Notas">
-          <div className="p-inputgroup">
-            <InputText
-              // value={notasAgregar}
-              // onChange={handleInputChange}
-              placeholder="Escribe un comentario"
+          )}
+          {materialToEdit && (
+            <MaterialDialog
+              visible={dialogVisible}
+              material={materialToEdit}
+              onClose={handleDialogClose}
+              onSave={handleEditarMaterial}
             />
-            <Button label="Enviar" />
+          )}
+          <Dialog
+            visible={dialogVisibleNuevaCompra}
+            onHide={handleEnviarNavigate}
+            header="Éxito"
+            modal
+            footer={<Button label="Cerrar" onClick={handleEnviarNavigate} />}
+          >
+            <div>¡La operación se completó con éxito!</div>
+          </Dialog>
+          <div className="table-container">
+            <DataTable value={selectedItems} scrollHeight="400px">
+              <Column field="ItemCode" header="Codigo" />
+              <Column field="Description" header="Description" />
+              <Column field="BuyUnitMsr" header="Unidad"></Column>
+              <Column field="Quantity" header="Cantidad" />
+              <Column field="IVAName" header="Impuesto" />
+              <Column
+                field=""
+                header=""
+                body={(rowData) => (
+                  <div>
+                    <Button
+                      icon="pi pi-pencil"
+                      rounded
+                      onClick={() => handleEdit(rowData)}
+                      className="p-button-success"
+                    />
+                    <Button
+                      icon="pi pi-trash"
+                      onClick={() => handleDelete(rowData)}
+                      className="p-button-danger"
+                    />
+                  </div>
+                )}
+              />
+            </DataTable>
           </div>
-          <div>
-            <div className="note-list">
-              {/* {notas.map((nota, index) => (
+        </Card>
+        <div className="body-right">
+          <Card title="Notas">
+            <div className="p-inputgroup">
+              <InputText
+                // value={notasAgregar}
+                // onChange={handleInputChange}
+                placeholder="Escribe un comentario"
+              />
+              <Button label="Enviar" />
+            </div>
+            <div>
+              <div className="note-list">
+                {/* {notas.map((nota, index) => (
                 <div key={index}>
                   <Divider align="center">
                     {`Nota ${index + 1}: ${nota.FirstName} ${nota.LastName}`}
@@ -511,13 +518,13 @@ function EditarRequisicion() {
                   <p>Notas: {nota.Notes}</p>
                 </div>
               ))} */}
+              </div>
             </div>
-          </div>
-        </Card>
+          </Card>
 
-        <Card title="Adjuntos" className="adjuntosaa">
-          <div className="p-field-group">
-            <div className="row align-right">
+          <Card title="Adjuntos" className="adjuntosaa">
+            <div className="p-field-group">
+              <div className="row align-right">
                 <FileUpload
                   mode="basic"
                   name="demo[]"
@@ -532,34 +539,37 @@ function EditarRequisicion() {
               </div>
               <div className="row">
                 <div className="p-col-field">
-                <DataTable >
-                  <Column field="FileName" header="Nombre" />
-                  <Column
-                    header="Acción"
-                    body={(rowData) => (
-                      <a
-                        href={rowData.SRC}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                      >
-                        Ver
-                      </a>
-                    )}
-                  />
-                  <Column
-                    header=""
-                    body={(rowData) => (
-                      <Button
-                        // onClick={() => eliminarFiles(rowData)}
-                        icon="pi pi-times" rounded severity="danger" aria-label="Cancel"
-                      />
-                    )}
-                  ></Column>
-                </DataTable>
+                  <DataTable>
+                    <Column field="FileName" header="Nombre" />
+                    <Column
+                      header="Acción"
+                      body={(rowData) => (
+                        <a
+                          href={rowData.SRC}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                        >
+                          Ver
+                        </a>
+                      )}
+                    />
+                    <Column
+                      header=""
+                      body={(rowData) => (
+                        <Button
+                          // onClick={() => eliminarFiles(rowData)}
+                          icon="pi pi-times"
+                          rounded
+                          severity="danger"
+                          aria-label="Cancel"
+                        />
+                      )}
+                    ></Column>
+                  </DataTable>
                 </div>
               </div>
-          </div>
-        </Card>
+            </div>
+          </Card>
         </div>
       </div>
     </Layout>

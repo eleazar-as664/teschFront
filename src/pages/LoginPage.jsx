@@ -6,6 +6,8 @@ import { useNavigate } from "react-router-dom";
 import { useForm } from "../hook/useForm";
 import axios from "axios"; // Importar Axios
 import "../Components/LoginForm/LoginForm.css";
+
+import routes from "../utils/routes";
 export const LoginPage = () => {
   const navigate = useNavigate();
   const [error, setError] = useState(null);
@@ -26,10 +28,10 @@ export const LoginPage = () => {
     }
   }, [user, navigate]);   
   const onLoginPrueba = async (e) => {
-    console.log('ahhhhhhhhhhhh paaaaaaaaaaoaaoppapaa')
+  
     e.preventDefault();
     try {
-      const response = await axios.post("http://localhost:3000/api/v1/SignIn", {
+      const response = await axios.post(`${routes.BASE_URL_SERVER}/api/v1/SignIn`, {
         UserName: name,
         Password: password,
         SecretKey: "O6XcIjRgEOvvRyO0QFHzf5jllsuzCiLEZj9YftaOwg",

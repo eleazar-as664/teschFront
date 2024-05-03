@@ -10,6 +10,7 @@ import { Dialog } from "primereact/dialog";
 import { Layout } from "../Components/Layout/Layout";
 import { Toast } from "primereact/toast";
 import axios from "axios";
+import routes from "../utils/routes";
 import "./Requisitor.css";
 import "../Components/Styles/Global.css";
 function Requisitor() {
@@ -37,7 +38,7 @@ function Requisitor() {
     console.log(token)
     
     try {
-      const apiUrl = `http://localhost:3000/api/v1/SAPSyncSendSinglePurchaseRequest/${purchaseRequestId}`;
+      const apiUrl = `${routes.BASE_URL_SERVER}/api/v1/SAPSyncSendSinglePurchaseRequest/${purchaseRequestId}`;
       const config = {
         headers: {
           "x-access-token": token,
@@ -67,7 +68,7 @@ function Requisitor() {
 
     axios
       .delete(
-        `http://localhost:3000/api/v1/DeletePurchaseRequest/${purchaseRequestId}`
+        `${routes.BASE_URL_SERVER}/api/v1/DeletePurchaseRequest/${purchaseRequestId}`
       )
       .then((response) => {
         console.log("Solicitud de compra cancelada con éxito");
@@ -94,7 +95,7 @@ function Requisitor() {
       console.clear();
       console.log(user.UserId);
       const IdUsuario = user.UserId;
-      const apiUrl = `http://localhost:3000/api/v1/GetPurchaseRequestsHeadersByUser/${IdUsuario}`;
+      const apiUrl = `${routes.BASE_URL_SERVER}/api/v1/GetPurchaseRequestsHeadersByUser/${IdUsuario}`;
       const config = {
         headers: {
           "x-access-token": token,
