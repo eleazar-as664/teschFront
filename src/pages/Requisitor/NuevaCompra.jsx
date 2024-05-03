@@ -338,7 +338,7 @@ function NuevaCompra() {
     console.log("Verificar que estemos mandando varios pdf*********");
     setArchivosSeleccionados([...archivosSeleccionados, archivoPDF]);
     console.log("Archivo seleccionado:", archivosSeleccionados);
-    // toast.current.show({
+    // toast.current.show({git
     //   severity: "info",
     //   summary: "Success",
 
