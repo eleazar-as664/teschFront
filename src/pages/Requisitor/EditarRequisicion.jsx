@@ -17,6 +17,8 @@ import { Toast } from "primereact/toast";
 import { InputText } from "primereact/inputtext";
 import { FileUpload } from "primereact/fileupload";
 import { Avatar } from "primereact/avatar";
+import { Divider } from "primereact/divider";
+
 import moment from "moment";
 import { useNavigate } from "react-router-dom";
 
@@ -46,8 +48,8 @@ function EditarRequisicion() {
     precio: false,
     Comments: false,
   });
-
-  const [companies, setCompanies] = useState([]);
+  const [currentDate, setCurrentDate] = useState("");
+  const [notas, setNotas] = useState([]);
   const [materialeslData, setMaterialesData] = useState([]);
   const [selectedItems, setSelectedItems] = useState([]);
   const [selectedMaterial, setSelectedMaterial] = useState(null);
@@ -55,9 +57,11 @@ function EditarRequisicion() {
   const [dialogVisible, setDialogVisible] = useState(false);
   const [dialogVisibleNuevaCompra, setDialogVisibleNuevaCompra] =
     useState(false);
+  const [notasAgregar, setNotasAgregar] = useState("");
   const [searchValue, setSearchValue] = useState("");
   const [contadorId, setContadorId] = useState(1);
   const [materialToEdit, setMaterialToEdit] = useState(null);
+  const [files, setFiles] = useState([]);
   const filterMaterials = (event) => {
     const searchTerm = event.query.toLowerCase();
     const filtered = materialeslData.filter((material) =>
@@ -74,6 +78,26 @@ function EditarRequisicion() {
   const user = JSON.parse(localStorage.getItem("user"));
   const datosRequisitor = JSON.parse(localStorage.getItem("datosRequisitor"));
   let toast;
+
+  const getDatosFiles = async () => {
+    try {
+      const idSolicitud = datosRequisitor.PurchaseRequestId;
+
+      const apiUrl = `${routes.BASE_URL_SERVER}/GetPurchaseRequestFiles/${idSolicitud}`;
+      const config = {
+        headers: {
+          "x-access-token": token,
+        },
+      };
+      const response = await axios.get(apiUrl, config);
+
+      const detalesRequisicion = response.data.data;
+
+      setFiles(detalesRequisicion);
+    } catch (error) {
+      console.error("Error al obtener datos de la API:", error);
+    }
+  };
   const handleAlmacenChange12 = (material) => {
     setSelectedMaterial(material);
     setDialogVisible(true); // Mostrar el MaterialDialog al seleccionar un material
@@ -82,109 +106,95 @@ function EditarRequisicion() {
   const handleDialogClose = () => {
     setDialogVisible(false);
   };
+  const getDatosCompra = async () => {
+    try {
+      const idSolicitud = datosRequisitor.PurchaseRequestId;
 
-  useEffect(() => {
-    const getDatosCompra = async () => {
-      try {
-        const idSolicitud = datosRequisitor.PurchaseRequestId;
+      const apiUrl = `${routes.BASE_URL_SERVER}/GetSinglePurchaseRequest/${idSolicitud}`;
+      const config = {
+        headers: {
+          "x-access-token": token,
+        },
+      };
+      const response = await axios.get(apiUrl, config);
 
-        const apiUrl = `${routes.BASE_URL_SERVER}/api/v1/GetSinglePurchaseRequest/${idSolicitud}`;
-        const config = {
-          headers: {
-            "x-access-token": token,
-          },
-        };
-        const response = await axios.get(apiUrl, config);
+      const detalesRequisicion = response.data.data;
 
-        console.log(
-          "Response:getDatosCompraaaaaaaaaaaaaaaaaaaaaaaa",
-          response.data.data
-        );
-        const detalesRequisicion = response.data.data;
+      // <Column field="ItemCode" header="Codigo" />
+      const newSelectedItems = detalesRequisicion.Detail.map((item, index) => ({
+        id: index, // Puedes usar el índice como un identificador único si no tienes uno en tus datos
+        ItemCode: item.ItemCode,
+        Description: item.Description,
+        BuyUnitMsr: item.BuyUnitMsr,
+        Quantity: item.Quantity,
+        IVAName: item.TaxCode,
+      }));
 
-        // <Column field="ItemCode" header="Codigo" />
-        const newSelectedItems = detalesRequisicion.Detail.map(
-          (item, index) => ({
-            id: index, // Puedes usar el índice como un identificador único si no tienes uno en tus datos
-            ItemCode: item.ItemCode,
-            Description: item.Description,
-            BuyUnitMsr: item.BuyUnitMsr,
-            Quantity: item.Quantity,
-            IVAName: item.TaxCode,
-          })
-        );
+      const notas = detalesRequisicion.Notes.map((item, index) => ({
+        id: index,
+        CreateDate: item.CreateDate,
+        FirstName: item.FirstName,
+        Notes: item.Notes,
+        UserName: item.UserName,
+        LastName: item.LastName,
+      }));
 
-        console.log("**********************************", newSelectedItems);
+      setNotas(notas);
 
-        // Actualizar selectedItems con todos los objetos de Detail
-        setSelectedItems(newSelectedItems);
-        setFormData({
-          ...formData,
-          Comments: detalesRequisicion.Comments,
-          NumAtCard: detalesRequisicion.NumAtCard,
-          fecha: detalesRequisicion.CreateDate,
-        });
-        setFormData(response.data.data);
-      } catch (error) {
-        console.error("Error al obtener datos de la API:", error);
-      }
-    };
-    getDatosCompra();
-  }, [datosRequisitor.PurchaseRequestId, token]); // El array vacío indica que este efecto se ejecuta solo una vez, equivalente a componentDidMount
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const apiUrl = `${routes.BASE_URL_SERVER}/api/v1/GetCompaniesForUser/${user.UserId}`;
-        const config = {
-          headers: {
-            "x-access-token": token,
-          },
-        };
-        const response = await axios.get(apiUrl, config);
-        setCompanies(response.data.data);
-
-        setFormData((prevState) => ({
-          ...prevState,
-          companies: response.data.data[0],
-        }));
-        const apiUrlGetItemsByCompany = `${routes.BASE_URL_SERVER}/api/v1/GetItemsByCompany/${response.data.data[0].Id}`;
-        const resp = await axios.get(apiUrlGetItemsByCompany, config);
-
-        setMaterialesData(resp.data.data);
-      } catch (error) {
-        console.error("Error al obtener datos de la API:", error);
-      }
-    };
-
-    fetchData();
-  }, [selectedItems, user.UserId, token]);
-  // const handleAlmacenChange = async (e) => {
-  //   const selectedAlmacen = e.target.value;
-  //   setFormData({ ...formData, almacen: selectedAlmacen });
-
-  //   try {
-  //     const apiUrl = `http://localhost:3000/api/v1/GetItemsByCompany/${selectedAlmacen.Id}`;
-  //     const config = {
-  //       headers: {
-  //         "x-access-token": token,
-  //       },
-  //     };
-  //     const response = await axios.get(apiUrl, config);
-  //     setMaterialesData(response.data.data);
-  //   } catch (error) {
-  //     console.error("Error al obtener datos adicionales:", error);
-  //   }
-  // };
-
-  const handleFileChange = (event) => {
-    const archivoPDF = event.target.files[0]; // Obtener el primer archivo seleccionado
-    setFormData((prevFormData) => ({
-      ...prevFormData,
-      archivoPDF: archivoPDF,
-    }));
-    console.log("Archivo seleccionado:", archivoPDF);
-    console.log("FormData actualizado:", formData);
+      // Actualizar selectedItems con todos los objetos de Detail
+      setSelectedItems(newSelectedItems);
+      setFormData({
+        ...formData,
+        Comments: detalesRequisicion.Comments,
+        NumAtCard: detalesRequisicion.NumAtCard,
+        fecha: detalesRequisicion.CreateDate,
+      });
+      setFormData(response.data.data);
+    } catch (error) {
+      console.error("Error al obtener datos de la API:", error);
+    }
   };
+
+  useEffect(() => {
+    const today = moment().format("YYYY-MM-DD");
+    setCurrentDate(today);
+   
+  }, [datosRequisitor.PurchaseRequestId, token,user.UserId]);
+  useEffect(() => {
+    // Mostrar los archivos pre-cargados cuando la página se carga
+
+    getDatosFiles();
+    getDatosCompra();
+  }, []);
+  const fetchData = async () => {
+    try {
+      const apiUrl = `${routes.BASE_URL_SERVER}/GetCompaniesForUser/${user.UserId}`;
+      const config = {
+        headers: {
+          "x-access-token": token,
+        },
+      };
+      const response = await axios.get(apiUrl, config);
+      // setCompanies(response.data.data);
+
+      setFormData((prevState) => ({
+        ...prevState,
+        companies: response.data.data[0],
+      }));
+      const apiUrlGetItemsByCompany = `${routes.BASE_URL_SERVER}/GetItemsByCompany/${response.data.data[0].Id}`;
+      const resp = await axios.get(apiUrlGetItemsByCompany, config);
+
+      setMaterialesData(resp.data.data);
+    } catch (error) {
+      console.error("Error al obtener datos de la API:", error);
+    }
+  };
+  useEffect(() => {
+    fetchData();
+ 
+  
+  }, [selectedItems]);
+  useEffect(() => {}, [getDatosCompra,getDatosFiles]);
   const handleSubmit = async (event) => {
     event.preventDefault();
 
@@ -229,30 +239,17 @@ function EditarRequisicion() {
       PurchaseOrderRequestDetails,
     };
   };
-  const sendFormData = async (data, pdf) => {
-    const formData = new FormData();
-
-    // Agregar los datos al FormData
-    formData.append("data", JSON.stringify(data));
-
-    // Agregar el documento al FormData
-    formData.append("FilesToUpload", pdf);
-
-    // Configurar los encabezados
+  const sendFormData = async (data) => {
     const config = {
       headers: {
         "x-access-token": token,
         "Content-Type": "multipart/form-data",
       },
     };
-    console.log("Data:", data);
-    console.log("FilesToUpload:", pdf);
 
-    console.log("Data:", data);
-    console.log("FilesToUpload:", pdf);
     const response = await axios.put(
-      `${routes.BASE_URL_SERVER}/api/v1/UpdatePurchaseRequest`,
-      formData,
+      `${routes.BASE_URL_SERVER}/UpdatePurchaseRequest`,
+      data,
       config
     );
     return response.data;
@@ -320,15 +317,107 @@ function EditarRequisicion() {
   const handleDelete = (rowData) => {
     const updatedItems = selectedItems.filter((item) => item !== rowData);
     setSelectedItems(updatedItems);
-    console.log("selectedItems:", selectedItems);
-    console.log("Elemento eliminado:", rowData);
   };
+  const handleInputChange = (e) => {
+    setNotasAgregar(e.target.value);
+  };
+  const handleAddNote = async () => {
+    console.clear();
+    console.log("notas:", notasAgregar);
+    const data = {
+      PurchaseRequestId: datosRequisitor.PurchaseRequestId,
+      UserId: user.UserId,
+      Notes: notasAgregar,
+    };
+    console.log("data:", data);
+    try {
+      const apiUrl = `${routes.BASE_URL_SERVER}/CreatePurchaseRequestNote`;
+      const config = {
+        headers: {
+          "x-access-token": token,
+        },
+      };
+      const response = await axios.post(apiUrl, data, config);
+      getDatosCompra();
+
+      console.log("Response:", response.data.data);
+      toast.show({
+        severity: "success",
+        summary: "Notificación",
+        detail: "Nota agregada con exito",
+        life: 2000,
+      });
+    } catch (error) {}
+    console.log("error:");
+    //  setCompanies(response.data.data);
+  };
+
 
   const handleEnviarNavigate = () => {
     setDialogVisibleNuevaCompra(false); // Cierra el modal
     navigate("/Requisitor"); // Navega a la ruta "/Requisitor"
   };
+  const handleFileSelect = (event) => {
+    const archivoPDF = event.files[0]; // Obtener el primer archivo seleccionado
 
+    toast.show({
+      severity: "success",
+      summary: "Notificación",
+      detail: "archivo agregado con exito",
+      life: 2000,
+    });
+    console.log("Archivo seleccionado:", archivoPDF);
+    try {
+      const requestData = {
+        PurchaseRequestId: datosRequisitor.PurchaseRequestId,
+        UserId: user.UserId,
+      };
+      const response = sendFormDataFiles(requestData, archivoPDF);
+    } catch (error) {}
+  };
+  const sendFormDataFiles = async (data, pdf) => {
+    const formData = new FormData();
+
+    formData.append("data", JSON.stringify(data));
+
+    formData.append("FilesToUpload", pdf);
+
+    // Configurar los encabezados
+    const config = {
+      headers: {
+        "x-access-token": token,
+        "Content-Type": "multipart/form-data",
+      },
+    };
+
+    const response = await axios.post(
+      `${routes.BASE_URL_SERVER}/AddAttachmentsToPurchaseRequest`,
+      formData,
+      config
+    );
+    getDatosFiles();
+    return response.data;
+  };
+  const eliminarFiles = (rowData) => {
+    axios
+      .delete(
+        `${routes.BASE_URL_SERVER}/DeleteAttachmentsFromPurchaseRequest/${rowData.AttachId}/${rowData.LineId}`
+      )
+      .then((response) => {
+        getDatosFiles();
+        toast.show({
+          severity: "warn",
+          summary: "Notificación",
+          detail: "Archivo eliminado con exito",
+          life: 3000,
+        });
+        console.log("Response:", response.data.data);
+      })
+      .catch((error) => {
+        console.error("Error al cancelar la solicitud de compra:", error);
+        // Manejar el error, como mostrar un mensaje al usuario
+      });
+  };
   return (
     <Layout>
       <div class="body-ordenCompra">
@@ -352,14 +441,16 @@ function EditarRequisicion() {
                 </div>
                 <div className="p-col-field">
                   <div className="p-field">
-                    <span className="field-name">Angel Star </span>
+                    <span className="field-name">
+                      {user.FirstName + " " + user.LastName}
+                    </span>
                   </div>
 
                   <div className="p-field">
-                    <span className="field-name">Red company, Inc. </span>
+                    <span className="field-name">{user.CompanyName} </span>
                   </div>
 
-                  <div className="p-field">28/02/2023</div>
+                  <div className="p-field">{currentDate}</div>
                 </div>
                 <div className="p-col-field-right">
                   <div className="row">
@@ -497,27 +588,27 @@ function EditarRequisicion() {
           <Card title="Notas">
             <div className="p-inputgroup">
               <InputText
-                // value={notasAgregar}
-                // onChange={handleInputChange}
+                value={notasAgregar}
+                onChange={handleInputChange}
                 placeholder="Escribe un comentario"
               />
-              <Button label="Enviar" />
+              <Button label="Enviar" onClick={handleAddNote} />
             </div>
             <div>
               <div className="note-list">
-                {/* {notas.map((nota, index) => (
-                <div key={index}>
-                  <Divider align="center">
-                    {`Nota ${index + 1}: ${nota.FirstName} ${nota.LastName}`}
-                  </Divider>
-                  <p>Código: {nota.Code}</p>
-                  <p>
-                    Fecha de Creación:{" "}
-                    {new Date(nota.CreateDate).toLocaleDateString()}
-                  </p>
-                  <p>Notas: {nota.Notes}</p>
-                </div>
-              ))} */}
+                {notas.map((nota, index) => (
+                  <div key={index}>
+                    <Divider align="center">
+                      {`Nota ${index + 1}: ${nota.FirstName} ${nota.LastName}`}
+                    </Divider>
+                    <p>Código: {nota.Code}</p>
+                    <p>
+                      Fecha de Creación:{" "}
+                      {new Date(nota.CreateDate).toLocaleDateString()}
+                    </p>
+                    <p>Notas: {nota.Notes}</p>
+                  </div>
+                ))}
               </div>
             </div>
           </Card>
@@ -531,7 +622,7 @@ function EditarRequisicion() {
                   multiple
                   accept="image/*,.pdf"
                   maxFileSize={1000000}
-                  // onSelect={handleFileSelect}
+                  onSelect={handleFileSelect}
                   auto
                   chooseLabel="Agregar"
                   className="upload-field-detail"
@@ -539,7 +630,7 @@ function EditarRequisicion() {
               </div>
               <div className="row">
                 <div className="p-col-field">
-                  <DataTable>
+                  <DataTable value={files}>
                     <Column field="FileName" header="Nombre" />
                     <Column
                       header="Acción"
@@ -557,7 +648,7 @@ function EditarRequisicion() {
                       header=""
                       body={(rowData) => (
                         <Button
-                          // onClick={() => eliminarFiles(rowData)}
+                          onClick={() => eliminarFiles(rowData)}
                           icon="pi pi-times"
                           rounded
                           severity="danger"

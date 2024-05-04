@@ -84,7 +84,7 @@ function NuevaCompra() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const apiUrl = `${routes.BASE_URL_SERVER}/api/v1/GetCompaniesForUser/${user.UserId}`;
+        const apiUrl = `${routes.BASE_URL_SERVER}/GetCompaniesForUser/${user.UserId}`;
         const config = {
           headers: {
             "x-access-token": token,
@@ -97,7 +97,7 @@ function NuevaCompra() {
           ...prevState,
           companies: response.data.data[0],
         }));
-        const apiUrlGetItemsByCompany = `${routes.BASE_URL_SERVER}/api/v1/GetItemsByCompany/${response.data.data[0].Id}`;
+        const apiUrlGetItemsByCompany = `${routes.BASE_URL_SERVER}/GetItemsByCompany/${response.data.data[0].Id}`;
         const resp = await axios.get(apiUrlGetItemsByCompany, config);
         setMaterialesData(resp.data.data);
       } catch (error) {
@@ -113,7 +113,7 @@ function NuevaCompra() {
     setFormData({ ...formData, almacen: selectedAlmacen });
 
     try {
-      const apiUrl = `${routes.BASE_URL_SERVER}/api/v1/GetItemsByCompany/${selectedAlmacen.Id}`;
+      const apiUrl = `${routes.BASE_URL_SERVER}/GetItemsByCompany/${selectedAlmacen.Id}`;
       const config = {
         headers: {
           "x-access-token": token,
@@ -126,58 +126,18 @@ function NuevaCompra() {
     }
   };
 
-  //   event.preventDefault();
-  //   if (validateForm()) {
-  //     try {
 
-  //       const momentDate = moment(formData.fecha);
-  //       // Formatear la nueva fecha
-  //       const formattedDate = momentDate.format("YYYY-MM-DD");
-  //       const PurchaseOrderRequestDetails = selectedItems.map((obj) => {
-  //         return {
-  //           Description: obj.Description,
-  //           BuyUnitMsr: obj.BuyUnitMsr,
-  //           Quantity: obj.Quantity,
-  //           TaxCodeId: obj.TaxCode,
-  //           ItemId: obj.Id,
-  //           PurchaseRequestId: 0,
-  //         };
-  //       });
-  //       console.log(PurchaseOrderRequestDetails);
-  //       const data = {
-  //         CreateDate: formattedDate,
-  //         DocDate: formattedDate,
-  //         UserId: user.UserId,
-  //         NumAtCard: formData.NumAtCard,
-  //         Comments: formData.Comments,
-  //         CompanyId: formData.companies.Id,
-  //         PurchaseOrderRequestDetails: PurchaseOrderRequestDetails,
-  //       };
-
-  //       // const response = await axios.post("http://endpoint", data);
-
-  //       // console.log("Respuesta del servidor:", response.data);
-  //     } catch (error) {
-  //       console.error("Error al enviar el formulario:", error);
-  //     }
-  //   } else {
-  //     // console.log("Datos inválidos, no se puede enviar el formulario.");
-  //   }
-  // };
-  const handleFileChange = (event) => {
-    const archivoPDF = event.target.files[0]; // Obtener el primer archivo seleccionado
-    setFormData((prevFormData) => ({
-      ...prevFormData,
-      archivoPDF: archivoPDF,
-    }));
-    console.log("Archivo seleccionado:", archivoPDF);
-    console.log("FormData actualizado:", formData);
-  };
   const handleSubmit = async (event) => {
     event.preventDefault();
-
+    console.log(
+      " datarchivosSeleccionadosarchivosSeleccionadosarchivosSeleccionadosa:",
+      archivosSeleccionados
+    );
+    console.log(formData);
     if (validateForm()) {
       try {
+        console.clear();
+
         const requestData = buildRequestData();
         const response = await sendFormData(requestData, archivosSeleccionados);
         handleSuccessResponse(response);
@@ -185,9 +145,6 @@ function NuevaCompra() {
         handleErrorResponse(error);
       }
     } else {
-      console.log("El formulario contiene errores y no puede ser enviado.");
-      console.log("*******************formData***************************");
-      console.log(formData);
       toast.show({
         severity: "warn",
         summary: "Notificación",
@@ -221,18 +178,11 @@ function NuevaCompra() {
       PurchaseOrderRequestDetails,
     };
   };
-  const sendFormData = async (data, pdfFiles) => {
+  const sendFormData = async (data, pdf) => {
     const formData = new FormData();
 
-    // Agregar los datos al FormData
     formData.append("data", JSON.stringify(data));
-    if (Array.isArray(pdfFiles) && pdfFiles.length > 0) {
-      // Agregar los archivos al FormData
-      pdfFiles.forEach((archivo, index) => {
-        // Cambiado pdf a archivo
-        formData.append(`FilesToUpload[${index}]`, archivo); // Cambiado pdf a archivo
-      });
-    }
+    formData.append("FilesToUpload", pdf);
 
     const config = {
       headers: {
@@ -250,7 +200,7 @@ function NuevaCompra() {
     }
 
     const response = await axios.post(
-      `${routes.BASE_URL_SERVER}/api/v1/CreatePurchaseRequest`,
+      `${routes.BASE_URL_SERVER}/CreatePurchaseRequest`,
       formData,
       config
     );
@@ -336,26 +286,11 @@ function NuevaCompra() {
   const handleFileSelect = (event) => {
     const archivoPDF = event.files[0]; // Obtener el primer archivo seleccionado
     console.log("Verificar que estemos mandando varios pdf*********");
-    setArchivosSeleccionados([...archivosSeleccionados, archivoPDF]);
-    console.log("Archivo seleccionado:", archivosSeleccionados);
-    // toast.current.show({git
-    //   severity: "info",
-    //   summary: "Success",
-
-    //   detail: "File Uploaded",
-    // });
+    setArchivosSeleccionados(archivoPDF);
     console.log("Archivo seleccionado:", archivoPDF);
-    // try {
-    //   const requestData = {
-    //     PurchaseRequestId: datosRequisitor.PurchaseRequestId,
-    //     UserId: user.UserId,
-    //   };
-    //   const response = sendFormData(requestData, archivoPDF);
-    //   handleSuccessResponse(response);
-    // } catch (error) {
-    //   handleErrorResponse(error);
-    // }
   };
+
+
   return (
     <Layout>
       <Card className="card-header">
@@ -417,30 +352,13 @@ function NuevaCompra() {
               <div className="p-field field-upload-container">
                 <FileUpload
                   name="demo[]"
-                  showButtons={false}
-                  auto="true"
                   onSelect={handleFileSelect}
-                  multiple
-                  accept="image/*"
+                  mode="basic"
+                  accept="image/*,.pdf"
                   maxFileSize={1000000}
-                  chooseLabel={
-                    <i className="pi pi-upload" style={{ fontSize: "24px" }} />
-                  }
-                  emptyTemplate={<p className="m-0">Coloque sus archivos.</p>}
                 />
 
-                {/* <FileUpload
-                      mode="basic"
-                      name="demo[]"
-                      multiple
-                      accept="image/*,.pdf"
-                      maxFileSize={1000000}
-                      onSelect={handleFileSelect}
-                      auto
-                      chooseLabel="Agregar"
-                    />
-                    <label htmlFor="proveedor">Archivo PDF </label>
-                    <input type="file" onChange={handleFileChange} /> */}
+             
               </div>
             </div>
 

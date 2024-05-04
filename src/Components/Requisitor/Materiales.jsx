@@ -21,7 +21,7 @@ function MaterialDialog({ visible, material, onClose, onSave }) {
         setUpdatedMaterial(material);
 
         if (material.CompanyId) {
-          const apiUrl = `${routes.BASE_URL_SERVER}/api/v1/GetTaxes/${material.CompanyId}`;
+          const apiUrl = `${routes.BASE_URL_SERVER}/GetTaxes/${material.CompanyId}`;
           const config = { headers: { "x-access-token": token } };
           const response = await axios.get(apiUrl, config);
           setIvaOptions(response.data.data);

@@ -31,7 +31,7 @@ export const LoginPage = () => {
   
     e.preventDefault();
     try {
-      const response = await axios.post(`${routes.BASE_URL_SERVER}/api/v1/SignIn`, {
+      const response = await axios.post(`${routes.BASE_URL_SERVER}/SignIn`, {
         UserName: name,
         Password: password,
         SecretKey: "O6XcIjRgEOvvRyO0QFHzf5jllsuzCiLEZj9YftaOwg",

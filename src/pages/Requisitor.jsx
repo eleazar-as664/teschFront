@@ -38,7 +38,7 @@ function Requisitor() {
     console.log(token)
     
     try {
-      const apiUrl = `${routes.BASE_URL_SERVER}/api/v1/SAPSyncSendSinglePurchaseRequest/${purchaseRequestId}`;
+      const apiUrl = `${routes.BASE_URL_SERVER}/SAPSyncSendSinglePurchaseRequest/${purchaseRequestId}`;
       const config = {
         headers: {
           "x-access-token": token,
@@ -68,7 +68,7 @@ function Requisitor() {
 
     axios
       .delete(
-        `${routes.BASE_URL_SERVER}/api/v1/DeletePurchaseRequest/${purchaseRequestId}`
+        `${routes.BASE_URL_SERVER}/DeletePurchaseRequest/${purchaseRequestId}`
       )
       .then((response) => {
         console.log("Solicitud de compra cancelada con éxito");
@@ -95,7 +95,7 @@ function Requisitor() {
       console.clear();
       console.log(user.UserId);
       const IdUsuario = user.UserId;
-      const apiUrl = `${routes.BASE_URL_SERVER}/api/v1/GetPurchaseRequestsHeadersByUser/${IdUsuario}`;
+      const apiUrl = `${routes.BASE_URL_SERVER}/GetPurchaseRequestsHeadersByUser/${IdUsuario}`;
       const config = {
         headers: {
           "x-access-token": token,

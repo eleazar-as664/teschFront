@@ -27,7 +27,7 @@ function DetalleCompra() {
     try {
       const idSolicitud = datosRequisitor.PurchaseRequestId;
 
-      const apiUrl = `${routes.BASE_URL_SERVER}/api/v1/GetPurchaseRequestFiles/${idSolicitud}`;
+      const apiUrl = `${routes.BASE_URL_SERVER}/GetPurchaseRequestFiles/${idSolicitud}`;
       const config = {
         headers: {
           "x-access-token": token,
@@ -46,7 +46,7 @@ function DetalleCompra() {
     try {
       const idSolicitud = datosRequisitor.PurchaseRequestId;
 
-      const apiUrl = `${routes.BASE_URL_SERVER}/api/v1/GetSinglePurchaseRequest/${idSolicitud}`;
+      const apiUrl = `${routes.BASE_URL_SERVER}/GetSinglePurchaseRequest/${idSolicitud}`;
       const config = {
         headers: {
           "x-access-token": token,
@@ -103,7 +103,7 @@ function DetalleCompra() {
     };
     console.log("data:", data);
     try {
-      const apiUrl = `${routes.BASE_URL_SERVER}/api/v1/CreatePurchaseRequestNote`;
+      const apiUrl = `${routes.BASE_URL_SERVER}/CreatePurchaseRequestNote`;
       const config = {
         headers: {
           "x-access-token": token,
@@ -126,7 +126,7 @@ function DetalleCompra() {
   const eliminarFiles = (rowData) => {
     axios
       .delete(
-        `${routes.BASE_URL_SERVER}/api/v1/DeleteAttachmentsFromPurchaseRequest/${rowData.AttachId}/${rowData.LineId}`
+        `${routes.BASE_URL_SERVER}/DeleteAttachmentsFromPurchaseRequest/${rowData.AttachId}/${rowData.LineId}`
       )
       .then((response) => {
         getDatosFiles();
@@ -181,7 +181,7 @@ function DetalleCompra() {
     };
 
     const response = await axios.post(
-      `${routes.BASE_URL_SERVER}/api/v1/AddAttachmentsToPurchaseRequest`,
+      `${routes.BASE_URL_SERVER}/AddAttachmentsToPurchaseRequest`,
       formData,
       config
     );
