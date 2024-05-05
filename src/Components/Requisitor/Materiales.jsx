@@ -35,10 +35,12 @@ function MaterialDialog({ visible, material, onClose, onSave }) {
   }, [material]); // Dependencia de material
 
   const handleInputChange = (e) => {
+    console.clear()
+    console.log("handleInputChange", e.target);
     const { name, value } = e.target;
     setUpdatedMaterial((prevState) => ({
       ...prevState,
-      [name]: value,
+      [name]: value || "",
     }));
   };
 
@@ -62,14 +64,17 @@ function MaterialDialog({ visible, material, onClose, onSave }) {
 
   const handleCantidadChange = (event) => {
     const newValue = event.value;
+    console.clear();
     console.log("newValue", newValue);
-    if (!isNaN(newValue) && newValue !== null) {
-      // Verifica si el nuevo valor no es NaN ni null
+
+    if (newValue != null && newValue !== "" && !isNaN(newValue)) {
+      // Verifica si el nuevo valor no es null ni NaN
+      console.log("Verifica si el nuevo valor no es null ni NaN", newValue);
       setUpdatedMaterial((prevState) => ({
         ...prevState,
         Quantity: newValue,
       }));
-    }
+    } 
   };
 
   const validateForm = () => {
@@ -158,6 +163,8 @@ function MaterialDialog({ visible, material, onClose, onSave }) {
               max={10000}
               className={validationErrors.Quantity ? "p-invalid" : ""}
               style={{ display: "contents" }}
+              autoComplete="off"
+              autoFocus
             />
             {validationErrors.Quantity && (
               <small className="p-error">{validationErrors.Quantity}</small>
@@ -168,7 +175,7 @@ function MaterialDialog({ visible, material, onClose, onSave }) {
             <InputText
               id="unidad"
               name="BuyUnitMsr"
-              value={updatedMaterial.BuyUnitMsr || ""}
+              value={updatedMaterial?.BuyUnitMsr || ""}
               onChange={handleInputChange}
             />
             {validationErrors.BuyUnitMsr && (

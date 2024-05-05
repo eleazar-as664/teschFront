@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 
 import TextInput from "../../Components/Requisitor/TextInput";
 import DatesInput from "../../Components/Requisitor/DatesInput";
@@ -158,8 +158,7 @@ function EditarRequisicion() {
   useEffect(() => {
     const today = moment().format("YYYY-MM-DD");
     setCurrentDate(today);
-   
-  }, [datosRequisitor.PurchaseRequestId, token,user.UserId]);
+  }, [datosRequisitor.PurchaseRequestId, token, user.UserId]);
   useEffect(() => {
     // Mostrar los archivos pre-cargados cuando la página se carga
 
@@ -191,10 +190,8 @@ function EditarRequisicion() {
   };
   useEffect(() => {
     fetchData();
- 
-  
   }, [selectedItems]);
-  useEffect(() => {}, [getDatosCompra,getDatosFiles]);
+  useEffect(() => {}, [getDatosCompra, getDatosFiles, fetchData]);
   const handleSubmit = async (event) => {
     event.preventDefault();
 
@@ -220,15 +217,15 @@ function EditarRequisicion() {
     const momentDate = moment(formData.fecha);
     const formattedDate = momentDate.format("YYYY-MM-DD");
     const PurchaseOrderRequestDetails = selectedItems.map((obj) => ({
-      Description: obj.Description,
+      Description: "Lampara de emergencia", // obj.Description,
       BuyUnitMsr: obj.BuyUnitMsr,
       Quantity: obj.Quantity,
-      TaxCodeId: obj.TaxCode,
-      ItemId: obj.Id,
-      PurchaseRequestId: 0,
+      TaxCodeId: 13, //obj.TaxCode,
+      ItemId: 34, // obj.Id,
     }));
 
     return {
+      PurchaseRequestId: datosRequisitor.PurchaseRequestId,
       CreateDate: formattedDate,
       DocDate: formattedDate,
       DocDueDate: formattedDate,
@@ -240,10 +237,11 @@ function EditarRequisicion() {
     };
   };
   const sendFormData = async (data) => {
+    console.clear();
+    console.log("Data:", data);
     const config = {
       headers: {
         "x-access-token": token,
-        "Content-Type": "multipart/form-data",
       },
     };
 
@@ -324,35 +322,43 @@ function EditarRequisicion() {
   const handleAddNote = async () => {
     console.clear();
     console.log("notas:", notasAgregar);
-    const data = {
-      PurchaseRequestId: datosRequisitor.PurchaseRequestId,
-      UserId: user.UserId,
-      Notes: notasAgregar,
-    };
-    console.log("data:", data);
-    try {
-      const apiUrl = `${routes.BASE_URL_SERVER}/CreatePurchaseRequestNote`;
-      const config = {
-        headers: {
-          "x-access-token": token,
-        },
+    if (notasAgregar) {
+      const data = {
+        PurchaseRequestId: datosRequisitor.PurchaseRequestId,
+        UserId: user.UserId,
+        Notes: notasAgregar,
       };
-      const response = await axios.post(apiUrl, data, config);
-      getDatosCompra();
-
-      console.log("Response:", response.data.data);
-      toast.show({
-        severity: "success",
-        summary: "Notificación",
-        detail: "Nota agregada con exito",
-        life: 2000,
-      });
-    } catch (error) {}
-    console.log("error:");
+      console.log("data:", data);
+      try {
+        const apiUrl = `${routes.BASE_URL_SERVER}/CreatePurchaseRequestNote`;
+        const config = {
+          headers: {
+            "x-access-token": token,
+          },
+        };
+        const response = await axios.post(apiUrl, data, config);
+        getDatosCompra();
+  
+        console.log("Response:", response.data.data);
+        toast.show({
+          severity: "success",
+          summary: "Notificación",
+          detail: "Nota agregada con exito",
+          life: 2000,
+        });
+      } catch (error) {}
+      console.log("error:");
     //  setCompanies(response.data.data);
+  }else{
+    toast.show({
+      severity: "warn",
+      summary: "Notificación",
+      detail: "Debe agregar una nota",
+      life: 2000,
+    });
+  }
+
   };
-
-
   const handleEnviarNavigate = () => {
     setDialogVisibleNuevaCompra(false); // Cierra el modal
     navigate("/Requisitor"); // Navega a la ruta "/Requisitor"
@@ -373,6 +379,7 @@ function EditarRequisicion() {
         UserId: user.UserId,
       };
       const response = sendFormDataFiles(requestData, archivoPDF);
+      console.log("Response:", response.data);
     } catch (error) {}
   };
   const sendFormDataFiles = async (data, pdf) => {

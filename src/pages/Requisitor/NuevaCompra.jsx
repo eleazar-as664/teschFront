@@ -126,7 +126,6 @@ function NuevaCompra() {
     }
   };
 
-
   const handleSubmit = async (event) => {
     event.preventDefault();
     console.log(
@@ -180,10 +179,14 @@ function NuevaCompra() {
   };
   const sendFormData = async (data, pdf) => {
     const formData = new FormData();
-
+    console.clear();
+    console.log(pdf);
     formData.append("data", JSON.stringify(data));
-    formData.append("FilesToUpload", pdf);
+    // formData.append("FilesToUpload", pdf);
 
+    pdf.forEach((file, index) => {
+      formData.append(`FilesToUpload`, file);
+    });
     const config = {
       headers: {
         "x-access-token": token,
@@ -225,10 +228,10 @@ function NuevaCompra() {
       formIsValid = false;
     }
 
-    if (!formData.NumAtCard.trim()) {
-      errors.NumAtCard = "El número de referencia es obligatorio.";
-      formIsValid = false;
-    }
+    // if (!formData.NumAtCard.trim()) {
+    //   errors.NumAtCard = "El número de referencia es obligatorio.";
+    //   formIsValid = false;
+    // }
 
     if (!formData.companies) {
       errors.companies = "Seleccione una compañía.";
@@ -284,13 +287,16 @@ function NuevaCompra() {
   };
 
   const handleFileSelect = (event) => {
-    const archivoPDF = event.files[0]; // Obtener el primer archivo seleccionado
-    console.log("Verificar que estemos mandando varios pdf*********");
-    setArchivosSeleccionados(archivoPDF);
-    console.log("Archivo seleccionado:", archivoPDF);
+    const nuevosArchivosPDF = Array.from(event.files);
+    setArchivosSeleccionados([...archivosSeleccionados, ...nuevosArchivosPDF]);
   };
-
-
+  const eliminarFiles = (rowData) => {
+    console.log(rowData);
+    const updatedItems = archivosSeleccionados.filter(
+      (item) => item !== rowData
+    );
+    setArchivosSeleccionados(updatedItems);
+  };
   return (
     <Layout>
       <Card className="card-header">
@@ -347,18 +353,6 @@ function NuevaCompra() {
                   rows={3}
                   cols={10}
                 />
-              </div>
-
-              <div className="p-field field-upload-container">
-                <FileUpload
-                  name="demo[]"
-                  onSelect={handleFileSelect}
-                  mode="basic"
-                  accept="image/*,.pdf"
-                  maxFileSize={1000000}
-                />
-
-             
               </div>
             </div>
 
@@ -450,6 +444,55 @@ function NuevaCompra() {
               )}
             />
           </DataTable>
+        </div>
+      </Card>
+
+      <Card title="Adjuntos" className="adjuntosaa">
+        <div className="p-field-group">
+          <div className="row align-right">
+            <FileUpload
+              mode="basic"
+              name="demo[]"
+              multiple
+              accept="image/*,.pdf"
+              maxFileSize={1000000}
+              onSelect={handleFileSelect}
+              auto
+              chooseLabel="Agregar"
+              className="upload-field-detail"
+            />
+          </div>
+          <div className="row">
+            <div className="p-col-field">
+              <DataTable value={archivosSeleccionados}>
+                <Column field="name" header="Nombre" />
+                <Column
+                  header="Acción"
+                  body={(rowData) => (
+                    <a
+                      href={rowData.objectURL}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      Ver
+                    </a>
+                  )}
+                />
+                <Column
+                  header=""
+                  body={(rowData) => (
+                    <Button
+                      onClick={() => eliminarFiles(rowData)}
+                      icon="pi pi-times"
+                      rounded
+                      severity="danger"
+                      aria-label="Cancel"
+                    />
+                  )}
+                ></Column>
+              </DataTable>
+            </div>
+          </div>
         </div>
       </Card>
     </Layout>

@@ -96,32 +96,43 @@ function DetalleCompra() {
   const handleAddNote = async () => {
     console.clear();
     console.log("notas:", notasAgregar);
-    const data = {
-      PurchaseRequestId: datosRequisitor.PurchaseRequestId,
-      UserId: user.UserId,
-      Notes: notasAgregar,
-    };
-    console.log("data:", data);
-    try {
-      const apiUrl = `${routes.BASE_URL_SERVER}/CreatePurchaseRequestNote`;
-      const config = {
-        headers: {
-          "x-access-token": token,
-        },
+    if (notasAgregar) {
+      const data = {
+        PurchaseRequestId: datosRequisitor.PurchaseRequestId,
+        UserId: user.UserId,
+        Notes: notasAgregar,
       };
-      const response = await axios.post(apiUrl, data, config);
-      getDatosCompra();
+      console.log("data:", data);
+      try {
+        const apiUrl = `${routes.BASE_URL_SERVER}/CreatePurchaseRequestNote`;
+        const config = {
+          headers: {
+            "x-access-token": token,
+          },
+        };
+        const response = await axios.post(apiUrl, data, config);
+        getDatosCompra();
+  
+        console.log("Response:", response.data.data);
+        toast.show({
+          severity: "success",
+          summary: "Notificación",
+          detail: "Nota agregada con exito",
+          life: 2000,
+        });
+      } catch (error) {}
+    }else{      
 
-      console.log("Response:", response.data.data);
       toast.show({
-        severity: "success",
+        severity: "warn",
         summary: "Notificación",
-        detail: "Nota agregada con exito",
+        detail: "Debe agregar una nota",
         life: 2000,
       });
-    } catch (error) {}
-    console.log("error:");
-    // setCompanies(response.data.data);
+    }
+   
+  
+ 
   };
   const eliminarFiles = (rowData) => {
     axios
