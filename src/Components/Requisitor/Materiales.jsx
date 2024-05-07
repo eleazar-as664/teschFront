@@ -100,9 +100,9 @@ function MaterialDialog({ visible, material, onClose, onSave }) {
     ) {
       errors.Quantity = "La cantidad debe ser un número.";
     }
-    if (!selectedIVA || !selectedIVA.TaxCode) {
-      errors.TaxCodeId = "Seleccione un valor de IVA.";
-    }
+    // if (!selectedIVA || !selectedIVA.TaxCode) {
+    //   errors.TaxCodeId = "Seleccione un valor de IVA.";
+    // }
 
     // Verificar si hay errores
     const formIsValid = Object.keys(errors).length === 0;
@@ -182,7 +182,7 @@ function MaterialDialog({ visible, material, onClose, onSave }) {
               <small className="p-error">{validationErrors.BuyUnitMsr}</small>
             )}
           </div>
-          <div className="p-field">
+          {/* <div className="p-field">
             <label htmlFor="iva">IVA</label>
 
             <Dropdown
@@ -199,7 +199,7 @@ function MaterialDialog({ visible, material, onClose, onSave }) {
             {validationErrors.TaxCodeId && (
               <small className="p-error">{validationErrors.TaxCodeId}</small>
             )}
-          </div>
+          </div> */}
         </div>
       </div>
     </Dialog>

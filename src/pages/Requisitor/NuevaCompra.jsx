@@ -251,7 +251,7 @@ function NuevaCompra() {
   const handleEditarMaterial = (materialModificado) => {
     // Encontrar el índice del material modificado en la lista selectedItems
     console.clear();
-    console.log("materialModificadssssssssssso", materialModificado);
+
     const index = selectedItems.findIndex(
       (item) => item.idTeficador === materialModificado.idTeficador
     );
@@ -266,16 +266,13 @@ function NuevaCompra() {
     }
 
     console.log("Material modificado:", materialModificado);
-    console.log("selectedItems:", selectedItems);
   };
 
-  useEffect(() => {
-    console.log("selectedItems:", selectedItems);
-  }, [selectedItems]);
+  useEffect(() => {}, [selectedItems]);
   const handleDelete = (rowData) => {
     const updatedItems = selectedItems.filter((item) => item !== rowData);
     setSelectedItems(updatedItems);
-    console.log("selectedItems:", selectedItems);
+
     console.log("Elemento eliminado:", rowData);
   };
 
@@ -424,7 +421,7 @@ function NuevaCompra() {
             <Column field="Description" header="Description" />
             <Column field="BuyUnitMsr" header="Unidad"></Column>
             <Column field="Quantity" header="Cantidad" />
-            <Column field="IVAName" header="Impuesto" />
+            {/* <Column field="IVAName" header="Impuesto" /> */}
             <Column
               field=""
               body={(rowData) => (

@@ -217,11 +217,11 @@ function EditarRequisicion() {
     const momentDate = moment(formData.fecha);
     const formattedDate = momentDate.format("YYYY-MM-DD");
     const PurchaseOrderRequestDetails = selectedItems.map((obj) => ({
-      Description: "Lampara de emergencia", // obj.Description,
+      Description:   obj.Description,
       BuyUnitMsr: obj.BuyUnitMsr,
       Quantity: obj.Quantity,
-      TaxCodeId: 13, //obj.TaxCode,
-      ItemId: 34, // obj.Id,
+      TaxCodeId: null, //obj.TaxCode,
+      ItemId:  obj.Id,
     }));
 
     return {
@@ -568,7 +568,7 @@ function EditarRequisicion() {
               <Column field="Description" header="Description" />
               <Column field="BuyUnitMsr" header="Unidad"></Column>
               <Column field="Quantity" header="Cantidad" />
-              <Column field="IVAName" header="Impuesto" />
+              {/* <Column field="IVAName" header="Impuesto" /> */}
               <Column
                 field=""
                 header=""

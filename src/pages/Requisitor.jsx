@@ -1,13 +1,19 @@
 import React, { useRef, useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { useMountEffect } from "primereact/hooks";
+import { Dropdown } from "primereact/dropdown";
 import { DataTable } from "primereact/datatable";
+import { FilterMatchMode } from "primereact/api";
 import { Column } from "primereact/column";
 import { Card } from "primereact/card";
 import { Button } from "primereact/button";
 import { useNavigate } from "react-router-dom";
 import { Dialog } from "primereact/dialog";
 import { Layout } from "../Components/Layout/Layout";
+import { InputText } from "primereact/inputtext";
+import { IconField } from "primereact/iconfield";
+import { InputIcon } from "primereact/inputicon";
+import { Tag } from "primereact/tag";
 import { Toast } from "primereact/toast";
 import axios from "axios";
 import routes from "../utils/routes";
@@ -21,12 +27,34 @@ function Requisitor() {
   const [visible, setVisible] = useState(false);
   const [visibleEnviarSAP, setVisibleEnviarSAP] = useState(false);
   const [rowDataToCancel, setRowDataToCancel] = useState(null);
-
   const [rowDataToEnviarSap, setRowDataToEnviarSap] = useState(null);
+  const [globalFilterValue, setGlobalFilterValue] = useState("");
+  const [statuses] = useState(["Abierto", "Cerrada"]);
+  const [filters, setFilters] = useState({
+    global: { value: null, matchMode: FilterMatchMode.CONTAINS },
+    PurchaseRequestId: { value: null, matchMode: FilterMatchMode.STARTS_WITH },
+    Company: { value: null, matchMode: FilterMatchMode.STARTS_WITH },
+    DocDate: { value: null, matchMode: FilterMatchMode.STARTS_WITH },
+    StatusSAP: { value: null, matchMode: FilterMatchMode.EQUALS },
+    NumAtCard: { value: null, matchMode: FilterMatchMode.STARTS_WITH },
+  });
   let toast;
   const navigate = useNavigate();
   const user = JSON.parse(localStorage.getItem("user"));
-  const token = JSON.parse(localStorage.getItem("user")).Token
+  const token = JSON.parse(localStorage.getItem("user")).Token;
+
+  const getSeverity = (status) => {
+    switch (status) {
+      case "Cerrada":
+        return "danger";
+
+      case "Abierto":
+        return "success";
+
+      default:
+        return null;
+    }
+  };
   const cancelarSolicitud = (rowData) => {
     setRowDataToCancel(rowData);
     setVisible(true); // Esto abre el Dialog
@@ -35,8 +63,8 @@ function Requisitor() {
   const handleDialogEnviarSap = async () => {
     const purchaseRequestId = rowDataToEnviarSap.PurchaseRequestId;
     console.log(purchaseRequestId);
-    console.log(token)
-    
+    console.log(token);
+
     try {
       const apiUrl = `${routes.BASE_URL_SERVER}/SAPSyncSendSinglePurchaseRequest/${purchaseRequestId}`;
       const config = {
@@ -44,21 +72,17 @@ function Requisitor() {
           "x-access-token": token,
         },
       };
-      const response = await axios.get(apiUrl, config); 
+      const response = await axios.get(apiUrl, config);
       console.log(response);
       fetchData();
-          toast.show({
-            severity: "success",
-            summary: "Notificación",
-            detail: "Se envio correctamente la solicitud a SAP",
-            life: 2000,
-          });
-    } catch (error) {
+      toast.show({
+        severity: "success",
+        summary: "Notificación",
+        detail: "Se envio correctamente la solicitud a SAP",
+        life: 2000,
+      });
+    } catch (error) {}
 
-      
-    }
-   
-   
     console.log("handleDialogCancel", rowDataToEnviarSap.PurchaseRequestId);
     setRowDataToEnviarSap(null);
     setVisibleEnviarSAP(false); // Esto cierra el Dialog
@@ -161,6 +185,58 @@ function Requisitor() {
     // localStorage.setItem("datosRequisitor", JSON.stringify(rowData));
     // navigate("./Requisitor/EnviarSap");
   };
+
+  const onGlobalFilterChange = (e) => {
+    const value = e.target.value;
+    let _filters = { ...filters };
+
+    _filters["global"].value = value;
+
+    setFilters(_filters);
+    setGlobalFilterValue(value);
+  };
+  const renderHeader = () => {
+    return (
+      <div className="flex justify-content-end">
+        <IconField iconPosition="left">
+          <InputIcon className="pi pi-search" />
+          <InputText
+            value={globalFilterValue}
+            onChange={onGlobalFilterChange}
+            placeholder="Buscar ..."
+          />
+        </IconField>
+      </div>
+    );
+  };
+  const statusItemTemplate = (option) => {
+    return <Tag value={option} severity={getSeverity(option)} />;
+  };
+
+  const statusRowFilterTemplate = (options) => {
+    return (
+      <Dropdown
+        value={options.value}
+        options={statuses}
+        onChange={(e) => options.filterApplyCallback(e.value)}
+        itemTemplate={statusItemTemplate}
+        placeholder="Seleciona un estado"
+        className="p-column-filter"
+        showClear
+        style={{ minWidth: "12rem" }}
+      />
+    );
+  };
+  const statusBodyTemplate = (rowData) => {
+    return (
+      <Tag
+        value={rowData.StatusSAP}
+        severity={getSeverity(rowData.StatusSAP)}
+      />
+    );
+  };
+  const header = renderHeader();
+
   return (
     <Layout>
       <Card className="card-header">
@@ -253,8 +329,27 @@ function Requisitor() {
           scrollHeight="400px"
           stripedRows
           tableStyle={{ minWidth: "50rem" }}
+          filters={filters}
+          filterDisplay="row"
+          globalFilterFields={[
+            "PurchaseRequestId",
+            "Company",
+            "DocDate",
+            "StatusSAP",
+            "NumAtCard",
+          ]}
+          emptyMessage="No hay solicitudes de compra registradas"
+          header={header}
+          paginator 
+          rows={5}
+       
         >
-          <Column sortable field="PurchaseRequestId" header="No." style={{ width: '10%' }}/>
+          <Column
+            sortable
+            field="PurchaseRequestId"
+            header="No."
+            style={{ width: "10%" }}
+          />
           <Column field="Company" header="Empresa/No.SAP" />
           <Column
             header="Enviar"
@@ -268,26 +363,41 @@ function Requisitor() {
           ></Column>
           <Column field="DocDate" header="F.Creación" />
 
-          <Column field="StatusSAP" header="Estatus" />
+          <Column
+            field="StatusSAP"
+            header="Estatus"
+            showFilterMenu={false}
+            filterMenuStyle={{ width: "14rem" }}
+            style={{ minWidth: "12rem" }}
+            body={statusBodyTemplate}
+            filter
+            filterElement={statusRowFilterTemplate}
+          />
           <Column field="NumAtCard" header="Referencia" />
           <Column
             body={(rowData) => (
               <div>
-              <Button
-                onClick={() => cancelarSolicitud(rowData)}
-                // label="Cancelar"
-                // severity="secondary"
-                icon="pi pi-times" rounded severity="danger" aria-label="Cancel"
-              />
-                            <Button
-                onClick={() => redirectToEditar(rowData)}
-                // label="Editar"
-                // severity="success"
-                icon="pi pi-pencil" rounded severity="success" aria-label="Search"
-              />
+                <Button
+                  onClick={() => cancelarSolicitud(rowData)}
+                  // label="Cancelar"
+                  // severity="secondary"
+                  icon="pi pi-times"
+                  rounded
+                  severity="danger"
+                  aria-label="Cancel"
+                />
+                <Button
+                  onClick={() => redirectToEditar(rowData)}
+                  // label="Editar"
+                  // severity="success"
+                  icon="pi pi-pencil"
+                  rounded
+                  severity="success"
+                  aria-label="Search"
+                />
               </div>
             )}
-            style={{ width: '10%' }}
+            style={{ width: "10%" }}
           ></Column>
         </DataTable>
       </Card>
