@@ -18,7 +18,7 @@ import { InputText } from "primereact/inputtext";
 import { FileUpload } from "primereact/fileupload";
 import { Avatar } from "primereact/avatar";
 import { Divider } from "primereact/divider";
-
+import { Calendar } from 'primereact/calendar';
 import moment from "moment";
 import { useNavigate } from "react-router-dom";
 
@@ -119,15 +119,20 @@ function EditarRequisicion() {
       const response = await axios.get(apiUrl, config);
 
       const detalesRequisicion = response.data.data;
+      console.clear();
+
+      console.log("detalesRequisicion:", detalesRequisicion);
 
       // <Column field="ItemCode" header="Codigo" />
+ 
       const newSelectedItems = detalesRequisicion.Detail.map((item, index) => ({
-        id: index, // Puedes usar el índice como un identificador único si no tienes uno en tus datos
+        idTeficador: contadorId + index, // Puedes usar el índice como un identificador único si no tienes uno en tus datos
         ItemCode: item.ItemCode,
         Description: item.Description,
         BuyUnitMsr: item.BuyUnitMsr,
         Quantity: item.Quantity,
         IVAName: item.TaxCode,
+        ItemId: item.ItemId,
       }));
 
       const notas = detalesRequisicion.Notes.map((item, index) => ({
@@ -138,18 +143,23 @@ function EditarRequisicion() {
         UserName: item.UserName,
         LastName: item.LastName,
       }));
-
+      // const materialConId = { ...newSelectedItems, idTeficador: contadorId };
+      setContadorId(contadorId + detalesRequisicion.Detail.length);
       setNotas(notas);
+      console.log("materialConId:", newSelectedItems);
+
 
       // Actualizar selectedItems con todos los objetos de Detail
-      setSelectedItems(newSelectedItems);
+      setSelectedItems( newSelectedItems);
       setFormData({
         ...formData,
         Comments: detalesRequisicion.Comments,
         NumAtCard: detalesRequisicion.NumAtCard,
-        fecha: detalesRequisicion.CreateDate,
+        fecha: moment(detalesRequisicion.DocDueDate).toDate() ,
       });
-      setFormData(response.data.data);
+      // setFormData(response.data.data);
+      console.log("formData:", formData);
+
     } catch (error) {
       console.error("Error al obtener datos de la API:", error);
     }
@@ -217,11 +227,11 @@ function EditarRequisicion() {
     const momentDate = moment(formData.fecha);
     const formattedDate = momentDate.format("YYYY-MM-DD");
     const PurchaseOrderRequestDetails = selectedItems.map((obj) => ({
-      Description:   obj.Description,
+      Description: obj.Description,
       BuyUnitMsr: obj.BuyUnitMsr,
       Quantity: obj.Quantity,
       TaxCodeId: null, //obj.TaxCode,
-      ItemId:  obj.Id,
+      ItemId: obj.ItemId,
     }));
 
     return {
@@ -239,6 +249,8 @@ function EditarRequisicion() {
   const sendFormData = async (data) => {
     console.clear();
     console.log("Data:", data);
+    console.log("formData:", selectedItems);
+    console.log("formDataformData:", formData);
     const config = {
       headers: {
         "x-access-token": token,
@@ -266,15 +278,15 @@ function EditarRequisicion() {
     const errors = {};
     let formIsValid = true;
 
-    if (!formData.fecha) {
-      errors.fecha = "La fecha es obligatoria.";
-      formIsValid = false;
-    }
+    // if (!formData.fecha) {
+    //   errors.fecha = "La fecha es obligatoria.";
+    //   formIsValid = false;
+    // }
 
-    if (!formData.NumAtCard.trim()) {
-      errors.NumAtCard = "El número de referencia es obligatorio.";
-      formIsValid = false;
-    }
+    // if (!formData.NumAtCard.trim()) {
+    //   errors.NumAtCard = "El número de referencia es obligatorio.";
+    //   formIsValid = false;
+    // }
 
     if (!formData.companies) {
       errors.companies = "Seleccione una compañía.";
@@ -286,6 +298,8 @@ function EditarRequisicion() {
   };
 
   const handleGuardarMaterial = (materialModificado) => {
+    console.clear();
+    console.log("materialModificadssssssssssso", materialModificado);
     const materialConId = { ...materialModificado, idTeficador: contadorId };
     setContadorId(contadorId + 1);
     setSelectedItems([...selectedItems, materialConId]);
@@ -338,7 +352,7 @@ function EditarRequisicion() {
         };
         const response = await axios.post(apiUrl, data, config);
         getDatosCompra();
-  
+
         console.log("Response:", response.data.data);
         toast.show({
           severity: "success",
@@ -348,16 +362,15 @@ function EditarRequisicion() {
         });
       } catch (error) {}
       console.log("error:");
-    //  setCompanies(response.data.data);
-  }else{
-    toast.show({
-      severity: "warn",
-      summary: "Notificación",
-      detail: "Debe agregar una nota",
-      life: 2000,
-    });
-  }
-
+      //  setCompanies(response.data.data);
+    } else {
+      toast.show({
+        severity: "warn",
+        summary: "Notificación",
+        detail: "Debe agregar una nota",
+        life: 2000,
+      });
+    }
   };
   const handleEnviarNavigate = () => {
     setDialogVisibleNuevaCompra(false); // Cierra el modal
@@ -462,6 +475,15 @@ function EditarRequisicion() {
                 <div className="p-col-field-right">
                   <div className="row">
                     <div className="p-field">
+                 
+                      {/* <Calendar
+                        value={new Date(formData.CreateDate)}
+                        onChange={(e) =>
+                          setFormData({ ...formData, fecha: e.value })}
+                        dateFormat="dd/mm/yy"
+                        placeholder="Seleccione una fecha"
+                        className={formErrors.fecha}
+                      /> */}
                       <DatesInput
                         value={formData.fecha}
                         onChange={(e) =>
@@ -623,6 +645,7 @@ function EditarRequisicion() {
           <Card title="Adjuntos" className="adjuntosaa">
             <div className="p-field-group">
               <div className="row align-right">
+              {files.length < 2 && (
                 <FileUpload
                   mode="basic"
                   name="demo[]"
@@ -634,6 +657,7 @@ function EditarRequisicion() {
                   chooseLabel="Agregar"
                   className="upload-field-detail"
                 />
+              )}
               </div>
               <div className="row">
                 <div className="p-col-field">

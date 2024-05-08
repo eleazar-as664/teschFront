@@ -128,11 +128,7 @@ function NuevaCompra() {
 
   const handleSubmit = async (event) => {
     event.preventDefault();
-    console.log(
-      " datarchivosSeleccionadosarchivosSeleccionadosarchivosSeleccionadosa:",
-      archivosSeleccionados
-    );
-    console.log(formData);
+   
     if (validateForm()) {
       try {
         console.clear();
@@ -162,7 +158,7 @@ function NuevaCompra() {
       BuyUnitMsr: obj.BuyUnitMsr,
       Quantity: obj.Quantity,
       TaxCodeId: obj.TaxCode,
-      ItemId: obj.Id,
+      ItemId: obj.ItemId,
       PurchaseRequestId: 0,
     }));
 
@@ -293,7 +289,7 @@ function NuevaCompra() {
       (item) => item !== rowData
     );
     setArchivosSeleccionados(updatedItems);
-  };
+  }; 
   return (
     <Layout>
       <Card className="card-header">
@@ -447,6 +443,7 @@ function NuevaCompra() {
       <Card title="Adjuntos" className="adjuntosaa">
         <div className="p-field-group">
           <div className="row align-right">
+          {archivosSeleccionados.length < 2 && (
             <FileUpload
               mode="basic"
               name="demo[]"
@@ -458,9 +455,12 @@ function NuevaCompra() {
               chooseLabel="Agregar"
               className="upload-field-detail"
             />
+          )}
+
           </div>
           <div className="row">
             <div className="p-col-field">
+
               <DataTable value={archivosSeleccionados}>
                 <Column field="name" header="Nombre" />
                 <Column

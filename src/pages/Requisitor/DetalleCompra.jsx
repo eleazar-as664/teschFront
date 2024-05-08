@@ -301,6 +301,7 @@ function DetalleCompra() {
         <Card title="Adjuntos" className="adjuntosaa">
           <div className="p-field-group">
             <div className="row align-right">
+            {files.length < 2 && (
                 <FileUpload
                   mode="basic"
                   name="demo[]"
@@ -312,6 +313,7 @@ function DetalleCompra() {
                   chooseLabel="Agregar"
                   className="upload-field-detail"
                 />
+              )}
               </div>
               <div className="row">
                 <div className="p-col-field">
