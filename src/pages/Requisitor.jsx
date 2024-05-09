@@ -23,13 +23,13 @@ function Requisitor() {
   const msgs = useRef(null);
 
   const [selectedItem, setSelectedItem] = useState(null);
-  const [data1, setData] = useState([]);
+  const [purchaseRequesData, setpurchaseRequesData] = useState([]);
   const [visible, setVisible] = useState(false);
   const [visibleEnviarSAP, setVisibleEnviarSAP] = useState(false);
   const [rowDataToCancel, setRowDataToCancel] = useState(null);
   const [rowDataToEnviarSap, setRowDataToEnviarSap] = useState(null);
   const [globalFilterValue, setGlobalFilterValue] = useState("");
-  const [statuses] = useState(["Abierto", "Cerrada"]);
+  const [statuses] = useState(["Abierta", "Cerrada"]);
   const [filters, setFilters] = useState({
     global: { value: null, matchMode: FilterMatchMode.CONTAINS },
     PurchaseRequestId: { value: null, matchMode: FilterMatchMode.STARTS_WITH },
@@ -42,13 +42,15 @@ function Requisitor() {
   const navigate = useNavigate();
   const user = JSON.parse(localStorage.getItem("user"));
   const token = JSON.parse(localStorage.getItem("user")).Token;
+  const tokenSap = JSON.parse(localStorage.getItem("user")).TokenSAP;
+
 
   const getSeverity = (status) => {
     switch (status) {
       case "Cerrada":
         return "danger";
 
-      case "Abierto":
+      case "Abierta":
         return "success";
 
       default:
@@ -66,13 +68,22 @@ function Requisitor() {
     console.log(token);
 
     try {
+
+      const data = {
+        SAPToken: tokenSap,
+        BusinessName: user.CompanyName,
+     
+      };
+    
+
       const apiUrl = `${routes.BASE_URL_SERVER}/SAPSyncSendSinglePurchaseRequest/${purchaseRequestId}`;
       const config = {
         headers: {
           "x-access-token": token,
         },
       };
-      const response = await axios.get(apiUrl, config);
+      const response = await axios.post(apiUrl,data, config);
+      console.clear();
       console.log(response);
       fetchData();
       toast.show({
@@ -81,7 +92,16 @@ function Requisitor() {
         detail: "Se envio correctamente la solicitud a SAP",
         life: 2000,
       });
-    } catch (error) {}
+    } catch (error) {
+      console.error("Error al enviar la solicitud a SAP:", error);
+      toast.show({
+        severity: "error",
+        summary: "Error",
+        detail: "Hubo un problema al enviar la solicitud a SAP",
+        life: 3000,
+      });
+      // Manejar el error 
+    }
 
     console.log("handleDialogCancel", rowDataToEnviarSap.PurchaseRequestId);
     setRowDataToEnviarSap(null);
@@ -127,7 +147,7 @@ function Requisitor() {
       };
       const response = await axios.get(apiUrl, config);
       console.log(response.data.data.purchaseRequestsHeaders);
-      setData(response.data.data.purchaseRequestsHeaders);
+      setpurchaseRequesData(response.data.data.purchaseRequestsHeaders);
     } catch (error) {
       console.error("Error al obtener datos de la API:", error);
     }
@@ -321,7 +341,7 @@ function Requisitor() {
           )}
         </Dialog>
         <DataTable
-          value={data1}
+          value={purchaseRequesData}
           selectionMode="single"
           selection={selectedItem}
           onRowClick={handleRowClick}

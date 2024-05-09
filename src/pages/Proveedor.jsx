@@ -1,19 +1,20 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { DataTable } from "primereact/datatable";
 import { Column } from "primereact/column";
 import { Card } from "primereact/card";
 import { FileUpload } from "primereact/fileupload";
 import { Button } from "primereact/button";
 import { useNavigate } from "react-router-dom";
-import { Layout } from '../Components/Layout/Layout';
+import { Layout } from "../Components/Layout/Layout";
 import { Dropdown } from "primereact/dropdown";
 import { InputText } from "primereact/inputtext";
+import routes from "../utils/routes";
+
 import "./Proveedor.css";
 import "../Components/Styles/Global.css";
-
+import axios from "axios";
 function Proveedor() {
-  const [selectedItem, setSelectedItem] = useState(null);
-
+  const [purchaseOrderData, setpurchaseOrderData] = useState([]);
   const navigate = useNavigate();
   const arrayObjetos = [
     {
@@ -138,70 +139,93 @@ function Proveedor() {
       estatus: "Completado",
     },
   ];
-  const onPDFUpload = (event) => {
-    // const file = event.files[0];
-    // const newFile = { name: file.name, size: file.size, type: file.type };
-    // setUploadedFiles([...uploadedFiles, newFile]);
+
+  const user = JSON.parse(localStorage.getItem("user"));
+  const token = JSON.parse(localStorage.getItem("user")).Token;
+
+  const fetchDataPurchaseOrder = async () => {
+    try {
+      console.clear();
+      console.log(user.UserId);
+      const IdUsuario = user.UserId;
+      const apiUrl = `${routes.BASE_URL_SERVER}/GetPurchaseOrdersHeadersForSupplier/${IdUsuario}`;
+      const config = {
+        headers: {
+          "x-access-token": token,
+        },
+      };
+      const response = await axios.get(apiUrl, config);
+      console.log(response.data.data);
+      // setpurchaseOrderData(response.data.data.purchaseRequestsHeaders);
+    } catch (error) {
+      console.error("Error al obtener datos de la API:", error);
+    }
   };
-  const onXMLUpload = (event) => {
-    // const file = event.files[0];
-    // setUploadedXML(file);
-  };
+  useEffect(() => {
+    fetchDataPurchaseOrder();
+  }, []);
+
   const handleRowClick = (event) => {
-    // Obtener los datos de la fila seleccionada
     const rowData = event.data;
 
-    // Guardar solo los datos necesarios en el localStorage
-    const selectedItem = {
-      orden: rowData.orden,
-      empresa: rowData.empresa,
-      // Añade más propiedades según sea necesario
-    };
-    localStorage.setItem("selectedItem", JSON.stringify(selectedItem));
+    // const selectedItem = {
+    //   orden: rowData.orden,
+    //   empresa: rowData.empresa,
+    // };
+    // localStorage.setItem("selectedItem", JSON.stringify(selectedItem));
 
     // Redirigir a la página de detalles
     navigate("./Proveedor/OrdenCompra");
   };
 
-  const redirectToDetalle = (event) =>{
-    console.log('HOLAAAAAAAAAAAAAAAAAAAA ELEAZAR :b')
-  }
+  const redirectToDetalle = (event) => {
+    console.log("HOLAAAAAAAAAAAAAAAAAAAA ELEAZAR :b");
+  };
 
   return (
     <Layout>
       <Card className="card-header">
-        <div class="row"> 
-        <div className="p-card-title">Ordenes de compra</div>
-           <div class="gorup-search">
-              <div className="p-field">
-                <Dropdown
-                          id="Filtros"
-                          name="Filtros"
-                          placeholder="Filtros"
-                        />
-              </div>
-              <div className="p-field">
-                <InputText
-                  id="nombre"
-                  name="nombre"
-                />
-              </div>
-          </div>    
+        <div class="row">
+          <div className="p-card-title">Ordenes de compra</div>
+          <div class="gorup-search">
+            <div className="p-field">
+              <Dropdown id="Filtros" name="Filtros" placeholder="Filtros" />
+            </div>
+            <div className="p-field">
+              <InputText id="nombre" name="nombre" />
+            </div>
+          </div>
         </div>
       </Card>
       <Card title="" className="cardProveedor">
         <DataTable
           value={arrayObjetos}
           selectionMode="single"
-          selection={selectedItem}
+          // selection={selectedItem}
           onRowClick={handleRowClick} // Capturar el clic en la fila
           scrollable
           scrollHeight="400px"
         >
-          <Column field="orden" header="Orden" style={{ width: '10%'}}></Column>
-          <Column field="empresa" header="Empresa/Fecha Solicitud" style={{ width: '40%'}} ></Column>
-          <Column field="empresa" header="Fecha Requerida" style={{ width: '40%'}} ></Column>
-          <Column field="estatus" header="Estatus" style={{ width: '10%'}}></Column>
+          <Column
+            field="orden"
+            header="Orden"
+            style={{ width: "10%" }}
+          ></Column>
+          <Column
+            field="empresa"
+            header="Empresa/Fecha Solicitud"
+            style={{ width: "40%" }}
+          ></Column>
+          <Column
+            field="empresa"
+            header="Fecha Requerida"
+            style={{ width: "40%" }}
+          ></Column>
+          <Column
+            field="estatus"
+            header="Estatus"
+            style={{ width: "10%" }}
+          ></Column>
           <Column
             header="Descargar"
             body={(rowData) => (
@@ -211,7 +235,7 @@ function Proveedor() {
                   <i
                     className="pi pi-file-pdf"
                     style={{ fontSize: "24px", color: "#f73164" }}
-                  />                  
+                  />
                 }
                 text
               />
@@ -220,9 +244,12 @@ function Proveedor() {
 
           <Column
             header="Subir Factura"
-            style={{ width: '30%'}}
+            style={{ width: "30%" }}
             body={() => (
-              <div onClick={(e) => e.stopPropagation()} style={{ display:"flex" }}>
+              <div
+                onClick={(e) => e.stopPropagation()}
+                style={{ display: "flex" }}
+              >
                 <FileUpload
                   mode="basic"
                   chooseLabel={
@@ -234,9 +261,8 @@ function Proveedor() {
                   uploadLabel="Subir"
                   cancelLabel="Cancelar"
                   customUpload
-                  onUpload={onPDFUpload}
+                  // onUpload={onPDFUpload}
                   accept="application/pdf"
-                  
                 />
                 <FileUpload
                   mode="basic"
@@ -249,12 +275,11 @@ function Proveedor() {
                   uploadLabel="Subir"
                   cancelLabel="Cancelar"
                   customUpload
-                  onUpload={onPDFUpload}
+                  // onUpload={onPDFUpload}
                   accept="application/xml"
                   style={{ width: "80px", height: "50px" }}
                 />
               </div>
-              
             )}
           />
           <Column
@@ -263,7 +288,7 @@ function Proveedor() {
           ></Column>
         </DataTable>
       </Card>
-     </Layout>
+    </Layout>
   );
 }
 
