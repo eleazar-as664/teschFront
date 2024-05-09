@@ -133,12 +133,22 @@ body{
     background-color: var(--danger-color) !important;
     border-color: var(--danger-color) !important;
 }
-
+.p-button-outlined.p-button-danger{
+    background-color: transparent !important;
+    color: var(--danger-color) !important;
+    border: 1px solid var(--danger-color) !important;
+}
 .p-button-info{
     background-color: var(--info-color) !important;
     border-color: var(--info-color) !important;
 }
 
+.p-button-outlined.p-button-info{
+    background-color: transparent !important;
+    color: #0288d1 !important;
+    border: 1px solid #0288d1 !important;
+    border-radius: 5px !important;
+}
 .p-button-success{
     background-color: var(--success-color) !important;
     border-color: var(--success-color) !important;
@@ -265,4 +275,21 @@ padding: 8px;
     max-height: 200px;
     overflow-x: hidden;
     overflow-y: scroll;
+}
+
+.p-fileupload-file-badge.p-badge.p-component.p-badge-success{
+    display: none;
+}
+.p-fileupload-row > [data-pc-section*=details]{
+    width: 85%;
+}
+.p-fileupload-row > [data-pc-section*=actions]{
+    width: 15%;
+}
+.global-filter{
+    display: flex;
+    justify-content: end;
+}
+.global-filter .p-inputtext {
+    padding-left: 30px;
 }

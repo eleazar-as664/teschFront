@@ -335,6 +335,7 @@ function DetalleCompra() {
                     header=""
                     body={(rowData) => (
                       <Button
+                        outlined
                         onClick={() => eliminarFiles(rowData)}
                         icon="pi pi-times" rounded severity="danger" aria-label="Cancel"
                       />

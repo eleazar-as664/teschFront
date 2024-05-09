@@ -586,12 +586,13 @@ function EditarRequisicion() {
           </Dialog>
           <div className="table-container">
             <DataTable value={selectedItems} scrollHeight="400px">
-              <Column field="ItemCode" header="Codigo" />
-              <Column field="Description" header="Description" />
-              <Column field="BuyUnitMsr" header="Unidad"></Column>
-              <Column field="Quantity" header="Cantidad" />
-              {/* <Column field="IVAName" header="Impuesto" /> */}
+            <Column field="ItemCode" header="Codigo" style={{ width: '15%' }} />
+            <Column field="Description" header="Description" style={{ width: '35%' }}/>
+            <Column field="BuyUnitMsr" header="Unidad" style={{ width: '15%' }}></Column>
+            <Column field="Quantity" header="Cantidad" style={{ width: '15%' }}/>
+            {/* <Column field="IVAName" header="Impuesto" style={{ width: '5%' }}/> */}
               <Column
+                style={{ width: '15%' }}
                 field=""
                 header=""
                 body={(rowData) => (
@@ -679,6 +680,7 @@ function EditarRequisicion() {
                       header=""
                       body={(rowData) => (
                         <Button
+                          outlined
                           onClick={() => eliminarFiles(rowData)}
                           icon="pi pi-times"
                           rounded

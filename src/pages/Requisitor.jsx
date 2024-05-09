@@ -217,7 +217,7 @@ function Requisitor() {
   };
   const renderHeader = () => {
     return (
-      <div className="flex justify-content-end">
+      <div className="global-filter">
         <IconField iconPosition="left">
           <InputIcon className="pi pi-search" />
           <InputText
@@ -370,25 +370,27 @@ function Requisitor() {
             header="No."
             style={{ width: "10%" }}
           />
-          <Column field="Company" header="Empresa/No.SAP" />
+          <Column field="Company" header="Empresa/No.SAP" style={{ width: "20%" }}/>
           <Column
             header="Enviar"
+            style={{ width: "20%" }}
             body={(rowData) => (
               <Button
+              outlined
                 onClick={() => enviarSolicitudSap(rowData)}
                 label="Enviar"
                 severity="info"
               />
             )}
           ></Column>
-          <Column field="DocDate" header="F.Creación" />
+          <Column field="DocDate" header="F.Creación" style={{ width: "20%" }} />
 
           <Column
             field="StatusSAP"
             header="Estatus"
             showFilterMenu={false}
             filterMenuStyle={{ width: "14rem" }}
-            style={{ minWidth: "12rem" }}
+            style={{ width: "10%", padding:"8px" }}
             body={statusBodyTemplate}
             filter
             filterElement={statusRowFilterTemplate}
@@ -398,9 +400,8 @@ function Requisitor() {
             body={(rowData) => (
               <div>
                 <Button
+                  outlined
                   onClick={() => cancelarSolicitud(rowData)}
-                  // label="Cancelar"
-                  // severity="secondary"
                   icon="pi pi-times"
                   rounded
                   severity="danger"
@@ -408,8 +409,6 @@ function Requisitor() {
                 />
                 <Button
                   onClick={() => redirectToEditar(rowData)}
-                  // label="Editar"
-                  // severity="success"
                   icon="pi pi-pencil"
                   rounded
                   severity="success"

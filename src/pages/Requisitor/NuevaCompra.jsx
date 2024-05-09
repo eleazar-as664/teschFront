@@ -292,12 +292,13 @@ function NuevaCompra() {
   }; 
   return (
     <Layout>
+     <div class="body-ordenCompra">
       <Card className="card-header">
         <div class="row">
           <div className="p-card-title">Nueva Solicitud</div>
         </div>
       </Card>
-      <Card>
+      <Card className="cardOrdenCompra">
         <Toast ref={(el) => (toast = el)} />
         <form onSubmit={handleSubmit}>
           <div className="p-field-group">
@@ -413,18 +414,18 @@ function NuevaCompra() {
         </Dialog>
         <div className="table-container">
           <DataTable value={selectedItems} scrollHeight="400px">
-            <Column field="ItemCode" header="Codigo" />
-            <Column field="Description" header="Description" />
-            <Column field="BuyUnitMsr" header="Unidad"></Column>
-            <Column field="Quantity" header="Cantidad" />
-            {/* <Column field="IVAName" header="Impuesto" /> */}
+            <Column field="ItemCode" header="Codigo" style={{ width: '15%' }}/>
+            <Column field="Description" header="Descripción" style={{ width: '35%' }}/>
+            <Column field="BuyUnitMsr" header="Unidad"  style={{ width: '15%' }}></Column>
+            <Column field="Quantity" header="Cantidad" style={{ width: '15%' }}/>
+            {/* <Column field="IVAName" header="Impuesto" style={{ width: '5%' }}/> */}
             <Column
+              style={{ width: '15%' }}
               field=""
               body={(rowData) => (
                 <div>
                   <Button
                     icon="pi pi-pencil"
-                    rounded
                     onClick={() => handleEdit(rowData)}
                     className="p-button-success"
                   />
@@ -439,59 +440,62 @@ function NuevaCompra() {
           </DataTable>
         </div>
       </Card>
-
-      <Card title="Adjuntos" className="adjuntosaa">
-        <div className="p-field-group">
-          <div className="row align-right">
-          {archivosSeleccionados.length < 2 && (
-            <FileUpload
-              mode="basic"
-              name="demo[]"
-              multiple
-              accept="image/*,.pdf"
-              maxFileSize={1000000}
-              onSelect={handleFileSelect}
-              auto
-              chooseLabel="Agregar"
-              className="upload-field-detail"
-            />
-          )}
-
-          </div>
-          <div className="row">
-            <div className="p-col-field">
-
-              <DataTable value={archivosSeleccionados}>
-                <Column field="name" header="Nombre" />
-                <Column
-                  header="Acción"
-                  body={(rowData) => (
-                    <a
-                      href={rowData.objectURL}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                    >
-                      Ver
-                    </a>
-                  )}
+ 
+      <div className="body-right">
+          <Card title="Adjuntos" className="adjuntosaa">
+            <div className="p-field-group">
+              <div className="row align-right">
+              {archivosSeleccionados.length < 2 && (
+                <FileUpload
+                  mode="basic"
+                  name="demo[]"
+                  multiple
+                  accept="image/*,.pdf"
+                  maxFileSize={1000000}
+                  onSelect={handleFileSelect}
+                  auto
+                  chooseLabel="Agregar"
+                  className="upload-field-detail"
                 />
-                <Column
-                  header=""
-                  body={(rowData) => (
-                    <Button
-                      onClick={() => eliminarFiles(rowData)}
-                      icon="pi pi-times"
-                      rounded
-                      severity="danger"
-                      aria-label="Cancel"
+              )}
+
+              </div>
+              <div className="row">
+                <div className="p-col-field">
+
+                  <DataTable value={archivosSeleccionados}>
+                    <Column field="name" header="Nombre" />
+                    <Column
+                      header="Acción"
+                      body={(rowData) => (
+                        <a
+                          href={rowData.objectURL}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                        >
+                          Ver
+                        </a>
+                      )}
                     />
-                  )}
-                ></Column>
-              </DataTable>
+                    <Column
+                      header=""
+                      body={(rowData) => (
+                        <Button
+                          onClick={() => eliminarFiles(rowData)}
+                          icon="pi pi-times"
+                          outlined
+                          severity="danger"
+                          aria-label="Cancel"
+                        />
+                      )}
+                    ></Column>
+                  </DataTable>
+                </div>
+              </div>
             </div>
-          </div>
+          </Card>
         </div>
-      </Card>
+     </div>
     </Layout>
   );
 }
