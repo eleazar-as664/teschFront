@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { DataTable } from "primereact/datatable";
+import { FilterMatchMode } from "primereact/api";
+
 import { Column } from "primereact/column";
 import { Card } from "primereact/card";
 import { FileUpload } from "primereact/fileupload";
@@ -8,137 +10,27 @@ import { useNavigate } from "react-router-dom";
 import { Layout } from "../Components/Layout/Layout";
 import { Dropdown } from "primereact/dropdown";
 import { InputText } from "primereact/inputtext";
+import { IconField } from "primereact/iconfield";
+import { InputIcon } from "primereact/inputicon";
+import { Tag } from "primereact/tag";
 import routes from "../utils/routes";
 
 import "./Proveedor.css";
 import "../Components/Styles/Global.css";
 import axios from "axios";
 function Proveedor() {
-  const [purchaseOrderData, setpurchaseOrderData] = useState([]);
   const navigate = useNavigate();
-  const arrayObjetos = [
-    {
-      orden: 1,
-      empresa: "Empresa A",
-      fechaRequerida: new Date(2024, 3, 1), // Año, mes (0-indexed), día
-      estatus: "En proceso",
-      rutaPDF: "../assets/pdfs/prueba.pdf",
-    },
-    {
-      orden: 2,
-      empresa: "Empresa B",
-      fechaRequerida: new Date(2024, 2, 15),
-      estatus: "Completado",
-    },
-    {
-      orden: 3,
-      empresa: "Empresa C",
-      fechaRequerida: new Date(2024, 1, 20),
-      estatus: "Cancelado",
-    },
-    {
-      orden: 4,
-      empresa: "Empresa D",
-      fechaRequerida: new Date(2024, 0, 10),
-      estatus: "En proceso",
-    },
-    {
-      orden: 5,
-      empresa: "Empresa E",
-      fechaRequerida: new Date(2023, 11, 5),
-      estatus: "Completado",
-    },
-    {
-      orden: 6,
-      empresa: "Empresa F",
-      fechaRequerida: new Date(2023, 10, 25),
-      estatus: "En proceso",
-    },
-    {
-      orden: 7,
-      empresa: "Empresa G",
-      fechaRequerida: new Date(2023, 9, 15),
-      estatus: "Cancelado",
-    },
-    {
-      orden: 8,
-      empresa: "Empresa H",
-      fechaRequerida: new Date(2023, 8, 7),
-      estatus: "Completado",
-    },
-    {
-      orden: 9,
-      empresa: "Empresa I",
-      fechaRequerida: new Date(2023, 7, 2),
-      estatus: "En proceso",
-    },
-    {
-      orden: 10,
-      empresa: "Empresa J",
-      fechaRequerida: new Date(2023, 6, 30),
-      estatus: "En proceso",
-    },
-    {
-      orden: 11,
-      empresa: "Empresa K",
-      fechaRequerida: new Date(2023, 5, 20),
-      estatus: "Completado",
-    },
-    {
-      orden: 12,
-      empresa: "Empresa L",
-      fechaRequerida: new Date(2023, 4, 12),
-      estatus: "En proceso",
-    },
-    {
-      orden: 13,
-      empresa: "Empresa M",
-      fechaRequerida: new Date(2023, 3, 6),
-      estatus: "Cancelado",
-    },
-    {
-      orden: 14,
-      empresa: "Empresa N",
-      fechaRequerida: new Date(2023, 2, 25),
-      estatus: "Completado",
-    },
-    {
-      orden: 15,
-      empresa: "Empresa O",
-      fechaRequerida: new Date(2023, 1, 15),
-      estatus: "En proceso",
-    },
-    {
-      orden: 16,
-      empresa: "Empresa P",
-      fechaRequerida: new Date(2023, 0, 8),
-      estatus: "Completado",
-    },
-    {
-      orden: 17,
-      empresa: "Empresa Q",
-      fechaRequerida: new Date(2022, 11, 30),
-      estatus: "Cancelado",
-    },
-    {
-      orden: 18,
-      empresa: "Empresa R",
-      fechaRequerida: new Date(2022, 10, 20),
-      estatus: "En proceso",
-    },
-    {
-      orden: 19,
-      empresa: "Empresa S",
-      fechaRequerida: new Date(2022, 9, 10),
-      estatus: "En proceso",
-    },
-    {
-      orden: 20,
-      empresa: "Empresa T",
-      fechaRequerida: new Date(2022, 8, 5),
-      estatus: "Completado",
-    },
-  ];
+
+  const [purchaseOrderData, setPurchaseOrderData] = useState([]);
+  const [statuses] = useState(["Abierta", "Cerrada"]);
+  const [globalFilterValue, setGlobalFilterValue] = useState("");
+  const [filters, setFilters] = useState({
+    global: { value: null, matchMode: FilterMatchMode.CONTAINS },
+    DocNum: { value: null, matchMode: FilterMatchMode.STARTS_WITH },
+    concatenatedInfo: { value: null, matchMode: FilterMatchMode.STARTS_WITH },
+    DocDueDate: { value: null, matchMode: FilterMatchMode.STARTS_WITH },
+    StatusSAP: { value: null, matchMode: FilterMatchMode.EQUALS },
+  });
 
   const user = JSON.parse(localStorage.getItem("user"));
   const token = JSON.parse(localStorage.getItem("user")).Token;
@@ -155,24 +47,28 @@ function Proveedor() {
         },
       };
       const response = await axios.get(apiUrl, config);
-      console.log(response.data.data);
+      // console.log(response.data.data);
+      // setpurchaseOrderData(response.data.data);
+      const updatedData = response.data.data.map((item) => ({
+        ...item,
+        concatenatedInfo: `${item.BusinessName} - ${item.DocDate}`,
+      }));
+      console.log(updatedData);
+
+      setPurchaseOrderData(updatedData);
       // setpurchaseOrderData(response.data.data.purchaseRequestsHeaders);
     } catch (error) {
       console.error("Error al obtener datos de la API:", error);
     }
   };
   useEffect(() => {
+    localStorage.removeItem("purchaseOrderData");
     fetchDataPurchaseOrder();
   }, []);
 
   const handleRowClick = (event) => {
     const rowData = event.data;
-
-    // const selectedItem = {
-    //   orden: rowData.orden,
-    //   empresa: rowData.empresa,
-    // };
-    // localStorage.setItem("selectedItem", JSON.stringify(selectedItem));
+    localStorage.setItem("purchaseOrderData", JSON.stringify(rowData));
 
     // Redirigir a la página de detalles
     navigate("./Proveedor/OrdenCompra");
@@ -182,6 +78,71 @@ function Proveedor() {
     console.log("HOLAAAAAAAAAAAAAAAAAAAA ELEAZAR :b");
   };
 
+  // Función para obtener el estado de la orden
+  const getSeverity = (status) => {
+    switch (status) {
+      case "Cerrada":
+        return "danger";
+
+      case "Abierta":
+        return "success";
+
+      default:
+        return null;
+    }
+  };
+  const statusItemTemplate = (option) => {
+    return <Tag value={option} severity={getSeverity(option)} />;
+  };
+
+  const statusRowFilterTemplate = (options) => {
+    return (
+      <Dropdown
+        value={options.value}
+        options={statuses}
+        onChange={(e) => options.filterApplyCallback(e.value)}
+        itemTemplate={statusItemTemplate}
+        placeholder="Seleciona un estado"
+        className="p-column-filter"
+        showClear
+        style={{ minWidth: "12rem" }}
+      />
+    );
+  };
+  const statusBodyTemplate = (rowData) => {
+    return (
+      <Tag
+        value={rowData.StatusSAP}
+        severity={getSeverity(rowData.StatusSAP)}
+      />
+    );
+  };
+
+  const onGlobalFilterChange = (e) => {
+    const value = e.target.value;
+    let _filters = { ...filters };
+
+    _filters["global"].value = value;
+
+    setFilters(_filters);
+    setGlobalFilterValue(value);
+  };
+  const renderHeader = () => {
+    return (
+      <div className="flex justify-content-end">
+        <IconField iconPosition="left">
+          <InputIcon className="pi pi-search" />
+          <InputText
+            value={globalFilterValue}
+            onChange={onGlobalFilterChange}
+            placeholder="Buscar ..."
+          />
+        </IconField>
+      </div>
+    );
+  };
+
+  const header = renderHeader();
   return (
     <Layout>
       <Card className="card-header">
@@ -199,32 +160,49 @@ function Proveedor() {
       </Card>
       <Card title="" className="cardProveedor">
         <DataTable
-          value={arrayObjetos}
+          value={purchaseOrderData}
           selectionMode="single"
           // selection={selectedItem}
           onRowClick={handleRowClick} // Capturar el clic en la fila
           scrollable
           scrollHeight="400px"
+          stripedRows
+          tableStyle={{ minWidth: "50rem" }}
+          filters={filters}
+          filterDisplay="row"
+          globalFilterFields={[
+            "DocNum",
+            "concatenatedInfo",
+            "DocDueDate",
+            "StatusSAP",
+          ]}
+          emptyMessage="No hay solicitudes de compra registradas"
+          header={header}
+          paginator
+          rows={5}
         >
           <Column
-            field="orden"
+            field="DocNum"
             header="Orden"
             style={{ width: "10%" }}
           ></Column>
           <Column
-            field="empresa"
+            field="concatenatedInfo"
             header="Empresa/Fecha Solicitud"
             style={{ width: "40%" }}
           ></Column>
           <Column
-            field="empresa"
+            field="DocDueDate"
             header="Fecha Requerida"
             style={{ width: "40%" }}
           ></Column>
           <Column
-            field="estatus"
+            field="StatusSAP"
             header="Estatus"
             style={{ width: "10%" }}
+            body={statusBodyTemplate}
+            filter
+            filterElement={statusRowFilterTemplate}
           ></Column>
           <Column
             header="Descargar"

@@ -49,7 +49,7 @@ function Requisitor() {
     switch (status) {
       case "Cerrada":
         return "danger";
-
+ 
       case "Abierta":
         return "success";
 

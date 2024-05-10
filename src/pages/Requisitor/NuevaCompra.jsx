@@ -45,6 +45,7 @@ function NuevaCompra() {
     Comments: false,
   });
 
+  const [centroCostos, setCentroCostos] = useState([]);
   const [companies, setCompanies] = useState([]);
   const [materialeslData, setMaterialesData] = useState([]);
   const [selectedItems, setSelectedItems] = useState([]);
@@ -68,9 +69,9 @@ function NuevaCompra() {
     setMaterialToEdit(rowData);
     setDialogVisible(true);
   };
-  const token =
-    'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6IlJ1YmVuLkciLCJpYXQiOjE3MTMwNTYxOTYsImV4cCI6MTcxMzA3MDU5Nn0.pUaTtKZz4sJEn9LzvGgkUl3MDeEpKNlKNuQbzDsMv_4"';
+  const token = JSON.parse(localStorage.getItem("user")).Token;
   const user = JSON.parse(localStorage.getItem("user"));
+  const tokenSap = JSON.parse(localStorage.getItem("user")).TokenSAP;
   let toast;
   const handleAlmacenChange12 = (material) => {
     setSelectedMaterial(material);
@@ -79,6 +80,31 @@ function NuevaCompra() {
 
   const handleDialogClose = () => {
     setDialogVisible(false);
+  };
+  const fetchDataCentroCostos = async () => {
+    try {
+      const apiUrl = `${routes.BASE_URL_SERVER}/GetCostCentersForEmployees`;
+      const config = {
+        headers: {
+          "x-access-token": token,
+        },
+      };
+
+      const data = {
+        SAPToken: tokenSap,
+        Dimension: 1,
+        DBName: user.CompanyDBName,
+      };
+      console.clear();
+      console.log(data);
+
+      const response = await axios.post(apiUrl, data, config);
+      console.log(response.data.data);
+
+      setCentroCostos(response.data.data);
+    } catch (error) {
+      console.error("Error al obtener datos de la API:", error);
+    }
   };
 
   useEffect(() => {
@@ -106,6 +132,7 @@ function NuevaCompra() {
     };
 
     fetchData();
+    fetchDataCentroCostos();
   }, [user.UserId]); // El array vacío indica que este efecto se ejecuta solo una vez, equivalente a componentDidMount
 
   const handleAlmacenChange = async (e) => {
@@ -128,7 +155,7 @@ function NuevaCompra() {
 
   const handleSubmit = async (event) => {
     event.preventDefault();
-   
+
     if (validateForm()) {
       try {
         console.clear();
@@ -152,7 +179,10 @@ function NuevaCompra() {
   const buildRequestData = () => {
     const momentDate = moment(formData.fecha);
     const formattedDate = momentDate.format("YYYY-MM-DD");
-
+    console.clear();
+    console.log('HLOLAAAAAAAAAAAAAAAAAAAAAAAAAA SOY FORMA DATA');
+    console.log(formData.CostCenterCode ? formData.CostCenterCode.CenterCode : '');
+    console.log(formData);
     const PurchaseOrderRequestDetails = selectedItems.map((obj) => ({
       Description: obj.Description,
       BuyUnitMsr: obj.BuyUnitMsr,
@@ -170,15 +200,16 @@ function NuevaCompra() {
       NumAtCard: formData.NumAtCard,
       Comments: formData.Comments,
       CompanyId: formData.companies.Id,
+      CostCenterCode: formData.CostCenterCode ? formData.CostCenterCode.CenterCode : '',
       PurchaseOrderRequestDetails,
     };
   };
   const sendFormData = async (data, pdf) => {
     const formData = new FormData();
     console.clear();
-    console.log(pdf);
+    console.log(data);
     formData.append("data", JSON.stringify(data));
-    // formData.append("FilesToUpload", pdf);
+    formData.append("FilesToUpload", pdf);
 
     pdf.forEach((file, index) => {
       formData.append(`FilesToUpload`, file);
@@ -289,7 +320,7 @@ function NuevaCompra() {
       (item) => item !== rowData
     );
     setArchivosSeleccionados(updatedItems);
-  }; 
+  };
   return (
     <Layout>
       <Card className="card-header">
@@ -345,6 +376,18 @@ function NuevaCompra() {
                   }
                   rows={3}
                   cols={10}
+                />
+              </div>
+              <div className="p-field">
+                <DropdownInput
+                  id="costos"
+                  label="Centro de Costos:"
+                  optionLabel="CenterName"
+                  value={formData.CostCenterCode}
+                  onChange={(e) =>
+                    setFormData({ ...formData, CostCenterCode: e.target.value })}
+                  placeholder="Seleccione un centro de costos"
+                  options={Array.isArray(centroCostos) ? centroCostos : []}
                 />
               </div>
             </div>
@@ -443,24 +486,22 @@ function NuevaCompra() {
       <Card title="Adjuntos" className="adjuntosaa">
         <div className="p-field-group">
           <div className="row align-right">
-          {archivosSeleccionados.length < 2 && (
-            <FileUpload
-              mode="basic"
-              name="demo[]"
-              multiple
-              accept="image/*,.pdf"
-              maxFileSize={1000000}
-              onSelect={handleFileSelect}
-              auto
-              chooseLabel="Agregar"
-              className="upload-field-detail"
-            />
-          )}
-
+            {archivosSeleccionados.length < 2 && (
+              <FileUpload
+                mode="basic"
+                name="demo[]"
+                multiple
+                accept="image/*,.pdf"
+                maxFileSize={1000000}
+                onSelect={handleFileSelect}
+                auto
+                chooseLabel="Agregar"
+                className="upload-field-detail"
+              />
+            )}
           </div>
           <div className="row">
             <div className="p-col-field">
-
               <DataTable value={archivosSeleccionados}>
                 <Column field="name" header="Nombre" />
                 <Column

@@ -1,4 +1,4 @@
-import React, { useRef, useState } from "react";
+import React, { useEffect, useState } from "react";
 
 import { Card } from "primereact/card";
 import { Button } from "primereact/button";
@@ -8,106 +8,44 @@ import { InputText } from 'primereact/inputtext';
 import { FileUpload } from "primereact/fileupload";
 import "./OrdenCompra.css";
 import { Layout } from "../../Components/Layout/Layout";
+import routes from "../../utils/routes";
+
+import axios from "axios";
 
 function NuevaCompra() {
-  const data = [
-    {
-      ID_Solicitud: 10,
-      No_Requisicion_SAP: "ABC123",
-      Fecha_Hora_Creacion: "2024-03-18 10:30:00",
-      Fecha_Vencimiento: "2024-04-10",
-      No_referencia: "REF001",
-      Centro_de_costo: "CC001",
-      Empresa: "Empresa A",
-      Comentarios: "Comentario 1",
-      No_OC_SAP: "OC123",
-      Sincronizado: true,
-      Adjunto1: "Archivo1.pdf",
-      Adjunto2: "Archivo2.pdf",
-      Notas_autorizacion: "Notas de autorización 1",
-      Notas_requisitor: "Notas del requisitor 1",
-    },
-    {
-      ID_Solicitud: 20,
-      No_Requisicion_SAP: "DEF456",
-      Fecha_Hora_Creacion: "2024-03-19 11:45:00",
-      Fecha_Vencimiento: "2024-04-12",
-      No_referencia: "REF002",
-      Centro_de_costo: "CC002",
-      Empresa: "Empresa B",
-      Comentarios: "Comentario 2",
-      No_OC_SAP: "OC456",
-      Sincronizado: false,
-      Adjunto1: "",
-      Adjunto2: "",
-      Notas_autorizacion: "Notas de autorización 2",
-      Notas_requisitor: "Notas del requisitor 2",
-    },
-    {
-      ID_Solicitud: 30,
-      No_Requisicion_SAP: "ABC123",
-      Fecha_Hora_Creacion: "2024-03-18 10:30:00",
-      Fecha_Vencimiento: "2024-04-10",
-      No_referencia: "REF001",
-      Centro_de_costo: "CC001",
-      Empresa: "Empresa A",
-      Comentarios: "Comentario 1",
-      No_OC_SAP: "OC123",
-      Sincronizado: true,
-      Adjunto1: "Archivo1.pdf",
-      Adjunto2: "Archivo2.pdf",
-      Notas_autorizacion: "Notas de autorización 1",
-      Notas_requisitor: "Notas del requisitor 1",
-    },
-    {
-      ID_Solicitud: 40,
-      No_Requisicion_SAP: "ABC123",
-      Fecha_Hora_Creacion: "2024-03-18 10:30:00",
-      Fecha_Vencimiento: "2024-04-10",
-      No_referencia: "REF001",
-      Centro_de_costo: "CC001",
-      Empresa: "Empresa A",
-      Comentarios: "Comentario 1",
-      No_OC_SAP: "OC123",
-      Sincronizado: true,
-      Adjunto1: "Archivo1.pdf",
-      Adjunto2: "Archivo2.pdf",
-      Notas_autorizacion: "Notas de autorización 1",
-      Notas_requisitor: "Notas del requisitor 1",
-    },
-    {
-      ID_Solicitud: 50,
-      No_Requisicion_SAP: "ABC123",
-      Fecha_Hora_Creacion: "2024-03-18 10:30:00",
-      Fecha_Vencimiento: "2024-04-10",
-      No_referencia: "REF001",
-      Centro_de_costo: "CC001",
-      Empresa: "Empresa A",
-      Comentarios: "Comentario 1",
-      No_OC_SAP: "OC123",
-      Sincronizado: true,
-      Adjunto1: "Archivo1.pdf",
-      Adjunto2: "Archivo2.pdf",
-      Notas_autorizacion: "Notas de autorización 1",
-      Notas_requisitor: "Notas del requisitor 1",
-    },
-    {
-      ID_Solicitud: 60,
-      No_Requisicion_SAP: "ABC123",
-      Fecha_Hora_Creacion: "2024-03-18 10:30:00",
-      Fecha_Vencimiento: "2024-04-10",
-      No_referencia: "REF001",
-      Centro_de_costo: "CC001",
-      Empresa: "Empresa A",
-      Comentarios: "Comentario 1",
-      No_OC_SAP: "OC123",
-      Sincronizado: true,
-      Adjunto1: "Archivo1.pdf",
-      Adjunto2: "Archivo2.pdf",
-      Notas_autorizacion: "Notas de autorización 1",
-      Notas_requisitor: "Notas del requisitor 1",
-    },
-  ];
+  const [purchaseOrderDataDetail, setPurchaseOrderDataDetail] = useState([]);
+  const [purchaseOrderDataHeader, setPurchaseOrderDataHeader] = useState([]);
+
+  
+
+  const ordenData = JSON.parse(localStorage.getItem("purchaseOrderData"));
+  const token = JSON.parse(localStorage.getItem("user")).Token;
+
+  const fetchDataPurchaseOrderDetail = async () => {
+    try {
+      console.clear();
+      const PurchaseOrderId = ordenData.PurchaseOrderId;
+      const apiUrl = `${routes.BASE_URL_SERVER}/GetPurchaseOrder/${PurchaseOrderId}`;
+      const config = {
+        headers: {
+          "x-access-token": token,
+        },
+      };
+      const response = await axios.get(apiUrl, config);
+
+      setPurchaseOrderDataDetail(response.data.data.Detail);
+      console.log(response.data.data.purchaseOrderHeader);
+      setPurchaseOrderDataHeader(response.data.data.purchaseOrderHeader);
+      // setpurchaseRequesData(response.data.data.purchaseRequestsHeaders);
+    } catch (error) {
+      console.error("Error al obtener datos de la API:", error);
+    }
+  };
+  useEffect(() => {
+    // localStorage.removeItem("datosRequisitor");
+    fetchDataPurchaseOrderDetail();
+  }, []);
+
   const dataq = [
     {
       ID_Solicitud: 10,
@@ -234,31 +172,23 @@ function NuevaCompra() {
               <div className="p-col-field">
                   <div className="p-field">
                     <span className="field-name">No. Orden: </span>  
-                     123123
+                     {purchaseOrderDataHeader.DocNum}
                   </div>
                   <div className="p-field">
-                    <span className="field-name">Fecha: </span>  
-                     01/01/2023
+                    <span className="field-name">Fecha Requerida: </span>  
+                     {purchaseOrderDataHeader.DocDate}
                   </div>
                   <div className="p-field">
                     <span className="field-name">Solicitó: </span>
-                    ANGEL START
+                     {purchaseOrderDataHeader.FirstName}
                   </div>
               </div>
               <div className="p-col-field">
                   <div className="p-field">
-                     <span className="field-name">Empresa: </span> 
-                      Red company, Inc.
-                  </div>
-                  <div className="p-field">
-                     <span className="field-name">Fecha Entrega: </span> 
-                      01/01/2023
-                  </div>
-                  <div className="p-field">
                      <span className="field-name">Comentarios: </span> 
-                      Lorem ipsum dolor sit amet, consectetur
-                      adipiscing elit.
+                     {purchaseOrderDataHeader.Comments}
                   </div>
+                 
               </div>
             </div>
             <div className="row">
@@ -283,15 +213,15 @@ function NuevaCompra() {
             </div>
           </div>
           <DataTable
-            value={dataq}
+            value={purchaseOrderDataDetail}
             scrollable
             scrollHeight="200px"
             tableStyle={{ minWidth: "50rem" }}
           >
-            <Column field="No_Requisicion_SAP" header="Código" />
-            <Column field="Fecha_Hora_Creacion" header="Descripción" />
-            <Column field="Fecha_Vencimiento" header="Unidad" />
-            <Column field="Centro_de_costo" header="Cantidad" />
+            <Column field="ItemCode" header="Código" />
+            <Column field="Description" header="Descripción" />
+            <Column field="Quantity" header="Unidad" />
+            <Column field="Quantity" header="Cantidad" />
           </DataTable>
         </Card>
 
