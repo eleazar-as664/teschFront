@@ -1,5 +1,6 @@
 import React from "react";
 import { Navigate } from "react-router-dom";
+import routes from "../utils/routes";
 
 export const PrivateRoute = ({ element, allowedProfiles }) => {
   const user = JSON.parse(localStorage.getItem("user"));
@@ -11,7 +12,7 @@ export const PrivateRoute = ({ element, allowedProfiles }) => {
   };
 
   if (!user) {
-    return <Navigate to="/login" />;
+    return <Navigate to={`${routes.URL_ROOT}login`} />;
   } else if (!hasRequiredProfiles(user.Profiles, allowedProfiles)) {
     return <p>No tienes permiso para acceder a esta página.</p>;
   }

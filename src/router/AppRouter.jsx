@@ -13,12 +13,13 @@ import "primereact/resources/themes/saga-blue/theme.css";
 import "primereact/resources/primereact.min.css";
 
 import { PrivateRoute } from "./PrivateRoute";
+import routes from "../utils/routes";
 
 export const AppRouter = () => {
   return (
     <>
       <Routes>
-        <Route path="/">
+        <Route path={routes.URL_ROOT}>
           <Route index element={<LoginPage />} />
           <Route path="login" element={<LoginPage />} />
           <Route
