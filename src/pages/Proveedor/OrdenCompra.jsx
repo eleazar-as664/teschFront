@@ -4,7 +4,7 @@ import { Card } from "primereact/card";
 import { Button } from "primereact/button";
 import { DataTable } from "primereact/datatable";
 import { Column } from "primereact/column";
-import { InputText } from 'primereact/inputtext';
+import { InputText } from "primereact/inputtext";
 import { FileUpload } from "primereact/fileupload";
 import "./OrdenCompra.css";
 import { Layout } from "../../Components/Layout/Layout";
@@ -15,8 +15,7 @@ import axios from "axios";
 function NuevaCompra() {
   const [purchaseOrderDataDetail, setPurchaseOrderDataDetail] = useState([]);
   const [purchaseOrderDataHeader, setPurchaseOrderDataHeader] = useState([]);
-
-  
+  const [archivosSeleccionados, setArchivosSeleccionados] = useState([]);
 
   const ordenData = JSON.parse(localStorage.getItem("purchaseOrderData"));
   const token = JSON.parse(localStorage.getItem("user")).Token;
@@ -156,59 +155,68 @@ function NuevaCompra() {
       setNote("");
     }
   };
-
+  const handleFileSelect = (event) => {
+    const nuevosArchivosPDF = Array.from(event.files);
+    setArchivosSeleccionados([...archivosSeleccionados, ...nuevosArchivosPDF]);
+  };
+  const eliminarFiles = (rowData) => {
+    console.log(rowData);
+    const updatedItems = archivosSeleccionados.filter(
+      (item) => item !== rowData
+    );
+    setArchivosSeleccionados(updatedItems);
+  };
   return (
-      <Layout>
-        <div class="body-ordenCompra">
+    <Layout>
+      <div class="body-ordenCompra">
         <Card className="card-header">
-            <div class="row"> 
-                <div className="p-card-title">Orden de compra</div>
-            </div>
+          <div class="row">
+            <div className="p-card-title">Orden de compra</div>
+          </div>
         </Card>
 
         <Card className="cardOrdenCompra">
           <div className="p-grid p-nogutter">
             <div className="row">
               <div className="p-col-field">
-                  <div className="p-field">
-                    <span className="field-name">No. Orden: </span>  
-                     {purchaseOrderDataHeader.DocNum}
-                  </div>
-                  <div className="p-field">
-                    <span className="field-name">Fecha Requerida: </span>  
-                     {purchaseOrderDataHeader.DocDate}
-                  </div>
-                  <div className="p-field">
-                    <span className="field-name">Solicitó: </span>
-                     {purchaseOrderDataHeader.FirstName}
-                  </div>
+                <div className="p-field">
+                  <span className="field-name">No. Orden: </span>
+                  {purchaseOrderDataHeader.DocNum}
+                </div>
+                <div className="p-field">
+                  <span className="field-name">Fecha Requerida: </span>
+                  {purchaseOrderDataHeader.DocDate}
+                </div>
+                <div className="p-field">
+                  <span className="field-name">Solicitó: </span>
+                  {purchaseOrderDataHeader.FirstName}
+                </div>
               </div>
               <div className="p-col-field">
-                  <div className="p-field">
-                     <span className="field-name">Comentarios: </span> 
-                     {purchaseOrderDataHeader.Comments}
-                  </div>
-                 
+                <div className="p-field">
+                  <span className="field-name">Comentarios: </span>
+                  {purchaseOrderDataHeader.Comments}
+                </div>
               </div>
             </div>
             <div className="row">
-              <div className="p-field button-conteiner upload-field-detail">            
-                <FileUpload 
-                    mode="basic" 
-                    name="demo[]" 
-                    url="/api/upload" 
-                    accept="image/*" 
-                    maxFileSize={1000000} 
-                    chooseLabel="Agregar factura PDF"
+              <div className="p-field button-conteiner upload-field-detail">
+                <FileUpload
+                  mode="basic"
+                  name="demo[]"
+                  url="/api/upload"
+                  accept="image/*"
+                  maxFileSize={1000000}
+                  chooseLabel="Agregar factura PDF"
                 />
-                <FileUpload 
-                    mode="basic" 
-                    name="demo[]" 
-                    url="/api/upload" 
-                    accept="image/*" 
-                    maxFileSize={1000000} 
-                    chooseLabel="Agregar factura XML"                    
-                />                
+                <FileUpload
+                  mode="basic"
+                  name="demo[]"
+                  url="/api/upload"
+                  accept="image/*"
+                  maxFileSize={1000000}
+                  chooseLabel="Agregar factura XML"
+                />
               </div>
             </div>
           </div>
@@ -241,6 +249,73 @@ function NuevaCompra() {
                 placeholder="Agregar nota"
               />
               <Button icon="pi pi-plus" onClick={handleAddNote} />
+            </div>
+          </div>
+        </Card>
+        <Card title="Adjuntos" className="adjuntosaa">
+          <div className="p-field-group">
+            <div className="row align-right">
+              {archivosSeleccionados.length < 3 && (
+                <FileUpload
+                  mode="basic"
+                  name="demo[]"
+                  multiple
+                  accept="image/*,.pdf,.xml"
+                  maxFileSize={1000000}
+                  onSelect={handleFileSelect}
+                  auto
+                  chooseLabel="Agregar"
+                  className="upload-field-detail"
+                />
+              )}
+              {archivosSeleccionados.length >= 3 && (
+            
+              <Button
+              // onClick={() => eliminarFiles(rowData)}
+              className="pi pi-file-pdf"
+              rounded
+              // severity="danger"
+              label="Enviar Archivos"
+              // aria-label="Enviar"
+            />
+            //   <Button
+            //   label="Aceptar"
+            //   icon="pi pi-check"
+            //   onClick={handleSave}
+            //   className="p-button-primary"
+            // />
+            )}
+            </div>
+            <div className="row">
+              <div className="p-col-field">
+                <DataTable value={archivosSeleccionados}>
+                  <Column field="name" header="Nombre" />
+                  <Column
+                    header="Acción"
+                    body={(rowData) => (
+                      <a
+                        href={rowData.objectURL}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                      >
+                        Ver
+                      </a>
+                    )}
+                  />
+                  <Column
+                    header=""
+                    body={(rowData) => (
+                      <Button
+                        onClick={() => eliminarFiles(rowData)}
+                        icon="pi pi-times"
+                        rounded
+                        severity="danger"
+                        aria-label="Cancel"
+                      />
+                    )}
+                  ></Column>
+                </DataTable>
+              </div>
             </div>
           </div>
         </Card>

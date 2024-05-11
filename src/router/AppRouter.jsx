@@ -6,6 +6,8 @@ import DetalleCompra from "../pages/Requisitor/DetalleCompra";
 import Requisitor from "../pages/Requisitor";
 import Proveedor from "../pages/Proveedor";
 import OrdenCompra from "../pages/Proveedor/OrdenCompra"
+import NotFount from "../Components/NotFount";
+import  "../Components/Styles/Global.css";
 import "primeicons/primeicons.css";
 import "primereact/resources/themes/saga-blue/theme.css";
 import "primereact/resources/primereact.min.css";
@@ -82,6 +84,7 @@ export const AppRouter = () => {
               />
             }
           />
+          <Route path="*" element={<NotFount />} />
         </Route>
       </Routes>
     </>

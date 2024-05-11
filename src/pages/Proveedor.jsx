@@ -5,6 +5,7 @@ import { FilterMatchMode } from "primereact/api";
 import { Column } from "primereact/column";
 import { Card } from "primereact/card";
 import { FileUpload } from "primereact/fileupload";
+import { Dialog } from "primereact/dialog";
 import { Button } from "primereact/button";
 import { useNavigate } from "react-router-dom";
 import { Layout } from "../Components/Layout/Layout";
@@ -24,6 +25,10 @@ function Proveedor() {
   const [purchaseOrderData, setPurchaseOrderData] = useState([]);
   const [statuses] = useState(["Abierta", "Cerrada"]);
   const [globalFilterValue, setGlobalFilterValue] = useState("");
+  const [visibleArchivosProveedor, setVvisibleArchivosProveedor] =
+    useState(false);
+  const [archivosSeleccionados, setArchivosSeleccionados] = useState([]);
+
   const [filters, setFilters] = useState({
     global: { value: null, matchMode: FilterMatchMode.CONTAINS },
     DocNum: { value: null, matchMode: FilterMatchMode.STARTS_WITH },
@@ -60,6 +65,18 @@ function Proveedor() {
     } catch (error) {
       console.error("Error al obtener datos de la API:", error);
     }
+  };
+
+  const handleFileSelect = (event) => {
+    const nuevosArchivosPDF = Array.from(event.files);
+    setArchivosSeleccionados([...archivosSeleccionados, ...nuevosArchivosPDF]);
+  };
+  const eliminarFiles = (rowData) => {
+    console.log(rowData);
+    const updatedItems = archivosSeleccionados.filter(
+      (item) => item !== rowData
+    );
+    setArchivosSeleccionados(updatedItems);
   };
   useEffect(() => {
     localStorage.removeItem("purchaseOrderData");
@@ -143,6 +160,10 @@ function Proveedor() {
   };
 
   const header = renderHeader();
+
+  const activarArchivosModal = (data) => {
+    setVvisibleArchivosProveedor(true);
+  };
   return (
     <Layout>
       <Card className="card-header">
@@ -159,6 +180,77 @@ function Proveedor() {
         </div>
       </Card>
       <Card title="" className="cardProveedor">
+        <Dialog
+          header="Enviar a SAP"
+          visible={visibleArchivosProveedor}
+          style={{ width: "30vw" }}
+          onHide={() => setVvisibleArchivosProveedor(false)}
+        >
+          <div className="p-field-group">
+            <div className="row align-right">
+              {archivosSeleccionados.length < 3 && (
+                <FileUpload
+                  mode="basic"
+                  name="demo[]"
+                  multiple
+                  accept="image/*,.pdf,.xml"
+                  maxFileSize={1000000}
+                  onSelect={handleFileSelect}
+                  auto
+                  chooseLabel="Agregar"
+                  className="upload-field-detail"
+                />
+              )}
+              {archivosSeleccionados.length >= 3 && (
+                <Button
+                  // onClick={() => eliminarFiles(rowData)}
+                  className="pi pi-file-pdf"
+                  rounded
+                  // severity="danger"
+                  label="Enviar Archivos"
+                  // aria-label="Enviar"
+                />
+                //   <Button
+                //   label="Aceptar"
+                //   icon="pi pi-check"
+                //   onClick={handleSave}
+                //   className="p-button-primary"
+                // />
+              )}
+            </div>
+            <div className="row">
+              <div className="p-col-field">
+                <DataTable value={archivosSeleccionados}>
+                  <Column field="name" header="Nombre" />
+                  <Column
+                    header="Acción"
+                    body={(rowData) => (
+                      <a
+                        href={rowData.objectURL}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                      >
+                        Ver
+                      </a>
+                    )}
+                  />
+                  <Column
+                    header=""
+                    body={(rowData) => (
+                      <Button
+                        onClick={() => eliminarFiles(rowData)}
+                        icon="pi pi-times"
+                        rounded
+                        severity="danger"
+                        aria-label="Cancel"
+                      />
+                    )}
+                  ></Column>
+                </DataTable>
+              </div>
+            </div>
+          </div>
+        </Dialog>
         <DataTable
           value={purchaseOrderData}
           selectionMode="single"
@@ -205,7 +297,7 @@ function Proveedor() {
             filterElement={statusRowFilterTemplate}
           ></Column>
           <Column
-            header="Descargar"
+            header="Ver"
             body={(rowData) => (
               <Button
                 onClick={() => redirectToDetalle(rowData.id)} // Agrega la función para redireccionar a la página de detalle
@@ -228,25 +320,19 @@ function Proveedor() {
                 onClick={(e) => e.stopPropagation()}
                 style={{ display: "flex" }}
               >
-                <FileUpload
-                  mode="basic"
-                  chooseLabel={
-                    <i
-                      className="pi pi-file-pdf"
-                      style={{ fontSize: "24px" }}
-                    />
-                  }
-                  uploadLabel="Subir"
-                  cancelLabel="Cancelar"
-                  customUpload
-                  // onUpload={onPDFUpload}
-                  accept="application/pdf"
+                <Button
+                  onClick={activarArchivosModal}
+                  className="pi pi-file-import"
+                  style={{ fontSize: "24px" }}
+                  rounded
+                  aria-label="Cancel"
                 />
-                <FileUpload
+
+                {/* <FileUpload
                   mode="basic"
                   chooseLabel={
                     <i
-                      className="pi pi-file-excel"
+                      className="pi pi-file-import"
                       style={{ fontSize: "24px" }}
                     />
                   }
@@ -256,7 +342,7 @@ function Proveedor() {
                   // onUpload={onPDFUpload}
                   accept="application/xml"
                   style={{ width: "80px", height: "50px" }}
-                />
+                /> */}
               </div>
             )}
           />
