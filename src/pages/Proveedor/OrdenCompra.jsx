@@ -19,6 +19,8 @@ function NuevaCompra() {
 
   const ordenData = JSON.parse(localStorage.getItem("purchaseOrderData"));
   const token = JSON.parse(localStorage.getItem("user")).Token;
+  const user = JSON.parse(localStorage.getItem("user"));
+  const purschageOrderData = JSON.parse(localStorage.getItem("purchaseOrderData"));
 
   const fetchDataPurchaseOrderDetail = async () => {
     try {
@@ -45,104 +47,7 @@ function NuevaCompra() {
     fetchDataPurchaseOrderDetail();
   }, []);
 
-  const dataq = [
-    {
-      ID_Solicitud: 10,
-      No_Requisicion_SAP: "ABC123",
-      Fecha_Hora_Creacion: "2024-03-18 10:30:00",
-      Fecha_Vencimiento: "2024-04-10",
-      No_referencia: "REF001",
-      Centro_de_costo: "CC001",
-      Empresa: "Empresa A",
-      Comentarios: "Comentario 1",
-      No_OC_SAP: "OC123",
-      Sincronizado: true,
-      Adjunto1: "Archivo1.pdf",
-      Adjunto2: "Archivo2.pdf",
-      Notas_autorizacion: "Notas de autorización 1",
-      Notas_requisitor: "Notas del requisitor 1",
-    },
-    {
-      ID_Solicitud: 20,
-      No_Requisicion_SAP: "DEF456",
-      Fecha_Hora_Creacion: "2024-03-19 11:45:00",
-      Fecha_Vencimiento: "2024-04-12",
-      No_referencia: "REF002",
-      Centro_de_costo: "CC002",
-      Empresa: "Empresa B",
-      Comentarios: "Comentario 2",
-      No_OC_SAP: "OC456",
-      Sincronizado: false,
-      Adjunto1: "",
-      Adjunto2: "",
-      Notas_autorizacion: "Notas de autorización 2",
-      Notas_requisitor: "Notas del requisitor 2",
-    },
-    {
-      ID_Solicitud: 30,
-      No_Requisicion_SAP: "ABC123",
-      Fecha_Hora_Creacion: "2024-03-18 10:30:00",
-      Fecha_Vencimiento: "2024-04-10",
-      No_referencia: "REF001",
-      Centro_de_costo: "CC001",
-      Empresa: "Empresa A",
-      Comentarios: "Comentario 1",
-      No_OC_SAP: "OC123",
-      Sincronizado: true,
-      Adjunto1: "Archivo1.pdf",
-      Adjunto2: "Archivo2.pdf",
-      Notas_autorizacion: "Notas de autorización 1",
-      Notas_requisitor: "Notas del requisitor 1",
-    },
-    {
-      ID_Solicitud: 40,
-      No_Requisicion_SAP: "ABC123",
-      Fecha_Hora_Creacion: "2024-03-18 10:30:00",
-      Fecha_Vencimiento: "2024-04-10",
-      No_referencia: "REF001",
-      Centro_de_costo: "CC001",
-      Empresa: "Empresa A",
-      Comentarios: "Comentario 1",
-      No_OC_SAP: "OC123",
-      Sincronizado: true,
-      Adjunto1: "Archivo1.pdf",
-      Adjunto2: "Archivo2.pdf",
-      Notas_autorizacion: "Notas de autorización 1",
-      Notas_requisitor: "Notas del requisitor 1",
-    },
-    {
-      ID_Solicitud: 50,
-      No_Requisicion_SAP: "ABC123",
-      Fecha_Hora_Creacion: "2024-03-18 10:30:00",
-      Fecha_Vencimiento: "2024-04-10",
-      No_referencia: "REF001",
-      Centro_de_costo: "CC001",
-      Empresa: "Empresa A",
-      Comentarios: "Comentario 1",
-      No_OC_SAP: "OC123",
-      Sincronizado: true,
-      Adjunto1: "Archivo1.pdf",
-      Adjunto2: "Archivo2.pdf",
-      Notas_autorizacion: "Notas de autorización 1",
-      Notas_requisitor: "Notas del requisitor 1",
-    },
-    {
-      ID_Solicitud: 60,
-      No_Requisicion_SAP: "ABC123",
-      Fecha_Hora_Creacion: "2024-03-18 10:30:00",
-      Fecha_Vencimiento: "2024-04-10",
-      No_referencia: "REF001",
-      Centro_de_costo: "CC001",
-      Empresa: "Empresa A",
-      Comentarios: "Comentario 1",
-      No_OC_SAP: "OC123",
-      Sincronizado: true,
-      Adjunto1: "Archivo1.pdf",
-      Adjunto2: "Archivo2.pdf",
-      Notas_autorizacion: "Notas de autorización 1",
-      Notas_requisitor: "Notas del requisitor 1",
-    },
-  ];
+
   const [note, setNote] = useState("");
   const [notes, setNotes] = useState([]);
 
@@ -165,6 +70,39 @@ function NuevaCompra() {
       (item) => item !== rowData
     );
     setArchivosSeleccionados(updatedItems);
+  };
+
+  const enviarArchivosSAP = async () => {
+    const formData = new FormData();
+
+    const data = {
+      PurchaseOrderId: purschageOrderData.PurchaseOrderId,
+      UserId: user.UserId,
+    };
+    formData.append("data", JSON.stringify(data));
+    formData.append("FilesToUpload", archivosSeleccionados);
+
+    archivosSeleccionados.forEach((file, index) => {
+      formData.append(`FilesToUpload`, file);
+    });
+    const config = {
+      headers: {
+        "x-access-token": token,
+        "Content-Type": "multipart/form-data",
+      },
+    };
+
+    try {
+      
+      const response = await axios.post(
+        `${routes.BASE_URL_SERVER}/AddAttachmentsToPurchaseOrder`,
+        formData,
+        config
+      );
+      console.log("Response:", response.data);
+    } catch (error) {
+      console.error("Error:", error);
+    }
   };
   return (
     <Layout>
@@ -233,26 +171,7 @@ function NuevaCompra() {
           </DataTable>
         </Card>
 
-        <Card title="Notas" className="adjuntos">
-          <div className="p-grid p-nogutter">
-            <div>
-              <ul>
-                {notes.map((note, index) => (
-                  <li key={index}>{note}</li>
-                ))}
-              </ul>
-            </div>
-            <div className="p-inputgroup">
-              <InputText
-                value={note}
-                onChange={handleNoteChange}
-                placeholder="Agregar nota"
-              />
-              <Button icon="pi pi-plus" onClick={handleAddNote} />
-            </div>
-          </div>
-        </Card>
-        <Card title="Adjuntos" className="adjuntosaa">
+        <Card title="Adjuntos" className="adjuntos">
           <div className="p-field-group">
             <div className="row align-right">
               {archivosSeleccionados.length < 3 && (
@@ -269,22 +188,16 @@ function NuevaCompra() {
                 />
               )}
               {archivosSeleccionados.length >= 3 && (
-            
-              <Button
-              // onClick={() => eliminarFiles(rowData)}
-              className="pi pi-file-pdf"
-              rounded
-              // severity="danger"
-              label="Enviar Archivos"
-              // aria-label="Enviar"
-            />
-            //   <Button
-            //   label="Aceptar"
-            //   icon="pi pi-check"
-            //   onClick={handleSave}
-            //   className="p-button-primary"
-            // />
-            )}
+               <Button
+               onClick={() => enviarArchivosSAP()}
+               className="pi pi-file-pdf"
+               rounded
+               // severity="danger"
+               label="Enviar Archivos"
+               // aria-label="Enviar"
+             />
+                
+              )}
             </div>
             <div className="row">
               <div className="p-col-field">

@@ -33,6 +33,7 @@ export const Navbar = () => {
   const direcionarRequicisiones = () =>{
     navigate("/Requisitor")
   }
+  const primeraLetra = user.FirstName.charAt(0);
   const items = [
     {
       label:  currentDate,
@@ -46,7 +47,7 @@ export const Navbar = () => {
         template: () => {
           return (
               <li className="w-full p-link flex-row">
-                  <Avatar image="https://primefaces.org/cdn/primereact/images/avatar/amyelsner.png" className="mr-2" shape="circle" />
+                  <Avatar  label={primeraLetra} className="mr-2" shape="circle" />
                   <div className="flex-column user-data">
                       <span className="name-user">{user.FirstName + " " + user.LastName}</span>
                       <span className="text-sm">{user.Profiles[0].Name  }</span>

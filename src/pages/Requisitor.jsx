@@ -23,6 +23,7 @@ function Requisitor() {
   const msgs = useRef(null);
 
   const [selectedItem, setSelectedItem] = useState(null);
+  const [enviandoASAP, setEnviandoASAP] = useState(false);
   const [purchaseRequesData, setpurchaseRequesData] = useState([]);
   const [visible, setVisible] = useState(false);
   const [visibleEnviarSAP, setVisibleEnviarSAP] = useState(false);
@@ -44,12 +45,11 @@ function Requisitor() {
   const token = JSON.parse(localStorage.getItem("user")).Token;
   const tokenSap = JSON.parse(localStorage.getItem("user")).TokenSAP;
 
-
   const getSeverity = (status) => {
     switch (status) {
       case "Cerrada":
         return "danger";
- 
+
       case "Abierta":
         return "success";
 
@@ -64,17 +64,14 @@ function Requisitor() {
 
   const handleDialogEnviarSap = async () => {
     const purchaseRequestId = rowDataToEnviarSap.PurchaseRequestId;
-    console.log(purchaseRequestId);
-    console.log(token);
+
+    setEnviandoASAP(true);
 
     try {
-
       const data = {
         SAPToken: tokenSap,
         BusinessName: user.CompanyName,
-     
       };
-    
 
       const apiUrl = `${routes.BASE_URL_SERVER}/SAPSyncSendSinglePurchaseRequest/${purchaseRequestId}`;
       const config = {
@@ -82,25 +79,23 @@ function Requisitor() {
           "x-access-token": token,
         },
       };
-      const response = await axios.post(apiUrl,data, config);
-      console.clear();
-      console.log(response);
-      fetchData();
-      toast.show({
-        severity: "success",
-        summary: "Notificación",
-        detail: "Se envio correctamente la solicitud a SAP",
-        life: 2000,
-      });
+      const response = await axios.post(apiUrl, data, config);
+      console.log("Response:", response);
+      // toast.show({
+      //   severity: "success",
+      //   summary: "Notificación",
+      //   detail: "Se envio correctamente la solicitud a SAP",
+      //   life: 2000,
+      // });
+      // fetchData();
+     
+    
     } catch (error) {
-      console.error("Error al enviar la solicitud a SAP:", error);
-      toast.show({
-        severity: "error",
-        summary: "Error",
-        detail: "Hubo un problema al enviar la solicitud a SAP",
-        life: 3000,
-      });
-      // Manejar el error 
+      console.error("Error al enviar la solicitud a SAP:",error);
+    
+    } finally {
+      // Indicar que se ha completado el envío a SAP
+      setEnviandoASAP(false);
     }
 
     console.log("handleDialogCancel", rowDataToEnviarSap.PurchaseRequestId);
@@ -155,6 +150,7 @@ function Requisitor() {
   useEffect(() => {
     localStorage.removeItem("datosRequisitor");
     fetchData();
+    
   }, []);
 
   useEffect(() => {}, [fetchData]);
@@ -309,11 +305,18 @@ function Requisitor() {
             </div>
 
             <div class="row">
-              <Button
-                onClick={handleDialogEnviarSap}
-                label="Enviar"
-                className="p-button-secondary"
-              />
+              {enviandoASAP ? (
+                <Button
+                  icon="pi pi-spin pi-spinner"
+                  className="p-button-secondary"
+                />
+              ) : (
+                <Button
+                  onClick={handleDialogEnviarSap}
+                  label="Enviar"
+                  className="p-button-secondary"
+                />
+              )}
             </div>
           </div>
         )}
@@ -360,9 +363,8 @@ function Requisitor() {
           ]}
           emptyMessage="No hay solicitudes de compra registradas"
           header={header}
-          paginator 
+          paginator
           rows={5}
-       
         >
           <Column
             sortable
@@ -370,53 +372,69 @@ function Requisitor() {
             header="No."
             style={{ width: "10%" }}
           />
-          <Column field="Company" header="Empresa/No.SAP" style={{ width: "20%" }}/>
+          <Column
+            field="Company"
+            header="Empresa/No.SAP"
+            style={{ width: "20%" }}
+          />
           <Column
             header="Enviar"
             style={{ width: "20%" }}
-            body={(rowData) => (
-              <Button
-              outlined
-                onClick={() => enviarSolicitudSap(rowData)}
-                label="Enviar"
-                severity="info"
-              />
-            )}
+            body={(rowData) =>
+              rowData.Sent ? (
+                <span>Enviado</span>
+              ) : (
+                <Button
+                  outlined
+                  onClick={() => enviarSolicitudSap(rowData)}
+                  label="Enviar"
+                  severity="info"
+                />
+              )
+            }
           ></Column>
-          <Column field="DocDate" header="F.Creación" style={{ width: "20%" }} />
+          <Column
+            field="DocDate"
+            header="F.Creación"
+            style={{ width: "20%" }}
+          />
 
           <Column
             field="StatusSAP"
             header="Estatus"
             showFilterMenu={false}
             filterMenuStyle={{ width: "14rem" }}
-            style={{ width: "10%", padding:"8px" }}
+            style={{ width: "10%", padding: "8px" }}
             body={statusBodyTemplate}
             filter
             filterElement={statusRowFilterTemplate}
           />
           <Column field="NumAtCard" header="Referencia" />
           <Column
-            body={(rowData) => (
-              <div>
-                <Button
-                  outlined
-                  onClick={() => cancelarSolicitud(rowData)}
-                  icon="pi pi-times"
-                  rounded
-                  severity="danger"
-                  aria-label="Cancel"
-                />
-                <Button
-                  onClick={() => redirectToEditar(rowData)}
-                  icon="pi pi-pencil"
-                  rounded
-                  severity="success"
-                  aria-label="Search"
-                />
-              </div>
-            )}
             style={{ width: "10%" }}
+            body={(rowData) =>
+              rowData.Sent ? (
+                <span></span>
+              ) : (
+                <div>
+                  <Button
+                    outlined
+                    onClick={() => cancelarSolicitud(rowData)}
+                    icon="pi pi-times"
+                    rounded
+                    severity="danger"
+                    aria-label="Cancel"
+                  />
+                  <Button
+                    onClick={() => redirectToEditar(rowData)}
+                    icon="pi pi-pencil"
+                    rounded
+                    severity="success"
+                    aria-label="Search"
+                  />
+                </div>
+              )
+            }
           ></Column>
         </DataTable>
       </Card>
