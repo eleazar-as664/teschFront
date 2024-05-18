@@ -218,6 +218,7 @@ function Proveedor() {
         <IconField iconPosition="left">
           <InputIcon className="pi pi-search" />
           <InputText
+            className="search-input"
             value={globalFilterValue}
             onChange={onGlobalFilterChange}
             placeholder="Buscar ..."
@@ -239,14 +240,6 @@ function Proveedor() {
       <Card className="card-header">
         <div class="row">
           <div className="p-card-title">Ordenes de compra</div>
-          <div class="gorup-search">
-            <div className="p-field">
-              <Dropdown id="Filtros" name="Filtros" placeholder="Filtros" />
-            </div>
-            <div className="p-field">
-              <InputText id="nombre" name="nombre" />
-            </div>
-          </div>
         </div>
       </Card>
       <Card title="" className="cardProveedor">

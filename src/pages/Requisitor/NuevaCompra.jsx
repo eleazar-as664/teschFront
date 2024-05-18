@@ -323,12 +323,13 @@ function NuevaCompra() {
   };
   return (
     <Layout>
+      <div className="body-ordenCompra">
       <Card className="card-header">
         <div class="row">
           <div className="p-card-title">Nueva Solicitud</div>
         </div>
       </Card>
-      <Card>
+      <Card className="cardOrdenCompra">
         <Toast ref={(el) => (toast = el)} />
         <form onSubmit={handleSubmit}>
           <div className="p-field-group">
@@ -366,18 +367,6 @@ function NuevaCompra() {
               </div>
             </div>
             <div className="row">
-              <div className="p-field" style={{ width: "31.9%" }}>
-                <TextTareaInput
-                  id="comentario"
-                  label="Comentarios"
-                  value={formData.Comments}
-                  onChange={(e) =>
-                    setFormData({ ...formData, Comments: e.target.value })
-                  }
-                  rows={3}
-                  cols={10}
-                />
-              </div>
               <div className="p-field">
                 <DropdownInput
                   id="costos"
@@ -388,6 +377,18 @@ function NuevaCompra() {
                     setFormData({ ...formData, CostCenterCode: e.target.value })}
                   placeholder="Seleccione un centro de costos"
                   options={Array.isArray(centroCostos) ? centroCostos : []}
+                />
+              </div>
+              <div className="p-field" style={{ width: "31.9%" }}>
+                <TextTareaInput
+                  id="comentario"
+                  label="Comentarios"
+                  value={formData.Comments}
+                  onChange={(e) =>
+                    setFormData({ ...formData, Comments: e.target.value })
+                  }
+                  rows={3}
+                  cols={10}
                 />
               </div>
             </div>
@@ -483,6 +484,7 @@ function NuevaCompra() {
         </div>
       </Card>
 
+      <div class="body-right">
       <Card title="Adjuntos" className="adjuntosaa">
         <div className="p-field-group">
           <div className="row align-right">
@@ -533,6 +535,8 @@ function NuevaCompra() {
           </div>
         </div>
       </Card>
+      </div>
+      </div>
     </Layout>
   );
 }
