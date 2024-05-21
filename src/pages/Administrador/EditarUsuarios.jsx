@@ -15,7 +15,7 @@ import { useNavigate } from "react-router-dom";
 
 import routes from "../../utils/routes";
 import axios from "axios";
-function NuevoUsuario() {
+function EditarUsuarios() {
   const navigate = useNavigate();
 
   const [employees, setEmployees] = useState([]);
@@ -44,6 +44,7 @@ function NuevoUsuario() {
   // Agregar event listener al cambio de archivos
   const user = JSON.parse(localStorage.getItem("user"));
   const token = JSON.parse(localStorage.getItem("user")).Token;
+  const employeesEditar = JSON.parse(localStorage.getItem("empleadosEditar"));
 
   const fetchDataUsuario = async () => {
     try {
@@ -174,9 +175,10 @@ function NuevoUsuario() {
   const buildRequestData = () => {
     console.log(formData);
     const requestData = {
-      UserName: formData.UserName,
-      Email: formData.Email,
+      UserName: employeesEditar.UserName,
+      Email: employeesEditar.UserEmail,
       ProfileId: formData.ProfileId.Id,
+      UserId: employeesEditar.UserId,
     };
     if (requestData.ProfileId === 4) {
       requestData.BusinessPartnerId = formData.BusinessPartnerId.Id;
@@ -200,38 +202,24 @@ function NuevoUsuario() {
   };
   const sendFormData = async (data) => {
     console.clear();
-    console.log(data);
-
     const config = {
       headers: {
         "x-access-token": token,
       },
     };
 
-    const response = await axios.post(
-      `${routes.BASE_URL_SERVER}/CreateUser`,
+    const response = await axios.patch(
+      `${routes.BASE_URL_SERVER}/UpdateUser`,
       data,
       config
     );
-    console.log("Respuesta:", response.data);
 
-    console.log(response.data);
     return response.data;
   };
 
   const validateForm = () => {
     const errors = {};
     let formIsValid = true;
-
-    if (!formData.Email) {
-      errors.Email = "El correo es obligatoria.";
-      formIsValid = false;
-    }
-
-    if (!formData.UserName) {
-      errors.UserName = "El nombre del  usuario es obligatorio.";
-      formIsValid = false;
-    }
 
     if (!formData.ProfileId) {
       errors.ProfileId = "Seleccione un perfil Usuario.";
@@ -245,20 +233,24 @@ function NuevoUsuario() {
   const handleSuccessResponse = (response) => {
     console.log("Respuesta del servidor:", response);
     setDialogVisibleNuevaCompra(true);
+    toast.current.show({
+      severity: "success",
+      summary: "Exito",
+      detail: "Usuario editado correctamente",
+      life: 3000,
+    })
     // Aquí podrías manejar la respuesta exitosa, por ejemplo, mostrar un mensaje de éxito al usuario
   };
 
   const handleErrorResponse = (error) => {
     console.log("Error al enviar el formulario:", error);
-    console.error("Error al enviar el formulario:", error);
-    // Aquí podrías manejar el error, por ejemplo, mostrar un mensaje de error al usuario
-
-    toast.current.show({
+    toast.current.show({        
       severity: "error",
       summary: "Error",
       detail: "Error al enviar el formulario",
       life: 3000,
-    });
+    })
+  
   };
 
   const handleEnviarNavigate = () => {
@@ -284,7 +276,7 @@ function NuevoUsuario() {
       <div class="body-ordenCompra">
         <Card className="card-header">
           <div class="row">
-            <div className="p-card-title">Nuevo usuario</div>
+            <div className="p-card-title">Editar Usuarios</div>
           </div>
         </Card>
         <Toast ref={toast} />
@@ -397,29 +389,12 @@ function NuevoUsuario() {
               <div className="row">
                 <div className="p-field">
                   <label>Usuario:</label>
-                  <InputText
-                    value={formData.UserName}
-                    onChange={(e) =>
-                      setFormData({ ...formData, UserName: e.target.value })
-                    }
-                  />
-                  {formErrors.UserName && (
-                    <small style={{ color: "red" }}>
-                      {formErrors.UserName}
-                    </small>
-                  )}
+                  <InputText value={employeesEditar.UserName} disabled />
                 </div>
                 <div className="p-field" style={{ width: "31.9%" }}>
                   <label>Correo:</label>
 
-                  <InputText
-                    value={formData.Email}
-                    onChange={handleEmailChange}
-                  />
-                  {error && <small style={{ color: "red" }}>{error}</small>}
-                  {formErrors.Email && (
-                    <small style={{ color: "red" }}>{formErrors.Email}</small>
-                  )}
+                  <InputText value={employeesEditar.UserEmail} disabled />
                 </div>
               </div>
 
@@ -479,4 +454,4 @@ function NuevoUsuario() {
   );
 }
 
-export default NuevoUsuario;
+export default EditarUsuarios;

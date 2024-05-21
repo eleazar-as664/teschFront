@@ -40,7 +40,7 @@ export const Navbar = () => {
     navigate("/Administrador")
   }
   const direcionarSicronizar = () =>{
-    navigate("Administrador/Sincronizacion")
+    navigate("/Administrador/Administrador/Sincronizacion")
   }
   const primeraLetra = user.FirstName.charAt(0);
   const items = [

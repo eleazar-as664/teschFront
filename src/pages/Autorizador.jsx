@@ -194,7 +194,7 @@ function Autorizador() {
               "DocDate",
               "StatusSAP",
             ]}
-            emptyMessage="No hay solicitudes de compra registradas"
+            emptyMessage="No hay resultados"
             header={header}
             paginator
             rows={5}

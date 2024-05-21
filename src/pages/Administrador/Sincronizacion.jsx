@@ -1,14 +1,12 @@
 import React, { useRef, useState, useEffect } from "react";
-import { Link } from "react-router-dom";
-
 import { DataTable } from "primereact/datatable";
-
 import { Column } from "primereact/column";
 import { Card } from "primereact/card";
 import { Button } from "primereact/button";
 import { useNavigate } from "react-router-dom";
 import { Dialog } from "primereact/dialog";
 import { Layout } from "../../Components/Layout/Layout";
+
 import { TabMenu } from "primereact/tabmenu";
 import { InputNumber } from "primereact/inputnumber";
 
@@ -17,7 +15,6 @@ import axios from "axios";
 import routes from "../../utils/routes";
 import "../../Components/Styles/Global.css";
 function Sincronizacion() {
-  const msgs = useRef(null);
   const navigate = useNavigate();
   const [activeIndex] = useState(0);
 
@@ -30,8 +27,10 @@ function Sincronizacion() {
   const [getCompanySettings, setGetCompanySettings] = useState([]);
   const [value1, setValue1] = useState();
   const [value2, setValue2] = useState();
+  const [valorEdit, setValorEdit] = useState();
+  const [inventoriable, setInventoriable] = useState();
+  const [companySettingsId, setCompanySettingsId] = useState();
   const [isButtonDisabled, setIsButtonDisabled] = useState(false);
-
   const user = JSON.parse(localStorage.getItem("user"));
   const token = JSON.parse(localStorage.getItem("user")).Token;
   const tokenSap = JSON.parse(localStorage.getItem("user")).TokenSAP;
@@ -84,14 +83,8 @@ function Sincronizacion() {
           "x-access-token": token,
         },
       };
-
       const responseGetCompanies = await axios.get(apiUrlCompanies, config);
-
       setCompanies(responseGetCompanies.data.data);
-
-      console.log("::::::::::::::::::::::::::::::::::::::::::::::::::::::");
-      //   setPurchaseOrderData(updatedData);
-      // setpurchaseOrderData(response.data.data.purchaseRequestsHeaders);
     } catch (error) {
       console.error("Error al obtener datos de la API:", error);
     }
@@ -155,8 +148,15 @@ function Sincronizacion() {
         config
       );
       const data = responseGetCompanySettings.data.data;
-      console.log(responseGetCompanySettings.data.data);
-      setGetCompanySettings([data] );
+      console.log(
+        "::::::::::::::::::::::::::responseGetCompanySettings::::::::::::::::::::::::::::"
+      );
+
+      console.log(data);
+      setValorEdit(data.Expense);
+      setInventoriable(data.Inventoriable);
+      setCompanySettingsId(data.CompanySettingsId);
+      setGetCompanySettings((prevSettings) => [...prevSettings, data]);
       console.log("::::::::::::::::::::::::::::::::::::::::::::::::::::::");
       console.log(getCompanySettings);
       //   setPurchaseOrderData(updatedData);c
@@ -170,9 +170,9 @@ function Sincronizacion() {
     const rowData = datos;
     setVisibleConfiguracionEmpresa(true);
     console.log(getCompanySettings.length);
-    setCompaniesConfig(rowData)
-    setValue2()
-    setValue1()
+    setCompaniesConfig(rowData);
+    setValue2();
+    setValue1();
     fetchDataGetCompanySettings(rowData);
 
     console.log(rowData);
@@ -182,9 +182,9 @@ function Sincronizacion() {
     setEnviandoASAP(true);
     try {
       const data = {
-        Inventoriable: value1,
-        Expense : value2,
-        CompanyId: companiesConfig.Id,  
+        Inventoriable: inventoriable,
+        Expense: valorEdit,
+        Id: companySettingsId,
       };
 
       const apiUrl = `${routes.BASE_URL_SERVER}/UpdateCompanySettings`;
@@ -195,6 +195,7 @@ function Sincronizacion() {
       };
       console.log(data);
       const response = await axios.patch(apiUrl, data, config);
+      console.log(response.data);
       toast.current.show({
         severity: "success",
         summary: "Enviado",
@@ -205,26 +206,25 @@ function Sincronizacion() {
 
       // fetchData();
     } catch (error) {
-      console.error("Error al enviar la solicitud a SAP:", error);
+      console.error("Error al actualizar datos de SAP:", error);
       toast.current.show({
-        severity: "Error",
+        severity: "error",
         summary: "Error",
         detail: "Error al actualizar compañias",
         life: 3000,
       });
     } finally {
-      setVisibleConfiguracionEmpresa(false)
+      setVisibleConfiguracionEmpresa(false);
       setIsButtonDisabled(false);
     }
-
   };
   const handleCreateCompanySettings = async () => {
     setIsButtonDisabled(true);
     try {
       const data = {
         Inventoriable: value1,
-        Expense : value2,
-        CompanyId: companiesConfig.Id,  
+        Expense: value2,
+        CompanyId: companiesConfig.Id,
       };
 
       const apiUrl = `${routes.BASE_URL_SERVER}/CreateCompanySettings`;
@@ -254,7 +254,7 @@ function Sincronizacion() {
         life: 3000,
       });
     } finally {
-      setVisibleConfiguracionEmpresa(false)
+      setVisibleConfiguracionEmpresa(false);
       setIsButtonDisabled(false);
     }
 
@@ -322,26 +322,39 @@ function Sincronizacion() {
             <div className="row">
               <div className="p-field">
                 <label>Limite Inventariable:</label>
-
-                <InputNumber
+                {getCompanySettings.length > 0 && (
+                  <InputNumber
+                    id="value1"
+                    value={valorEdit}
+                    onValueChange={(e) => setValue1(e.value)}
+                  />
+                )}
+                {getCompanySettings.length <= 0 && (
+                  <InputNumber
                   id="value1"
                   value={value1}
                   onValueChange={(e) => setValue1(e.value)}
-                  mode="currency"
-                  currency="USD"
-                  locale="en-US"
                 />
+                )}
+               
               </div>
               <div className="p-field">
                 <label>Limite de Gasto:</label>
-                <InputNumber
-                  id="value2"
-                  value={value2}
-                  onValueChange={(e) => setValue2(e.value)}
-                  mode="currency"
-                  currency="USD"
-                  locale="en-US"
-                />
+                {getCompanySettings.length > 0 && (
+                  <InputNumber
+                    id="value1"
+                    value={inventoriable}
+                    onValueChange={(e) => setValue1(e.value)}
+                  />
+                )}
+                {getCompanySettings.length <= 0 && (
+                 <InputNumber
+                 id="value2"
+                 value={value2}
+                 onValueChange={(e) => setValue2(e.value)}
+               />
+                )}
+                
               </div>
             </div>
           </div>

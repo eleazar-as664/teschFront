@@ -331,7 +331,7 @@ function Proveedor() {
             "DocDueDate",
             "StatusSAP",
           ]}
-          emptyMessage="No hay solicitudes de compra registradas"
+          emptyMessage="No hay ordenes de compra"
           header={header}
           paginator
           rows={5}

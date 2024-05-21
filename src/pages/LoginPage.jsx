@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { InputText } from "primereact/inputtext";
 import { Button } from "primereact/button";
 import { Toast } from "primereact/toast";
@@ -17,7 +17,8 @@ export const LoginPage = () => {
     password: "",
   });
 
-  let toast;
+  const toast = useRef(null);
+
   const user = JSON.parse(localStorage.getItem("user"));
   useEffect(() => {
     if (user) {
@@ -26,9 +27,8 @@ export const LoginPage = () => {
         return navigate(firstProfilePath);
       }
     }
-  }, [user, navigate]);   
+  }, [user, navigate]);
   const onLoginPrueba = async (e) => {
-  
     e.preventDefault();
     try {
       const response = await axios.post(`${routes.BASE_URL_SERVER}/SignIn`, {
@@ -36,14 +36,14 @@ export const LoginPage = () => {
         Password: password,
         SecretKey: "O6XcIjRgEOvvRyO0QFHzf5jllsuzCiLEZj9YftaOwg",
       });
-      console.log(response)
+      console.log(response);
       const user = response.data.data;
       localStorage.setItem("user", JSON.stringify(user));
       const firstProfilePath = user.Profiles[0]?.Path;
       navigate(firstProfilePath);
     } catch (error) {
       setError("Credenciales incorrectas");
-      toast.show({
+      toast.current.show({
         severity: "warn",
         summary: "Notificación",
         detail: "¡Credenciales incorrectas!",
@@ -54,7 +54,8 @@ export const LoginPage = () => {
 
   return (
     <div className="general">
-      <Toast ref={(el) => (toast = el)} />
+      <Toast ref={toast} />
+
       <form onSubmit={onLoginPrueba}>
         <div className="login-container">
           <h2>TeschConsulting</h2>

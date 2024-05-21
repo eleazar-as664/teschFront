@@ -17,7 +17,6 @@ import axios from "axios";
 import routes from "../../utils/routes";
 import "../../Components/Styles/Global.css";
 function SincronizarEmpleados() {
-  const msgs = useRef(null);
   const navigate = useNavigate();
   const [activeIndex] = useState(3);
 

@@ -1,7 +1,6 @@
 import React, { useRef, useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { useMountEffect } from "primereact/hooks";
-import { Dropdown } from "primereact/dropdown";
 import { DataTable } from "primereact/datatable";
 import { FilterMatchMode } from "primereact/api";
 import { Column } from "primereact/column";
@@ -13,7 +12,6 @@ import { Layout } from "../Components/Layout/Layout";
 import { InputText } from "primereact/inputtext";
 import { IconField } from "primereact/iconfield";
 import { InputIcon } from "primereact/inputicon";
-import { Tag } from "primereact/tag";
 import { Toast } from "primereact/toast";
 import axios from "axios";
 import routes from "../utils/routes";
@@ -28,34 +26,26 @@ function Administrador() {
   const [rowDataToCancel, setRowDataToCancel] = useState(null);
   const [rowDataToEnviarSap, setRowDataToEnviarSap] = useState(null);
   const [globalFilterValue, setGlobalFilterValue] = useState("");
-  const [statuses] = useState(["Abierta", "Cerrada"]);
+
   const [filters, setFilters] = useState({
     global: { value: null, matchMode: FilterMatchMode.CONTAINS },
-    PurchaseRequestId: { value: null, matchMode: FilterMatchMode.STARTS_WITH },
-    Company: { value: null, matchMode: FilterMatchMode.STARTS_WITH },
-    DocDate: { value: null, matchMode: FilterMatchMode.STARTS_WITH },
-    StatusSAP: { value: null, matchMode: FilterMatchMode.EQUALS },
-    NumAtCard: { value: null, matchMode: FilterMatchMode.STARTS_WITH },
+    UserName: { value: null, matchMode: FilterMatchMode.STARTS_WITH },
+    UserEmail: { value: null, matchMode: FilterMatchMode.STARTS_WITH },
+    CompanyName: { value: null, matchMode: FilterMatchMode.STARTS_WITH },
+    UserEmployeeName: { value: null, matchMode: FilterMatchMode.EQUALS },
+    UserProfileName: { value: null, matchMode: FilterMatchMode.STARTS_WITH },
   });
-  let toast;
+
+  const toast = useRef(null);
+
   const navigate = useNavigate();
   const user = JSON.parse(localStorage.getItem("user"));
   const token = JSON.parse(localStorage.getItem("user")).Token;
   const tokenSap = JSON.parse(localStorage.getItem("user")).TokenSAP;
 
-  const getSeverity = (status) => {
-    switch (status) {
-      case "Cerrada":
-        return "danger";
-
-      case "Abierta":
-        return "success";
-
-      default:
-        return null;
-    }
-  };
-  const cancelarSolicitud = (rowData) => {
+  const desactivarUsuario = (rowData) => {
+    console.clear();
+    console.log(rowData);
     setRowDataToCancel(rowData);
     setVisible(true); // Esto abre el Dialog
   };
@@ -79,9 +69,6 @@ function Administrador() {
       };
       const response = await axios.post(apiUrl, data, config);
       console.log("Response:", response);
-    
-
-
     } catch (error) {
       console.error("Error al enviar la solicitud a SAP:", error);
     } finally {
@@ -94,27 +81,30 @@ function Administrador() {
     setVisibleEnviarSAP(false); // Esto cierra el Dialog
   };
   const handleDialogCancel = () => {
-    const purchaseRequestId = rowDataToCancel.PurchaseRequestId;
+    const purchaseRequestId = rowDataToCancel.UserId;
 
     axios
-      .delete(
-        `${routes.BASE_URL_SERVER}/DeletePurchaseRequest/${purchaseRequestId}`
-      )
+      .patch(`${routes.BASE_URL_SERVER}/DeactivateUser/${purchaseRequestId}`)
       .then((response) => {
         console.log("Solicitud de compra cancelada con éxito");
-        toast.show({
+        toast.current.show({
           severity: "success",
           summary: "Notificación",
-          detail: "Solicitud de compra cancelada con éxito",
+          detail: "El usuario ha sido desactivado con exito",
           life: 3000,
         });
         // Realizar cualquier acción adicional después de cancelar la solicitud, como actualizar la lista de solicitudes de compra
       })
       .catch((error) => {
         console.error("Error al cancelar la solicitud de compra:", error);
+        toast.current.show({
+          severity: "error",
+          summary: "Error",
+          detail: "Error al desactivar el usuario",
+          life: 3000,
+        });
         // Manejar el error, como mostrar un mensaje al usuario
       });
-    console.log("handleDialogCancel", rowDataToCancel.PurchaseRequestId);
     setRowDataToCancel(null);
     setVisible(false); // Esto cierra el Dialog
   };
@@ -122,8 +112,8 @@ function Administrador() {
   const fetchDataGetEmployees = async () => {
     try {
       console.clear();
-      const CompanyId = user.CompanyId;
-      const apiUrl = `${routes.BASE_URL_SERVER}/GetEmployees/${CompanyId}`;
+
+      const apiUrl = `${routes.BASE_URL_SERVER}/GetUsers`;
       const config = {
         headers: {
           "x-access-token": token,
@@ -136,7 +126,7 @@ function Administrador() {
     }
   };
   useEffect(() => {
-    localStorage.removeItem("datosRequisitor");
+    localStorage.removeItem("empleadosEditar");
     fetchDataGetEmployees();
   }, []);
 
@@ -158,29 +148,8 @@ function Administrador() {
 
   const redirectToEditar = (datos) => {
     const rowData = datos;
-
-    localStorage.setItem("datosRequisitor", JSON.stringify(rowData));
-    navigate("./Requisitor/EditarRequisicion");
-  };
-
-  const handleRowClick = (event) => {
-    // Obtener los datos de la fila seleccionada
-    const rowData = event.data;
-    console.clear();
-    console.log(rowData);
-
-    localStorage.setItem("datosRequisitor", JSON.stringify(rowData));
-
-    // Redirigir a la página de detalles
-    navigate("./Requisitor/DetalleCompra");
-  };
-  const enviarSolicitudSap = (rowData) => {
-    console.clear();
-    console.log(rowData);
-    setRowDataToEnviarSap(rowData);
-    setVisibleEnviarSAP(true); // Esto abre el Dialog
-    // localStorage.setItem("datosRequisitor", JSON.stringify(rowData));
-    // navigate("./Requisitor/EnviarSap");
+    localStorage.setItem("empleadosEditar", JSON.stringify(rowData));
+    navigate("/Administrador/Administrador/EditarUsuarios");
   };
 
   const onGlobalFilterChange = (e) => {
@@ -206,40 +175,16 @@ function Administrador() {
       </div>
     );
   };
-  const statusItemTemplate = (option) => {
-    return <Tag value={option} severity={getSeverity(option)} />;
-  };
 
-  const statusRowFilterTemplate = (options) => {
-    return (
-      <Dropdown
-        value={options.value}
-        options={statuses}
-        onChange={(e) => options.filterApplyCallback(e.value)}
-        itemTemplate={statusItemTemplate}
-        placeholder="Seleciona un estado"
-        className="p-column-filter"
-        showClear
-        style={{ minWidth: "12rem" }}
-      />
-    );
-  };
-  const statusBodyTemplate = (rowData) => {
-    return (
-      <Tag
-        value={rowData.StatusSAP}
-        severity={getSeverity(rowData.StatusSAP)}
-      />
-    );
-  };
   const header = renderHeader();
 
   return (
     <Layout>
       <Card className="card-header">
-        <Toast ref={(el) => (toast = el)} />
+        <Toast ref={toast} />
+
         <div class="row">
-          <div className="p-card-title">Solicitudes</div>
+          <div className="p-card-title">Nuevo Usuario</div>
           <div class="gorup-search">
             <div>
               <Link to="./Administrador/NuevoUsuario">
@@ -304,15 +249,15 @@ function Administrador() {
       </Dialog>
       <Card className="cardSolicitante">
         <Dialog
-          header="Cancelar Solicitud"
+          header="Desactivar usuario"
           visible={visible}
           style={{ width: "30vw" }}
           onHide={() => setVisible(false)}
         >
           {rowDataToCancel && (
             <div>
-              <p>¿Estás seguro que deseas cancelar la solicitud?</p>
-              <p>Detalles de la solicitud: {rowDataToCancel.NumAtCard}</p>
+              <p>¿Estás seguro que deseas descativar el usuario?</p>
+              <p> {rowDataToCancel.UserName}</p>
               <div class="row">
                 <Button
                   onClick={handleDialogCancel}
@@ -327,7 +272,6 @@ function Administrador() {
         <DataTable
           value={employees}
           selectionMode="single"
-          onRowClick={handleRowClick}
           scrollable
           scrollHeight="400px"
           stripedRows
@@ -335,44 +279,41 @@ function Administrador() {
           filters={filters}
           filterDisplay="row"
           globalFilterFields={[
-            "PurchaseRequestId",
-            "Company",
-            "DocDate",
-            "StatusSAP",
-            "NumAtCard",
+            "UserName",
+            "UserEmail",
+            "CompanyName",
+            "UserEmployeeName",
+            "UserProfileName",
           ]}
-          emptyMessage="No hay solicitudes de compra registradas"
+          emptyMessage="No hay empleados registrados"
           header={header}
           paginator
           rows={5}
         >
           <Column
             sortable
-            field="FirstName"
+            field="UserName"
             header="Nombre de usuario"
             style={{ width: "10%" }}
           />
+          <Column field="UserEmail" header="Email" style={{ width: "20%" }} />
+
           <Column
-            field="email"
-            header="Email"
-            style={{ width: "20%" }}
-          />
-          
-          <Column
-            field="empresa"
+            field="CompanyName"
             header="Empresa"
             style={{ width: "20%" }}
           />
 
           <Column
-            field="FirstName"
+            field="UserEmployeeName"
             header="Empleado"
             showFilterMenu={false}
             filterMenuStyle={{ width: "14rem" }}
             style={{ width: "10%", padding: "8px" }}
-           
           />
-          <Column field="NumAtCard" header="Referencia" />
+          <Column field="UserProfileName" header="Perfil" />
+          <Column field="UserLastModification" header="Ultima Modificación" />
+
           <Column
             style={{ width: "10%" }}
             body={(rowData) =>
@@ -382,7 +323,7 @@ function Administrador() {
                 <div>
                   <Button
                     outlined
-                    onClick={() => cancelarSolicitud(rowData)}
+                    onClick={() => desactivarUsuario(rowData)}
                     icon="pi pi-times"
                     rounded
                     severity="danger"

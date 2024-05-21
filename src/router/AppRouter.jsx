@@ -10,6 +10,7 @@ import Sincronizar from "../pages/Administrador/Sincronizacion";
 import SincronizacionProvedores from "../pages/Administrador/SincronizarProvedores";
 import SincronizarEmpleados from "../pages/Administrador/SincronizarEmpleados";
 import SincronizarArticulos from "../pages/Administrador/SincronizarArticulos";
+import EditarUsuarios from "../pages/Administrador/EditarUsuarios";
 import Requisitor from "../pages/Requisitor";
 import Proveedor from "../pages/Proveedor";
 import OrdenCompra from "../pages/Proveedor/OrdenCompra";
@@ -81,6 +82,16 @@ export const AppRouter = () => {
             element={
               <PrivateRoute
                 element={<SincronizarArticulos />}
+                allowedProfiles={["Admin"]}
+              />
+            }
+          />
+          
+          <Route
+            path="Administrador/Administrador/EditarUsuarios"
+            element={
+              <PrivateRoute
+                element={<EditarUsuarios />}
                 allowedProfiles={["Admin"]}
               />
             }
