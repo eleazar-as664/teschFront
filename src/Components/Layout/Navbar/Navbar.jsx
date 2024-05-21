@@ -33,6 +33,9 @@ export const Navbar = () => {
   const direcionarRequicisiones = () =>{
     navigate("/Requisitor")
   }
+  const direcionamientoAutorizaciones = () => {   
+    navigate("/Autorizador"); 
+  }
   const primeraLetra = user.FirstName.charAt(0);
   const items = [
     {
@@ -130,6 +133,12 @@ export const Navbar = () => {
       id: "10",
     },  
     {
+      label: "Autorizaciones",
+      icon: "pi pi-cog",
+      id: "12",
+      command: direcionamientoAutorizaciones,
+    },  
+    {
       label: "Cerrar",
       icon: "pi pi-sign-out",
       id: "5",
@@ -159,6 +168,13 @@ export const Navbar = () => {
     );
     filteredItems10 = filteredItems10.concat(solicitanteItems);
   }
+
+  if (user.Profiles.some(profile => profile.Name === "Autorizador")) {
+    const solicitanteItems = items10.filter(   
+    (item) => item.id === "12" || item.id === "5" || item.id === "11" || item.id === "22"
+  );
+  filteredItems10 = filteredItems10.concat(solicitanteItems);
+}
 
   if (user.Profiles.some(profile => profile.Name === "Administrador")) {
     const adminItems = items10.filter(

@@ -8,6 +8,7 @@ import Proveedor from "../pages/Proveedor";
 import OrdenCompra from "../pages/Proveedor/OrdenCompra"
 import NotFount from "../Components/NotFount";
 import Autorizador from "../pages/Autorizador";
+import AutorizadorOrdenCompra from "../pages/Autorizador/AutorizadorOrdenCompra";
 import  "../Components/Styles/Global.css";
 import "primeicons/primeicons.css";
 import "primereact/resources/themes/saga-blue/theme.css";
@@ -90,6 +91,15 @@ export const AppRouter = () => {
             element={
               <PrivateRoute
                 element={<Autorizador />}
+                allowedProfiles={["Autorizador"]}
+              />
+            }
+          />
+           <Route
+            path="Autorizador/Autorizador/AutorizadorOrdenCompra"
+            element={
+              <PrivateRoute
+                element={<AutorizadorOrdenCompra />}
                 allowedProfiles={["Autorizador"]}
               />
             }

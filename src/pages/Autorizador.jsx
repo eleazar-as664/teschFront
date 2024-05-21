@@ -13,6 +13,8 @@ import { Dropdown } from "primereact/dropdown";
 import { InputText } from "primereact/inputtext";
 import { IconField } from "primereact/iconfield";
 import { InputIcon } from "primereact/inputicon";
+import { Toast } from "primereact/toast";
+
 import { Tag } from "primereact/tag";
 import routes from "../utils/routes";
 
@@ -41,19 +43,20 @@ function Autorizador() {
   const user = JSON.parse(localStorage.getItem("user"));
   const token = JSON.parse(localStorage.getItem("user")).Token;
 
-  const fetchDataPurchaseOrder = async () => {
+  const fetchDataPurchaseOrderHeadersPendingApproval = async () => {
     try {
       console.clear();
-      console.log(user.UserId);
+      console.log("Cargando datos de la API...")
       const IdUsuario = user.UserId;
-      const apiUrl = `${routes.BASE_URL_SERVER}/GetPurchaseOrdersHeadersForSupplier/${IdUsuario}`;
+      const apiUrl = `${routes.BASE_URL_SERVER}/GetPurchaseOrderHeadersPendingApproval/${IdUsuario}`;
       const config = {
         headers: {
           "x-access-token": token,
         },
       };
+      console.log(apiUrl)
       const response = await axios.get(apiUrl, config);
-      // console.log(response.data.data);
+      console.log(response.data.data);
       // setpurchaseOrderData(response.data.data);
       const updatedData = response.data.data.map((item) => ({
         ...item,
@@ -64,7 +67,7 @@ function Autorizador() {
       setPurchaseOrderData(updatedData);
       // setpurchaseOrderData(response.data.data.purchaseRequestsHeaders);
     } catch (error) {
-      console.error("Error al obtener datos de la API:", error);
+      console.error("Error al obtener datos de la API:", error.response.data.message);
     }
   };
 
@@ -79,21 +82,23 @@ function Autorizador() {
 
   useEffect(() => {
     localStorage.removeItem("purchaseOrderData");
-    fetchDataPurchaseOrder();
+    fetchDataPurchaseOrderHeadersPendingApproval();
   }, []);
 
   const handleRowClick = (event) => {
+    console.clear();
+    console.log("Clic en la fila",event.data);
     const rowData = event.data;
     localStorage.setItem("purchaseOrderData", JSON.stringify(rowData));
 
     // Redirigir a la página de detalles
-    // navigate("./Proveedor/OrdenCompra");
+    navigate("/Autorizador/Autorizador/AutorizadorOrdenCompra");
   };
 
-  const redirectToDetalle = (event) => {
+  const redirectToDetalle = (datos) => {
      console.clear();
-     console.log("HOLAAAAAAAAAAAAAAAAAAAA ELEAZAR :b");
-     console.log(event.data);
+     console.log("Boton presionado");
+     console.log(datos.Id);
      
   };
 
@@ -177,61 +182,94 @@ function Autorizador() {
           selectionMode="single"
           // selection={selectedItem}
           onRowClick={handleRowClick} // Capturar el clic en la fila
-          scrollable
-          scrollHeight="400px"
-          stripedRows
-          tableStyle={{ minWidth: "50rem" }}
-          filters={filters}
-          filterDisplay="row"
-          globalFilterFields={[
-            "DocNum",
-            "concatenatedInfo",
-            "DocDueDate",
-            "StatusSAP",
-          ]}
-          emptyMessage="No hay solicitudes de compra registradas"
-          header={header}
-          paginator
-          rows={5}
-        >
-          <Column
-            field="DocNum"
-            header="Orden"
-            style={{ width: "10%" }}
-          ></Column>
-          <Column
-            field="concatenatedInfo"
-            header="Empresa/Fecha Solicitud"
-            style={{ width: "40%" }}
-          ></Column>
-          <Column
-            field="DocDueDate"
-            header="Fecha Requerida"
-            style={{ width: "40%" }}
-          ></Column>
-          <Column
-            field="StatusSAP"
-            header="Estatus"
-            style={{ width: "10%" }}
-            body={statusBodyTemplate}
-            filter
-            filterElement={statusRowFilterTemplate}
-          ></Column>
-          <Column
-            header="Ver"
-            body={(rowData) => (
-              <Button
-                onClick={() => redirectToDetalle(rowData.id)} // Agrega la función para redireccionar a la página de detalle
-                label={
+            scrollable
+            scrollHeight="400px"
+            stripedRows
+            tableStyle={{ minWidth: "50rem" }}
+            filters={filters}
+            filterDisplay="row"
+            globalFilterFields={[
+              "DocNum",
+              "CompanyName",
+              "DocDate",
+              "StatusSAP",
+            ]}
+            emptyMessage="No hay solicitudes de compra registradas"
+            header={header}
+            paginator
+            rows={5}
+            >
+            <Column
+              field="DocNum"
+              header="Orden"
+              style={{ width: "10%" }}
+            ></Column>
+            <Column
+              field="CompanyName"
+              header="Empresa"
+              style={{ width: "20%" }}
+            ></Column>
+            <Column
+              field="DocDate"
+              header="Fecha Orden"
+              style={{ width: "20%" }}
+            ></Column>
+            <Column
+              field="Requester"
+              header="Solicitó"
+              style={{ width: "20%" }}
+            ></Column>
+            <Column
+              field="ApprovalStatus"
+              header="Estatus"
+              style={{ width: "20%" }}
+              body={(rowData) => {
+              switch (rowData.ApprovalStatus) {
+                case "Para Autorizar":
+                return (
+                  <div>
                   <i
-                    className="pi pi-file-pdf"
-                    style={{ fontSize: "24px", color: "#f73164" }}
-                  />
-                }
-                text
-              />
-            )}
-          ></Column>
+                    className="pi pi-exclamation-triangle"
+                    style={{ color: "orange" }}
+                  ></i>
+                  {rowData.ApprovalStatus}
+                  </div>
+                );
+                case "Abierto":
+                return (
+                  <div>
+                  <i
+                    className="pi pi-lock-open"
+                    style={{ color: "purple" }}
+                  ></i>
+                  {rowData.ApprovalStatus}
+                  </div>
+                );
+                case "Cerrado":
+                return (
+                  <div>
+                  <i
+                    className="pi pi-check-circle"
+                    style={{ color: "green" }}
+                  ></i>
+                  {rowData.ApprovalStatus}
+                  </div>
+                );
+                case "Cancelado":
+                return (
+                  <div>
+                  <i
+                    className="pi pi-times-circle"
+                    style={{ color: "red" }}
+                  ></i>
+                  {rowData.ApprovalStatus}
+                  </div>
+                );
+                default:
+                return rowData.ApprovalStatus;
+              }
+              }}
+            ></Column>
           <Column
             headerStyle={{ width: "5%", minWidth: "5rem" }}
             bodyStyle={{ textAlign: "center" }}
