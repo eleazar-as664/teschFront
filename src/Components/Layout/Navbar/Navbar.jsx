@@ -33,6 +33,12 @@ export const Navbar = () => {
   const direcionarRequicisiones = () =>{
     navigate("/Requisitor")
   }
+  const direcionarUsuarios = () =>{
+    navigate("/Administrador")
+  }
+  const direcionarSicronizar = () =>{
+    navigate("Administrador/Sincronizacion")
+  }
   const primeraLetra = user.FirstName.charAt(0);
   const items = [
     {
@@ -118,11 +124,15 @@ export const Navbar = () => {
       label: "Sincronización",
       icon: "pi pi-sync",
       id: "8",
+      command: direcionarSicronizar,
+  
     },    
     {
       label: "Usuarios",
       icon: "pi pi-users",
       id: "9",
+      command: direcionarUsuarios,
+
     },  
     {
       label: "Configuración",
@@ -160,9 +170,9 @@ export const Navbar = () => {
     filteredItems10 = filteredItems10.concat(solicitanteItems);
   }
 
-  if (user.Profiles.some(profile => profile.Name === "Administrador")) {
+  if (user.Profiles.some(profile => profile.Name === "Admin")) {
     const adminItems = items10.filter(
-      (item) => item.id === "8" || item.id === "9" || item.id === "10" || item.id === "11"  || item.id === "6"
+      (item) => item.id === "8" || item.id === "9"  || item.id === "11"  || item.id === "6"|| item.id === "5" 
     );
     filteredItems10 = filteredItems10.concat(adminItems);
   }
