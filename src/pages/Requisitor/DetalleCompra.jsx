@@ -9,7 +9,7 @@ import { FileUpload } from "primereact/fileupload";
 import { Layout } from "../../Components/Layout/Layout";
 import { Toast } from "primereact/toast";
 import { Divider } from "primereact/divider";
-import { Avatar } from 'primereact/avatar';
+import { Avatar } from "primereact/avatar";
 import routes from "../../utils/routes";
 import axios from "axios";
 function DetalleCompra() {
@@ -22,6 +22,9 @@ function DetalleCompra() {
   const [materialesSolicitados, setMaterialesSolicitados] = useState([]);
   const [notas, setNotas] = useState([]);
   const [notasAgregar, setNotasAgregar] = useState("");
+  const [ infoUsuarioCreadorSolicitud, setInfoUsuarioCreadorSolicitud] = useState([]);
+  const [primeraLetra,setPrimeraLetra] = useState('');
+
   // Agregar event listener al cambio de archivos
   const getDatosFiles = async () => {
     try {
@@ -56,6 +59,12 @@ function DetalleCompra() {
 
       const detalesRequisicion = response.data.data;
 
+      setInfoUsuarioCreadorSolicitud(detalesRequisicion);
+      setPrimeraLetra(detalesRequisicion.FirstName.charAt(0)) 
+
+      console.clear();
+      console.log("detalesRequisicion:", detalesRequisicion);
+
       const newSelectedItems = detalesRequisicion.Detail.map((item, index) => ({
         id: index,
         ItemCode: item.ItemCode,
@@ -87,7 +96,7 @@ function DetalleCompra() {
     getDatosCompra();
   }, []);
 
-  useEffect(() => {}, [materialesSolicitados,getDatosCompra,getDatosFiles]);
+  useEffect(() => {}, [materialesSolicitados, getDatosCompra, getDatosFiles]);
 
   const handleInputChange = (e) => {
     setNotasAgregar(e.target.value);
@@ -112,7 +121,7 @@ function DetalleCompra() {
         };
         const response = await axios.post(apiUrl, data, config);
         getDatosCompra();
-  
+
         console.log("Response:", response.data.data);
         toast.show({
           severity: "success",
@@ -121,8 +130,7 @@ function DetalleCompra() {
           life: 2000,
         });
       } catch (error) {}
-    }else{      
-
+    } else {
       toast.show({
         severity: "warn",
         summary: "Notificación",
@@ -130,9 +138,6 @@ function DetalleCompra() {
         life: 2000,
       });
     }
-   
-  
- 
   };
   const eliminarFiles = (rowData) => {
     axios
@@ -201,7 +206,6 @@ function DetalleCompra() {
   };
 
   const handleSuccessResponse = (response) => {
-   
     console.log("Respuesta del servidor:", response);
     // Aquí podrías manejar la respuesta exitosa, por ejemplo, mostrar un mensaje de éxito al usuario
   };
@@ -209,50 +213,49 @@ function DetalleCompra() {
   const handleErrorResponse = (error) => {
     console.error("Error al enviar el formulario:", error);
   };
+  // const primeraLetra = infoUsuarioCreadorSolicitud.FirstName.charAt(0);
 
   return (
     <Layout>
-    <div class="body-ordenCompra">
-      <Card className="card-header">
-        <div class="row"> 
+      <div class="body-ordenCompra">
+        <Card className="card-header">
+          <div class="row">
             <div className="p-card-title">Detalle de Solicitud</div>
-        </div>
-      </Card>
+          </div>
+        </Card>
         <Toast ref={(el) => (toast = el)} />
         <Card className="cardOrdenCompra">
           <div className="p-grid p-nogutter">
-          <div className="row">
-            <div className="p-col">
-            <Avatar image="https://primefaces.org/cdn/primereact/images/avatar/amyelsner.png" className="mr-2" shape="circle" />
-            </div>
+            <div className="row">
+              <div className="p-col">
+                <Avatar label={primeraLetra} className="mr-2" shape="circle" />
+              </div>
               <div className="p-col-field">
                 <div className="p-field">
-                  <span className="field-name">Angel Star </span>  
+                  <span className="field-name">{infoUsuarioCreadorSolicitud.FirstName + " " + infoUsuarioCreadorSolicitud.LastName} </span>
                 </div>
 
                 <div className="p-field">
-                  <span className="field-name">Red company, Inc. </span>  
+                  <span className="field-name">{infoUsuarioCreadorSolicitud.BusinessName} </span>
                 </div>
 
-                <div className="p-field">
-                  28/02/2023
-                </div>
+                <div className="p-field">{infoUsuarioCreadorSolicitud.CreateDate}</div>
               </div>
 
               <div className="p-col-field">
                 <div className="p-field">
-                  <span className="field-name">Fecha de entrega: </span>  
-                  02/02/2023
+                  <span className="field-name">Fecha de entrega: </span>
+                 {infoUsuarioCreadorSolicitud.DocDate}
                 </div>
 
                 <div className="p-field">
-                   <span className="field-name">Referencia: </span>
-                   222222
+                  <span className="field-name">Referencia: </span>
+                  {infoUsuarioCreadorSolicitud.NumAtCard}
                 </div>
                 <div className="p-field">
-                   <span className="field-name">Comentarios: </span>
+                  <span className="field-name">Comentarios: </span>
+                  {infoUsuarioCreadorSolicitud.Comments}
                 </div>
-
               </div>
             </div>
           </div>
@@ -270,82 +273,85 @@ function DetalleCompra() {
         </Card>
 
         <div className="body-right">
-        <Card title="Notas">
-          <div className="p-inputgroup">
-            <InputText
-              value={notasAgregar}
-              onChange={handleInputChange}
-              placeholder="Escribe un comentario"
-            />
-            <Button label="Enviar" onClick={handleAddNote} />
-          </div>
-          <div>
-            <div className="note-list">
-              {notas.map((nota, index) => (
-                <div key={index}>
-                  <Divider align="center">
-                    {`Nota ${index + 1}: ${nota.FirstName} ${nota.LastName}`}
-                  </Divider>
-                  <p>Código: {nota.Code}</p>
-                  <p>
-                    Fecha de Creación:{" "}
-                    {new Date(nota.CreateDate).toLocaleDateString()}
-                  </p>
-                  <p>Notas: {nota.Notes}</p>
-                </div>
-              ))}
+          <Card title="Notas">
+            <div className="p-inputgroup">
+              <InputText
+                value={notasAgregar}
+                onChange={handleInputChange}
+                placeholder="Escribe un comentario"
+              />
+              <Button label="Enviar" onClick={handleAddNote} />
             </div>
-          </div>
-        </Card>
+            <div>
+              <div className="note-list">
+                {notas.map((nota, index) => (
+                  <div key={index}>
+                    <Divider align="center">
+                      {`Nota ${index + 1}: ${nota.FirstName} ${nota.LastName}`}
+                    </Divider>
+                    <p>Código: {nota.Code}</p>
+                    <p>
+                      Fecha de Creación:{" "}
+                      {new Date(nota.CreateDate).toLocaleDateString()}
+                    </p>
+                    <p>Notas: {nota.Notes}</p>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </Card>
 
-        <Card title="Adjuntos" className="adjuntosaa">
-          <div className="p-field-group">
-            <div className="row align-right">
-            {files.length < 2 && (
-                <FileUpload
-                  mode="basic"
-                  name="demo[]"
-                  multiple
-                  accept="image/*,.pdf"
-                  maxFileSize={1000000}
-                  onSelect={handleFileSelect}
-                  auto
-                  chooseLabel="Agregar"
-                  className="upload-field-detail"
-                />
-              )}
+          <Card title="Adjuntos" className="adjuntosaa">
+            <div className="p-field-group">
+              <div className="row align-right">
+                {files.length < 2 && (
+                  <FileUpload
+                    mode="basic"
+                    name="demo[]"
+                    multiple
+                    accept="image/*,.pdf"
+                    maxFileSize={1000000}
+                    onSelect={handleFileSelect}
+                    auto
+                    chooseLabel="Agregar"
+                    className="upload-field-detail"
+                  />
+                )}
               </div>
               <div className="row">
                 <div className="p-col-field">
-                <DataTable value={files}>
-                  <Column field="FileName" header="Nombre" />
-                  <Column
-                    header="Acción"
-                    body={(rowData) => (
-                      <a
-                        href={rowData.SRC}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                      >
-                        Ver
-                      </a>
-                    )}
-                  />
-                  <Column
-                    header=""
-                    body={(rowData) => (
-                      <Button
-                        outlined
-                        onClick={() => eliminarFiles(rowData)}
-                        icon="pi pi-times" rounded severity="danger" aria-label="Cancel"
-                      />
-                    )}
-                  ></Column>
-                </DataTable>
+                  <DataTable value={files}>
+                    <Column field="FileName" header="Nombre" />
+                    <Column
+                      header="Acción"
+                      body={(rowData) => (
+                        <a
+                          href={rowData.SRC}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                        >
+                          Ver
+                        </a>
+                      )}
+                    />
+                    <Column
+                      header=""
+                      body={(rowData) => (
+                        <Button
+                          outlined
+                          onClick={() => eliminarFiles(rowData)}
+                          icon="pi pi-times"
+                          rounded
+                          severity="danger"
+                          aria-label="Cancel"
+                        />
+                      )}
+                    ></Column>
+                  </DataTable>
                 </div>
               </div>
-          </div>
-        </Card>
+            </div>
+          </Card>
         </div>
       </div>
     </Layout>

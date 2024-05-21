@@ -1,11 +1,18 @@
 import { Route, Routes } from "react-router-dom";
-import { DashboardPage, LoginPage } from "../pages";
+import { LoginPage } from "../pages";
+import Administrador from "../pages/Administrador";
 import NuevaCompra from "../pages/Requisitor/NuevaCompra";
 import EditarRequisicion from "../pages/Requisitor/EditarRequisicion";
 import DetalleCompra from "../pages/Requisitor/DetalleCompra";
+import NuevoUsuario from "../pages/Administrador/NuevoUsuario";
+import Sincronizar from "../pages/Administrador/Sincronizacion";
+
+import SincronizacionProvedores from "../pages/Administrador/SincronizarProvedores";
+import SincronizarEmpleados from "../pages/Administrador/SincronizarEmpleados";
+import SincronizarArticulos from "../pages/Administrador/SincronizarArticulos";
 import Requisitor from "../pages/Requisitor";
 import Proveedor from "../pages/Proveedor";
-import OrdenCompra from "../pages/Proveedor/OrdenCompra"
+import OrdenCompra from "../pages/Proveedor/OrdenCompra";
 import NotFount from "../Components/NotFount";
 import Autorizador from "../pages/Autorizador";
 import AutorizadorOrdenCompra from "../pages/Autorizador/AutorizadorOrdenCompra";
@@ -27,11 +34,58 @@ export const AppRouter = () => {
             path="/Administrador"
             element={
               <PrivateRoute
-                element={<DashboardPage />}
-                allowedProfiles={["admin"]}
+                element={<Administrador />}
+                allowedProfiles={["Admin"]}
               />
             }
           />
+          <Route
+            path="Administrador/Administrador/NuevoUsuario"
+            element={
+              <PrivateRoute
+                element={<NuevoUsuario />}
+                allowedProfiles={["Admin"]}
+              />
+            }
+          />
+          <Route
+            path="Administrador/Administrador/Sincronizacion"
+            element={
+              <PrivateRoute
+                element={<Sincronizar />}
+                allowedProfiles={["Admin"]}
+              />
+            }
+          />
+          <Route
+            path="Administrador/Administrador/SincronizarProvedores"
+            element={
+              <PrivateRoute
+                element={<SincronizacionProvedores />}
+                allowedProfiles={["Admin"]}
+              />
+            }
+          />
+          <Route
+            path="Administrador/Administrador/SincronizarEmpleados"
+            element={
+              <PrivateRoute
+                element={<SincronizarEmpleados />}
+                allowedProfiles={["Admin"]}
+              />
+            }
+          />
+
+          <Route
+            path="Administrador/Administrador/SincronizarArticulos"
+            element={
+              <PrivateRoute
+                element={<SincronizarArticulos />}
+                allowedProfiles={["Admin"]}
+              />
+            }
+          />
+
           <Route
             path="/Requisitor"
             element={
@@ -59,7 +113,7 @@ export const AppRouter = () => {
               />
             }
           />
-           <Route
+          <Route
             path="Requisitor/Requisitor/DetalleCompra"
             element={
               <PrivateRoute
@@ -77,7 +131,7 @@ export const AppRouter = () => {
               />
             }
           />
-           <Route
+          <Route
             path="Proveedor/Proveedor/OrdenCompra"
             element={
               <PrivateRoute

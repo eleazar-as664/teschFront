@@ -398,7 +398,6 @@ function Proveedor() {
               </div>
             )}
           />
-
           <Column
             headerStyle={{ width: "5%", minWidth: "5rem" }}
             bodyStyle={{ textAlign: "center" }}

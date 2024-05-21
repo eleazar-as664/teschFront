@@ -18,7 +18,7 @@ import { InputText } from "primereact/inputtext";
 import { FileUpload } from "primereact/fileupload";
 import { Avatar } from "primereact/avatar";
 import { Divider } from "primereact/divider";
-import { Calendar } from 'primereact/calendar';
+import { Calendar } from "primereact/calendar";
 import moment from "moment";
 import { useNavigate } from "react-router-dom";
 
@@ -62,6 +62,8 @@ function EditarRequisicion() {
   const [contadorId, setContadorId] = useState(1);
   const [materialToEdit, setMaterialToEdit] = useState(null);
   const [files, setFiles] = useState([]);
+  const [primeraLetra,setPrimeraLetra] = useState('');
+
   const filterMaterials = (event) => {
     const searchTerm = event.query.toLowerCase();
     const filtered = materialeslData.filter((material) =>
@@ -74,9 +76,11 @@ function EditarRequisicion() {
     setDialogVisible(true);
   };
   const token = JSON.parse(localStorage.getItem("user")).Token;
-
   const user = JSON.parse(localStorage.getItem("user"));
   const datosRequisitor = JSON.parse(localStorage.getItem("datosRequisitor"));
+  const [infoUsuarioCreadorSolicitud, setInfoUsuarioCreadorSolicitud] =
+    useState([]);
+
   let toast;
 
   const getDatosFiles = async () => {
@@ -119,12 +123,15 @@ function EditarRequisicion() {
       const response = await axios.get(apiUrl, config);
 
       const detalesRequisicion = response.data.data;
+      setInfoUsuarioCreadorSolicitud(detalesRequisicion);
+      setPrimeraLetra(detalesRequisicion.FirstName.charAt(0)) 
+
       console.clear();
 
-      console.log("detalesRequisicion:", detalesRequisicion);
+      console.log("detalesRequisicion:", detalesRequisicion,primeraLetra);
 
       // <Column field="ItemCode" header="Codigo" />
- 
+
       const newSelectedItems = detalesRequisicion.Detail.map((item, index) => ({
         idTeficador: contadorId + index, // Puedes usar el índice como un identificador único si no tienes uno en tus datos
         ItemCode: item.ItemCode,
@@ -148,18 +155,16 @@ function EditarRequisicion() {
       setNotas(notas);
       console.log("materialConId:", newSelectedItems);
 
-
       // Actualizar selectedItems con todos los objetos de Detail
-      setSelectedItems( newSelectedItems);
+      setSelectedItems(newSelectedItems);
       setFormData({
         ...formData,
         Comments: detalesRequisicion.Comments,
         NumAtCard: detalesRequisicion.NumAtCard,
-        fecha: moment(detalesRequisicion.DocDueDate).toDate() ,
+        fecha: moment(detalesRequisicion.DocDueDate).toDate(),
       });
       // setFormData(response.data.data);
       console.log("formData:", formData);
-
     } catch (error) {
       console.error("Error al obtener datos de la API:", error);
     }
@@ -277,16 +282,6 @@ function EditarRequisicion() {
   const validateForm = () => {
     const errors = {};
     let formIsValid = true;
-
-    // if (!formData.fecha) {
-    //   errors.fecha = "La fecha es obligatoria.";
-    //   formIsValid = false;
-    // }
-
-    // if (!formData.NumAtCard.trim()) {
-    //   errors.NumAtCard = "El número de referencia es obligatorio.";
-    //   formIsValid = false;
-    // }
 
     if (!formData.companies) {
       errors.companies = "Seleccione una compañía.";
@@ -438,6 +433,7 @@ function EditarRequisicion() {
         // Manejar el error, como mostrar un mensaje al usuario
       });
   };
+
   return (
     <Layout>
       <div class="body-ordenCompra">
@@ -454,7 +450,7 @@ function EditarRequisicion() {
               <div className="row">
                 <div className="p-col">
                   <Avatar
-                    image="https://primefaces.org/cdn/primereact/images/avatar/amyelsner.png"
+                    label={primeraLetra}
                     className="mr-2"
                     shape="circle"
                   />
@@ -462,12 +458,16 @@ function EditarRequisicion() {
                 <div className="p-col-field">
                   <div className="p-field">
                     <span className="field-name">
-                      {user.FirstName + " " + user.LastName}
+                      {infoUsuarioCreadorSolicitud.FirstName +
+                        " " +
+                        infoUsuarioCreadorSolicitud.LastName}
                     </span>
                   </div>
 
                   <div className="p-field">
-                    <span className="field-name">{user.CompanyName} </span>
+                    <span className="field-name">
+                      {infoUsuarioCreadorSolicitud.BusinessName}{" "}
+                    </span>
                   </div>
 
                   <div className="p-field">{currentDate}</div>
@@ -475,7 +475,6 @@ function EditarRequisicion() {
                 <div className="p-col-field-right">
                   <div className="row">
                     <div className="p-field">
-                 
                       {/* <Calendar
                         value={new Date(formData.CreateDate)}
                         onChange={(e) =>
@@ -586,13 +585,29 @@ function EditarRequisicion() {
           </Dialog>
           <div className="table-container">
             <DataTable value={selectedItems} scrollHeight="400px">
-            <Column field="ItemCode" header="Codigo" style={{ width: '15%' }} />
-            <Column field="Description" header="Description" style={{ width: '35%' }}/>
-            <Column field="BuyUnitMsr" header="Unidad" style={{ width: '15%' }}></Column>
-            <Column field="Quantity" header="Cantidad" style={{ width: '15%' }}/>
-            {/* <Column field="IVAName" header="Impuesto" style={{ width: '5%' }}/> */}
               <Column
-                style={{ width: '15%' }}
+                field="ItemCode"
+                header="Codigo"
+                style={{ width: "15%" }}
+              />
+              <Column
+                field="Description"
+                header="Description"
+                style={{ width: "35%" }}
+              />
+              <Column
+                field="BuyUnitMsr"
+                header="Unidad"
+                style={{ width: "15%" }}
+              ></Column>
+              <Column
+                field="Quantity"
+                header="Cantidad"
+                style={{ width: "15%" }}
+              />
+              {/* <Column field="IVAName" header="Impuesto" style={{ width: '5%' }}/> */}
+              <Column
+                style={{ width: "15%" }}
                 field=""
                 header=""
                 body={(rowData) => (
@@ -646,19 +661,19 @@ function EditarRequisicion() {
           <Card title="Adjuntos" className="adjuntosaa">
             <div className="p-field-group">
               <div className="row align-right">
-              {files.length < 2 && (
-                <FileUpload
-                  mode="basic"
-                  name="demo[]"
-                  multiple
-                  accept="image/*,.pdf"
-                  maxFileSize={1000000}
-                  onSelect={handleFileSelect}
-                  auto
-                  chooseLabel="Agregar"
-                  className="upload-field-detail"
-                />
-              )}
+                {files.length < 2 && (
+                  <FileUpload
+                    mode="basic"
+                    name="demo[]"
+                    multiple
+                    accept="image/*,.pdf"
+                    maxFileSize={1000000}
+                    onSelect={handleFileSelect}
+                    auto
+                    chooseLabel="Agregar"
+                    className="upload-field-detail"
+                  />
+                )}
               </div>
               <div className="row">
                 <div className="p-col-field">
