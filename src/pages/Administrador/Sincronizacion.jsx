@@ -25,7 +25,7 @@ function Sincronizacion() {
   const [enviandoASAP, setEnviandoASAP] = useState(false);
   const [companies, setCompanies] = useState([]);
   const [getCompanySettings, setGetCompanySettings] = useState([]);
-  const [value1, setValue1] = useState();
+  const [value1nventariable, setValue1] = useState();
   const [value2, setValue2] = useState();
   const [valorEdit, setValorEdit] = useState();
   const [inventoriable, setInventoriable] = useState();
@@ -222,7 +222,7 @@ function Sincronizacion() {
     setIsButtonDisabled(true);
     try {
       const data = {
-        Inventoriable: value1,
+        Inventoriable: value1nventariable,
         Expense: value2,
         CompanyId: companiesConfig.Id,
       };
@@ -325,14 +325,14 @@ function Sincronizacion() {
                 {getCompanySettings.length > 0 && (
                   <InputNumber
                     id="value1"
-                    value={valorEdit}
+                    value={inventoriable}
                     onValueChange={(e) => setValue1(e.value)}
                   />
                 )}
                 {getCompanySettings.length <= 0 && (
                   <InputNumber
                   id="value1"
-                  value={value1}
+                  value={value1nventariable}
                   onValueChange={(e) => setValue1(e.value)}
                 />
                 )}
@@ -343,7 +343,7 @@ function Sincronizacion() {
                 {getCompanySettings.length > 0 && (
                   <InputNumber
                     id="value1"
-                    value={inventoriable}
+                    value={valorEdit}
                     onValueChange={(e) => setValue1(e.value)}
                   />
                 )}
