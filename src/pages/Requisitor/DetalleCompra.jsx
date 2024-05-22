@@ -15,15 +15,18 @@ import axios from "axios";
 function DetalleCompra() {
   const [files, setFiles] = useState([]);
 
-  let toast;
+  const toast = useRef(null);
+
   const datosRequisitor = JSON.parse(localStorage.getItem("datosRequisitor"));
   const user = JSON.parse(localStorage.getItem("user"));
   const token = JSON.parse(localStorage.getItem("user")).Token;
   const [materialesSolicitados, setMaterialesSolicitados] = useState([]);
   const [notas, setNotas] = useState([]);
   const [notasAgregar, setNotasAgregar] = useState("");
-  const [ infoUsuarioCreadorSolicitud, setInfoUsuarioCreadorSolicitud] = useState([]);
-  const [primeraLetra,setPrimeraLetra] = useState('');
+  const [infoUsuarioCreadorSolicitud, setInfoUsuarioCreadorSolicitud] =
+    useState([]);
+  const [primeraLetra, setPrimeraLetra] = useState("");
+  const [enviandoNota, setEnviandoNota] = useState(false);
 
   // Agregar event listener al cambio de archivos
   const getDatosFiles = async () => {
@@ -60,7 +63,7 @@ function DetalleCompra() {
       const detalesRequisicion = response.data.data;
 
       setInfoUsuarioCreadorSolicitud(detalesRequisicion);
-      setPrimeraLetra(detalesRequisicion.FirstName.charAt(0)) 
+      setPrimeraLetra(detalesRequisicion.FirstName.charAt(0));
 
       console.clear();
       console.log("detalesRequisicion:", detalesRequisicion);
@@ -112,6 +115,7 @@ function DetalleCompra() {
         Notes: notasAgregar,
       };
       console.log("data:", data);
+      setEnviandoNota(true);
       try {
         const apiUrl = `${routes.BASE_URL_SERVER}/CreatePurchaseRequestNote`;
         const config = {
@@ -123,15 +127,27 @@ function DetalleCompra() {
         getDatosCompra();
 
         console.log("Response:", response.data.data);
-        toast.show({
+        toast.current.show({
           severity: "success",
           summary: "Notificación",
           detail: "Nota agregada con exito",
           life: 2000,
         });
-      } catch (error) {}
+      } catch (error) {
+        console.error("Error al agregar la nota:", error);
+
+        toast.current.show({
+          severity: "error",
+          summary: "Notificación",
+          detail: "Error al agregar la nota",
+          life: 2000,
+        });
+      } finally {
+        setNotasAgregar("");
+        setEnviandoNota(false);
+      }
     } else {
-      toast.show({
+      toast.current.show({
         severity: "warn",
         summary: "Notificación",
         detail: "Debe agregar una nota",
@@ -146,7 +162,7 @@ function DetalleCompra() {
       )
       .then((response) => {
         getDatosFiles();
-        toast.show({
+        toast.current.show({
           severity: "warn",
           summary: "Notificación",
           detail: "Archivo eliminado con exito",
@@ -162,7 +178,7 @@ function DetalleCompra() {
   const handleFileSelect = (event) => {
     const archivoPDF = event.files[0]; // Obtener el primer archivo seleccionado
 
-    toast.show({
+    toast.current.show({
       severity: "success",
       summary: "Notificación",
       detail: "archivo agregado con exito",
@@ -223,7 +239,7 @@ function DetalleCompra() {
             <div className="p-card-title">Detalle de Solicitud</div>
           </div>
         </Card>
-        <Toast ref={(el) => (toast = el)} />
+        <Toast ref={toast} />
         <Card className="cardOrdenCompra">
           <div className="p-grid p-nogutter">
             <div className="row">
@@ -232,20 +248,28 @@ function DetalleCompra() {
               </div>
               <div className="p-col-field">
                 <div className="p-field">
-                  <span className="field-name">{infoUsuarioCreadorSolicitud.FirstName + " " + infoUsuarioCreadorSolicitud.LastName} </span>
+                  <span className="field-name">
+                    {infoUsuarioCreadorSolicitud.FirstName +
+                      " " +
+                      infoUsuarioCreadorSolicitud.LastName}{" "}
+                  </span>
                 </div>
 
                 <div className="p-field">
-                  <span className="field-name">{infoUsuarioCreadorSolicitud.BusinessName} </span>
+                  <span className="field-name">
+                    {infoUsuarioCreadorSolicitud.BusinessName}{" "}
+                  </span>
                 </div>
 
-                <div className="p-field">{infoUsuarioCreadorSolicitud.CreateDate}</div>
+                <div className="p-field">
+                  {infoUsuarioCreadorSolicitud.CreateDate}
+                </div>
               </div>
 
               <div className="p-col-field">
                 <div className="p-field">
                   <span className="field-name">Fecha de entrega: </span>
-                 {infoUsuarioCreadorSolicitud.DocDate}
+                  {infoUsuarioCreadorSolicitud.DocDate}
                 </div>
 
                 <div className="p-field">
@@ -280,7 +304,12 @@ function DetalleCompra() {
                 onChange={handleInputChange}
                 placeholder="Escribe un comentario"
               />
-              <Button label="Enviar" onClick={handleAddNote} />
+
+              {enviandoNota ? (
+                <Button icon="pi pi-spin pi-spinner" />
+              ) : (
+                <Button label="Enviar" onClick={handleAddNote} />
+              )}
             </div>
             <div>
               <div className="note-list">

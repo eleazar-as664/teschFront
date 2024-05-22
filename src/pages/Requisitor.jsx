@@ -39,7 +39,7 @@ function Requisitor() {
     StatusSAP: { value: null, matchMode: FilterMatchMode.EQUALS },
     NumAtCard: { value: null, matchMode: FilterMatchMode.STARTS_WITH },
   });
-  let toast;
+  const toast = useRef(null);
   const navigate = useNavigate();
   const user = JSON.parse(localStorage.getItem("user"));
   const token = JSON.parse(localStorage.getItem("user")).Token;
@@ -81,17 +81,23 @@ function Requisitor() {
       };
       const response = await axios.post(apiUrl, data, config);
       console.log("Response:", response);
-      // toast.show({
-      //   severity: "success",
-      //   summary: "Notificación",
-      //   detail: "Se envio correctamente la solicitud a SAP",
-      //   life: 2000,
-      // });
-      // fetchData();
+       toast.current.show({
+        severity: "success",
+        summary: "Notificación",
+        detail: "Se envio correctamente la solicitud a SAP",
+        life: 2000,
+      });
+       fetchData();
      
     
     } catch (error) {
       console.error("Error al enviar la solicitud a SAP:",error);
+      toast.current.show({
+        severity: "error",
+        summary: "Error",
+        detail: "Error al enviar la solicitud a SAP",
+        life: 2000,
+      })
     
     } finally {
       // Indicar que se ha completado el envío a SAP
@@ -112,7 +118,7 @@ function Requisitor() {
       .then((response) => {
         console.log("Solicitud de compra cancelada con éxito");
         fetchData();
-        toast.show({
+        toast.current.show({
           severity: "success",
           summary: "Notificación",
           detail: "Solicitud de compra cancelada con éxito",
@@ -256,7 +262,7 @@ function Requisitor() {
   return (
     <Layout>
       <Card className="card-header">
-        <Toast ref={(el) => (toast = el)} />
+      <Toast ref={toast} />
         <div class="row">
           <div className="p-card-title">Solicitudes</div>
           <div class="gorup-search">
