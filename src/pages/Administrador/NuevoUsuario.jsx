@@ -47,6 +47,8 @@ function NuevoUsuario() {
   // Agregar event listener al cambio de archivos
   const user = JSON.parse(localStorage.getItem("user"));
   const token = JSON.parse(localStorage.getItem("user")).Token;
+
+
   const fetchBusinessPartners = async (CompanyId) => {
     if (!CompanyId) {
       console.log("CompanyId is undefined");
@@ -332,6 +334,12 @@ function NuevoUsuario() {
       CompanyId: newCompanyId,
     });
   };
+  const handleDelete = (rowData) => {
+    const updatedItems = selectedCompanies.filter((item) => item !== rowData);
+    setSelectedCompanies(updatedItems);
+
+    console.log("Elemento eliminado:", rowData);
+  };
 
   return (
     <Layout>
@@ -491,7 +499,19 @@ function NuevoUsuario() {
                   {formData.ProfileId?.Id == 3 ? (
                     <DataTable value={selectedCompanies} className="mt-4">
                       <Column field="Id" header="ID" />
-                      <Column field="Name" header="Name" />
+                      <Column field="Name" header="Nombre" />
+                      <Column
+                        field=""
+                        body={(rowData) => (
+                          <div>
+                            <Button
+                              icon="pi pi-trash"
+                              onClick={() => handleDelete(rowData)}
+                              className="p-button-danger"
+                            />
+                          </div>
+                        )}
+                      />
                     </DataTable>
                   ) : (
                     <> </>

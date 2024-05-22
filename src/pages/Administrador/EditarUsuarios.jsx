@@ -26,7 +26,9 @@ function EditarUsuarios() {
     useState(false);
   const [formData, setFormData] = useState({});
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState("");
+  const [empresasId, setEmpresasId] = useState();
+
+
   const [formErrors, setFormErrors] = useState({
     Email: false,
     ProfileId: false,
@@ -46,12 +48,60 @@ function EditarUsuarios() {
   const token = JSON.parse(localStorage.getItem("user")).Token;
   const employeesEditar = JSON.parse(localStorage.getItem("empleadosEditar"));
 
-  const fetchDataUsuario = async () => {
+  const fetchBusinessPartners = async (CompanyId) => {
+    if (!CompanyId) {
+      console.log("CompanyId is undefined");
+      return;
+    }
+    const apiUrleGetBusinessPartners = `${routes.BASE_URL_SERVER}/GetBusinessPartners/${CompanyId}`;
+    const config = {
+      headers: {
+        "x-access-token": token,
+      },
+    };
+    setLoading(true);
     try {
-      const CompanyId = user.CompanyId;
-      const apiUrlEmpleados = `${routes.BASE_URL_SERVER}/GetEmployees/${CompanyId}`;
+      const response = await axios.get(apiUrleGetBusinessPartners, config);
+      console.log("************  GetBusinessPartners  ****************");
 
-      const apiUrlCompanies = `${routes.BASE_URL_SERVER}/GetCompanies`;
+      console.log(response.data.data);
+      setBusinessPartners(response.data.data || []);
+    } catch (error) {
+      console.error("Error fetching business partners:", error);
+      setBusinessPartners([]);
+    }
+    setLoading(false);
+  };
+  const fetchDataGetEmployees = async (CompanyId) => {
+    if (!CompanyId) {
+      console.log("GetEmployees is undefined");
+      return;
+    }
+
+    const apiUrlEmpleados = `${routes.BASE_URL_SERVER}/GetEmployees/${CompanyId}`;
+    console.log("urlGetEmployees: ", apiUrlEmpleados);
+    try {
+      
+      const config = {
+        headers: {
+          "x-access-token": token,
+        },
+      };
+      const responseGetEmpleados = await axios.get(apiUrlEmpleados, config);
+      console.log("responseGetEmpleadosaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa:", responseGetEmpleados.data.data);
+      const updateEmployees = responseGetEmpleados.data.data.map((item) => ({
+        ...item,
+        nombreCompleto: `${item.FirstName} ${item.LastName}`,
+      }));
+      setEmployees(updateEmployees || []);
+    } catch (error) {
+      console.error("Error al obtener datos de la API:", error);
+      setEmployees([]);
+    }
+  };
+
+  const fetchDataGetProfiles = async () => {
+    try {
       const apiUrlGetProfiles = `${routes.BASE_URL_SERVER}/GetProfiles`;
 
       const config = {
@@ -59,47 +109,41 @@ function EditarUsuarios() {
           "x-access-token": token,
         },
       };
-      const responseGetEmpleados = await axios.get(apiUrlEmpleados, config);
-      const responseGetCompanies = await axios.get(apiUrlCompanies, config);
+
       const responseGetProfiles = await axios.get(apiUrlGetProfiles, config);
 
-      const updateEmployees = responseGetEmpleados.data.data.map((item) => ({
-        ...item,
-        nombreCompleto: `${item.FirstName} ${item.LastName}`,
-      }));
-      setEmployees(updateEmployees);
-      setCompanies(responseGetCompanies.data.data);
       setProfiles(responseGetProfiles.data.data);
+    } catch (error) {
+      console.error("Error al obtener datos de la API:", error);
+    }
+  };
+  const fetchDataGetCompanies = async () => {
+    try {
+      const apiUrlCompanies = `${routes.BASE_URL_SERVER}/GetCompanies`;
+
+      const config = {
+        headers: {
+          "x-access-token": token,
+        },
+      };
+
+      const responseGetCompanies = await axios.get(apiUrlCompanies, config);
+      console.log(responseGetCompanies.data.data);
+      setCompanies(responseGetCompanies.data.data);
     } catch (error) {
       console.error("Error al obtener datos de la API:", error);
     }
   };
 
   useEffect(() => {
-    const fetchBusinessPartners = async () => {
-      console.clear();
+    fetchDataGetProfiles();
+    fetchDataGetCompanies();
+    if (empresasId && empresasId.Id) {
+      fetchBusinessPartners(empresasId.Id);
+      fetchDataGetEmployees(empresasId.Id);
+    }
+  }, [empresasId]);
 
-      const CompanyId = user.CompanyId;
-
-      const apiUrleGetBusinessPartners = `${routes.BASE_URL_SERVER}/GetBusinessPartners/${CompanyId}`;
-      const config = {
-        headers: {
-          "x-access-token": token,
-        },
-      };
-      try {
-        const response = await axios.get(apiUrleGetBusinessPartners, config);
-        console.log(response.data.data);
-        setBusinessPartners(response.data.data);
-      } catch (error) {
-        console.error("Error fetching business partners:", error);
-      }
-      setLoading(false);
-    };
-
-    fetchBusinessPartners();
-    fetchDataUsuario();
-  }, []);
   const selectedEmpleadoTemplate = (option, props) => {
     if (option) {
       return (
@@ -139,16 +183,7 @@ function EditarUsuarios() {
       </div>
     );
   };
-  const handleEmailChange = (e) => {
-    const email = e.target.value;
-    setFormData({ ...formData, Email: email });
 
-    if (!validateEmail(email)) {
-      setError("Por favor, ingrese un correo electrónico válido.");
-    } else {
-      setError("");
-    }
-  };
   const handleSubmit = async (event) => {
     event.preventDefault();
 
@@ -270,7 +305,22 @@ function EditarUsuarios() {
     }
     setFormDataAutorizador({ ...formDataAutorizador, CompanyId: e.value });
   };
+  const handleEmpresasChange = (e) => {
+    const newCompanyId = e.target.value;
+    console.log(newCompanyId.Id);
+    setEmpresasId({ Id: newCompanyId.Id });
 
+    setFormData({
+      ...formData,
+      CompanyId: newCompanyId,
+    });
+  };
+  const handleDelete = (rowData) => {
+    const updatedItems = selectedCompanies.filter((item) => item !== rowData);
+    setSelectedCompanies(updatedItems);
+
+    console.log("Elemento eliminado:", rowData);
+  };
   return (
     <Layout>
       <div class="body-ordenCompra">
@@ -326,12 +376,7 @@ function EditarUsuarios() {
                   formData.ProfileId?.Id == 2 ? (
                     <Dropdown
                       value={formData.CompanyId}
-                      onChange={(e) =>
-                        setFormData({
-                          ...formData,
-                          CompanyId: e.target.value,
-                        })
-                      }
+                      onChange={handleEmpresasChange}
                       options={companies}
                       optionLabel="Name"
                       placeholder="Seleccionar Compañia"
@@ -417,7 +462,19 @@ function EditarUsuarios() {
                   {formData.ProfileId?.Id == 3 ? (
                     <DataTable value={selectedCompanies} className="mt-4">
                       <Column field="Id" header="ID" />
-                      <Column field="Name" header="Name" />
+                      <Column field="Name" header="nombre" />
+                      <Column
+                        field=""
+                        body={(rowData) => (
+                          <div>
+                            <Button
+                              icon="pi pi-trash"
+                              onClick={() => handleDelete(rowData)}
+                              className="p-button-danger"
+                            />
+                          </div>
+                        )}
+                      />
                     </DataTable>
                   ) : (
                     <> </>
