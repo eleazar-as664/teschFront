@@ -117,7 +117,7 @@ function SincronizarEmpleados() {
         BusinessName: selectedEmpresas.BusinessName,
       };
 
-      const apiUrl = `${routes.BASE_URL_SERVER}/SAPSynCompanies`;
+      const apiUrl = `${routes.BASE_URL_SERVER}/SAPSyncBusinessPartners`;
       const config = {
         headers: {
           "x-access-token": token,
@@ -125,7 +125,6 @@ function SincronizarEmpleados() {
       };
       console.log(data);
       const response = await axios.post(apiUrl, data, config);
-      console.log("Response:", response);
       toast.current.show({
         severity: "success",
         summary: "Enviado",
