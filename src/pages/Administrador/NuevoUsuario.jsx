@@ -35,6 +35,9 @@ function NuevoUsuario() {
   const [formDataAutorizador, setFormDataAutorizador] = useState({
     CompanyId: null,
   });
+
+  const [empresasId, setEmpresasId] = useState();
+
   const [selectedCompanies, setSelectedCompanies] = useState([]);
   const validateEmail = (email) => {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -44,13 +47,58 @@ function NuevoUsuario() {
   // Agregar event listener al cambio de archivos
   const user = JSON.parse(localStorage.getItem("user"));
   const token = JSON.parse(localStorage.getItem("user")).Token;
-
-  const fetchDataUsuario = async () => {
+  const fetchBusinessPartners = async (CompanyId) => {
+    if (!CompanyId) {
+      console.log("CompanyId is undefined");
+      return;
+    }
+    const apiUrleGetBusinessPartners = `${routes.BASE_URL_SERVER}/GetBusinessPartners/${CompanyId}`;
+    const config = {
+      headers: {
+        "x-access-token": token,
+      },
+    };
+    setLoading(true);
     try {
-      const CompanyId = user.CompanyId;
-      const apiUrlEmpleados = `${routes.BASE_URL_SERVER}/GetEmployees/${CompanyId}`;
+      const response = await axios.get(apiUrleGetBusinessPartners, config);
+      console.log("************  GetBusinessPartners  ****************");
 
-      const apiUrlCompanies = `${routes.BASE_URL_SERVER}/GetCompanies`;
+      console.log(response.data.data);
+      setBusinessPartners(response.data.data || []);
+    } catch (error) {
+      console.error("Error fetching business partners:", error);
+      setBusinessPartners([]);
+    }
+    setLoading(false);
+  };
+  const fetchDataGetEmployees = async (CompanyId) => {
+    if (!CompanyId) {
+      console.log("GetEmployees is undefined");
+      return;
+    }
+
+    const apiUrlEmpleados = `${routes.BASE_URL_SERVER}/GetEmployees/${CompanyId}`;
+    try {
+      const config = {
+        headers: {
+          "x-access-token": token,
+        },
+      };
+      const responseGetEmpleados = await axios.get(apiUrlEmpleados, config);
+
+      const updateEmployees = responseGetEmpleados.data.data.map((item) => ({
+        ...item,
+        nombreCompleto: `${item.FirstName} ${item.LastName}`,
+      }));
+      setEmployees(updateEmployees || []);
+    } catch (error) {
+      console.error("Error al obtener datos de la API:", error);
+      setEmployees([]);
+    }
+  };
+
+  const fetchDataGetProfiles = async () => {
+    try {
       const apiUrlGetProfiles = `${routes.BASE_URL_SERVER}/GetProfiles`;
 
       const config = {
@@ -58,47 +106,42 @@ function NuevoUsuario() {
           "x-access-token": token,
         },
       };
-      const responseGetEmpleados = await axios.get(apiUrlEmpleados, config);
-      const responseGetCompanies = await axios.get(apiUrlCompanies, config);
+
       const responseGetProfiles = await axios.get(apiUrlGetProfiles, config);
 
-      const updateEmployees = responseGetEmpleados.data.data.map((item) => ({
-        ...item,
-        nombreCompleto: `${item.FirstName} ${item.LastName}`,
-      }));
-      setEmployees(updateEmployees);
-      setCompanies(responseGetCompanies.data.data);
       setProfiles(responseGetProfiles.data.data);
+    } catch (error) {
+      console.error("Error al obtener datos de la API:", error);
+    }
+  };
+  const fetchDataGetCompanies = async () => {
+    try {
+      const apiUrlCompanies = `${routes.BASE_URL_SERVER}/GetCompanies`;
+
+      const config = {
+        headers: {
+          "x-access-token": token,
+        },
+      };
+
+      const responseGetCompanies = await axios.get(apiUrlCompanies, config);
+      console.log(responseGetCompanies.data.data);
+      setCompanies(responseGetCompanies.data.data);
     } catch (error) {
       console.error("Error al obtener datos de la API:", error);
     }
   };
 
   useEffect(() => {
-    const fetchBusinessPartners = async () => {
-      console.clear();
+    fetchDataGetProfiles();
+    fetchDataGetCompanies();
+    if (empresasId && empresasId.Id) {
+      fetchBusinessPartners(empresasId.Id);
+      fetchDataGetEmployees(empresasId.Id);
+    }
+  }, [empresasId]);
 
-      const CompanyId = user.CompanyId;
-
-      const apiUrleGetBusinessPartners = `${routes.BASE_URL_SERVER}/GetBusinessPartners/${CompanyId}`;
-      const config = {
-        headers: {
-          "x-access-token": token,
-        },
-      };
-      try {
-        const response = await axios.get(apiUrleGetBusinessPartners, config);
-        console.log(response.data.data);
-        setBusinessPartners(response.data.data);
-      } catch (error) {
-        console.error("Error fetching business partners:", error);
-      }
-      setLoading(false);
-    };
-
-    fetchBusinessPartners();
-    fetchDataUsuario();
-  }, []);
+  useEffect(() => {}, [fetchDataGetEmployees]);
   const selectedEmpleadoTemplate = (option, props) => {
     if (option) {
       return (
@@ -262,7 +305,7 @@ function NuevoUsuario() {
   };
 
   const handleEnviarNavigate = () => {
-    console.clear();
+    console.log("************  fetchBusinessPartners  ****************");
 
     setDialogVisibleNuevaCompra(false); // Cierra el modal
     navigate("/Administrador"); // Navega a la ruta "/Requisitor"
@@ -277,6 +320,17 @@ function NuevoUsuario() {
       setSelectedCompanies([...selectedCompanies, selectedCompany]);
     }
     setFormDataAutorizador({ ...formDataAutorizador, CompanyId: e.value });
+  };
+
+  const handleEmpresasChange = (e) => {
+    const newCompanyId = e.target.value;
+    console.log(newCompanyId.Id);
+    setEmpresasId({ Id: newCompanyId.Id });
+
+    setFormData({
+      ...formData,
+      CompanyId: newCompanyId,
+    });
   };
 
   return (
@@ -334,12 +388,7 @@ function NuevoUsuario() {
                   formData.ProfileId?.Id == 2 ? (
                     <Dropdown
                       value={formData.CompanyId}
-                      onChange={(e) =>
-                        setFormData({
-                          ...formData,
-                          CompanyId: e.target.value,
-                        })
-                      }
+                      onChange={handleEmpresasChange}
                       options={companies}
                       optionLabel="Name"
                       placeholder="Seleccionar Compañia"
