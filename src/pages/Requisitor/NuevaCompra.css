@@ -15,8 +15,8 @@
     display: flex;
 }
 
-.p-button .p-button-icon-left {
-    margin-right: 0.35rem;
+.botonInsertarRequisitor  .p-button-icon-left {
+    margin-right: 0.35rem !important;
 }
 
 
