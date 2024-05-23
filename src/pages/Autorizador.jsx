@@ -25,8 +25,7 @@ function Autorizador() {
   const navigate = useNavigate();
 
   const [purchaseOrderData, setPurchaseOrderData] = useState([]);
-  const [statuses] = useState(["Abierta", "Cerrada"]);
-  const [PurchaseOrderId, setPurchaseOrderId] = useState([]);
+  const [statuses] = useState(["Abierto", "Cerrada", "Cancelado", "Pendiente"]);
 
   const [globalFilterValue, setGlobalFilterValue] = useState("");
 
@@ -46,7 +45,7 @@ function Autorizador() {
   const fetchDataPurchaseOrderHeadersPendingApproval = async () => {
     try {
       console.clear();
-      console.log("Cargando datos de la API...")
+      console.log("Cargando datos de la API...");
       const IdUsuario = user.UserId;
       const apiUrl = `${routes.BASE_URL_SERVER}/GetPurchaseOrderHeadersPendingApproval/${IdUsuario}`;
       const config = {
@@ -54,7 +53,7 @@ function Autorizador() {
           "x-access-token": token,
         },
       };
-      console.log(apiUrl)
+      console.log(apiUrl);
       const response = await axios.get(apiUrl, config);
       console.log(response.data.data);
       // setpurchaseOrderData(response.data.data);
@@ -67,7 +66,10 @@ function Autorizador() {
       setPurchaseOrderData(updatedData);
       // setpurchaseOrderData(response.data.data.purchaseRequestsHeaders);
     } catch (error) {
-      console.error("Error al obtener datos de la API:", error.response.data.message);
+      console.error(
+        "Error al obtener datos de la API:",
+        error.response.data.message
+      );
     }
   };
 
@@ -75,10 +77,6 @@ function Autorizador() {
     const nuevosArchivosPDF = Array.from(event.files);
     setArchivosSeleccionados([...archivosSeleccionados, ...nuevosArchivosPDF]);
   };
- 
-
- 
-
 
   useEffect(() => {
     localStorage.removeItem("purchaseOrderData");
@@ -87,7 +85,7 @@ function Autorizador() {
 
   const handleRowClick = (event) => {
     console.clear();
-    console.log("Clic en la fila",event.data);
+    console.log("Clic en la fila", event.data);
     const rowData = event.data;
     localStorage.setItem("purchaseOrderData", JSON.stringify(rowData));
 
@@ -96,10 +94,9 @@ function Autorizador() {
   };
 
   const redirectToDetalle = (datos) => {
-     console.clear();
-     console.log("Boton presionado");
-     console.log(datos.Id);
-     
+    console.clear();
+    console.log("Boton presionado");
+    console.log(datos.Id);
   };
 
   // Función para obtener el estado de la orden
@@ -108,8 +105,13 @@ function Autorizador() {
       case "Cerrada":
         return "danger";
 
-      case "Abierta":
+      case "Abierto":
         return "success";
+      case "Pendiente":
+        return "warning";
+
+      case "Cancelado":
+        return "danger";
 
       default:
         return null;
@@ -182,100 +184,94 @@ function Autorizador() {
           selectionMode="single"
           // selection={selectedItem}
           onRowClick={handleRowClick} // Capturar el clic en la fila
-            scrollable
-            scrollHeight="400px"
-            stripedRows
-            tableStyle={{ minWidth: "50rem" }}
-            filters={filters}
-            filterDisplay="row"
-            globalFilterFields={[
-              "DocNum",
-              "CompanyName",
-              "DocDate",
-              "StatusSAP",
-            ]}
-            emptyMessage="No hay resultados"
-            header={header}
-            paginator
-            rows={5}
-            >
-            <Column
-              field="DocNum"
-              header="Orden"
-              style={{ width: "10%" }}
-            ></Column>
-            <Column
-              field="CompanyName"
-              header="Empresa"
-              style={{ width: "20%" }}
-            ></Column>
-            <Column
-              field="DocDate"
-              header="Fecha Orden"
-              style={{ width: "20%" }}
-            ></Column>
-            <Column
-              field="Requester"
-              header="Solicitó"
-              style={{ width: "20%" }}
-            ></Column>
-            <Column
-              field="ApprovalStatus"
-              header="Estatus"
-              style={{ width: "20%" }}
-              body={(rowData) => {
+          scrollable
+          scrollHeight="400px"
+          stripedRows
+          tableStyle={{ minWidth: "50rem" }}
+          filters={filters}
+          filterDisplay="row"
+          globalFilterFields={["DocNum", "CompanyName", "DocDate", "StatusSAP"]}
+          emptyMessage="No hay resultados"
+          header={header}
+          paginator
+          rows={5}
+        >
+          <Column
+            field="DocNum"
+            header="Orden"
+            style={{ width: "10%" }}
+          ></Column>
+          <Column
+            field="CompanyName"
+            header="Empresa"
+            style={{ width: "20%" }}
+          ></Column>
+          <Column
+            field="DocDate"
+            header="Fecha Orden"
+            style={{ width: "20%" }}
+          ></Column>
+          <Column
+            field="Requester"
+            header="Solicitó"
+            style={{ width: "20%" }}
+          ></Column>
+          <Column
+            field="ApprovalStatus"
+            header="Estatus"
+            style={{ width: "20%" }}
+            body={(rowData) => {
               switch (rowData.ApprovalStatus) {
                 case "Para Autorizar":
-                return (
-                  <div>
-                  <i
-                    className="pi pi-exclamation-triangle"
-                    style={{ color: "orange" }}
-                  ></i>
-                  {rowData.ApprovalStatus}
-                  </div>
-                );
+                  return (
+                    <div>
+                      <i
+                        className="pi pi-exclamation-triangle"
+                        style={{ color: "orange" }}
+                      ></i>
+                      {rowData.ApprovalStatus}
+                    </div>
+                  );
                 case "Abierto":
-                return (
-                  <div>
-                  <i
-                    className="pi pi-lock-open"
-                    style={{ color: "purple" }}
-                  ></i>
-                  {rowData.ApprovalStatus}
-                  </div>
-                );
+                  return (
+                    <div>
+                      <i
+                        className="pi pi-lock-open"
+                        style={{ color: "purple" }}
+                      ></i>
+                      {rowData.ApprovalStatus}
+                    </div>
+                  );
                 case "Cerrado":
-                return (
-                  <div>
-                  <i
-                    className="pi pi-check-circle"
-                    style={{ color: "green" }}
-                  ></i>
-                  {rowData.ApprovalStatus}
-                  </div>
-                );
+                  return (
+                    <div>
+                      <i
+                        className="pi pi-check-circle"
+                        style={{ color: "green" }}
+                      ></i>
+                      {rowData.ApprovalStatus}
+                    </div>
+                  );
                 case "Cancelado":
-                return (
-                  <div>
-                  <i
-                    className="pi pi-times-circle"
-                    style={{ color: "red" }}
-                  ></i>
-                  {rowData.ApprovalStatus}
-                  </div>
-                );
+                  return (
+                    <div>
+                      <i
+                        className="pi pi-times-circle"
+                        style={{ color: "red" }}
+                      ></i>
+                      {rowData.ApprovalStatus}
+                    </div>
+                  );
                 default:
-                return rowData.ApprovalStatus;
+                  return rowData.ApprovalStatus;
               }
-              }}
-            ></Column>
+            }}
+          ></Column>
           <Column
             headerStyle={{ width: "5%", minWidth: "5rem" }}
             bodyStyle={{ textAlign: "center" }}
           ></Column>
         </DataTable>
-
       </Card>
     </Layout>
   );
