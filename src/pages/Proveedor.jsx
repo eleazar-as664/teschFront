@@ -26,7 +26,7 @@ function Proveedor() {
   const toast = useRef(null);
 
   const [purchaseOrderData, setPurchaseOrderData] = useState([]);
-  const [statuses] = useState(["Abierta", "Cerrada"]);
+  const [statuses] = useState(["Abierto", "Cerrada", "Pendiente", "Cancelado"]);
   const [PurchaseOrderId, setPurchaseOrderId] = useState([]);
 
   const [globalFilterValue, setGlobalFilterValue] = useState("");
@@ -81,7 +81,6 @@ function Proveedor() {
         CompanyId: user.CompanyId,
       };
       console.clear();
-     
 
       const apiUrl = `${routes.BASE_URL_SERVER}/SAPSyncPurchaseOrders`;
       const config = {
@@ -96,15 +95,13 @@ function Proveedor() {
       console.error("Error al obtener datos de la API:", error.response.data);
 
       if (error.response.data.code == 401) {
-
         toast.current.show({
           severity: "warn",
           summary: "Información",
-          detail:`${error.response.data.detailMessage}`,
+          detail: `${error.response.data.detailMessage}`,
           life: 3000,
         });
       }
-      
     }
   };
 
@@ -180,8 +177,7 @@ function Proveedor() {
     navigate("./Proveedor/OrdenCompra");
   };
 
-  const redirectToDetalle = (event) => {
-  };
+  const redirectToDetalle = (event) => {};
 
   // Función para obtener el estado de la orden
   const getSeverity = (status) => {
@@ -189,8 +185,13 @@ function Proveedor() {
       case "Cerrada":
         return "danger";
 
-      case "Abierta":
+      case "Abierto":
         return "success";
+      case "Pendiente":
+        return "warning";
+
+      case "Cancelado":
+        return "danger";
 
       default:
         return null;
