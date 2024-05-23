@@ -285,8 +285,9 @@ function Administrador() {
             "UserEmployeeName",
             "UserProfileName",
           ]}
-          emptyMessage="No hay empleados registrados"
           header={header}
+          emptyMessage="No hay empleados registrados"
+
           paginator
           rows={5}
         >

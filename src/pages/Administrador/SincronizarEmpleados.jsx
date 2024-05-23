@@ -11,7 +11,10 @@ import { Dialog } from "primereact/dialog";
 import { Layout } from "../../Components/Layout/Layout";
 import { TabMenu } from "primereact/tabmenu";
 import { Dropdown } from "primereact/dropdown";
-
+import { FilterMatchMode } from "primereact/api";
+import { IconField } from "primereact/iconfield";
+import { InputIcon } from "primereact/inputicon";
+import { InputText } from "primereact/inputtext";
 import { Toast } from "primereact/toast";
 import axios from "axios";
 import routes from "../../utils/routes";
@@ -25,6 +28,25 @@ function SincronizarEmpleados() {
   const [employees, setEmployees] = useState([]);
   const [companies, setCompanies] = useState([]);
   const [selectedEmpresas, setSelectedEmpresas] = useState(null);
+
+  const [globalFilterValue, setGlobalFilterValue] = useState("");
+
+  const [filters, setFilters] = useState({
+    global: { value: null, matchMode: FilterMatchMode.CONTAINS },
+    EmpId: { value: null, matchMode: FilterMatchMode.STARTS_WITH },
+    FirstName: { value: null, matchMode: FilterMatchMode.STARTS_WITH },
+    BirthDate: { value: null, matchMode: FilterMatchMode.STARTS_WITH },
+    Sexo: { value: null, matchMode: FilterMatchMode.STARTS_WITH },
+    CompanyName: { value: null, matchMode: FilterMatchMode.STARTS_WITH },
+    OcrCode: {
+      value: null,
+      matchMode: FilterMatchMode.STARTS_WITH,
+    },
+    UpdateDate: { value: null, matchMode: FilterMatchMode.STARTS_WITH },
+    Estatus: { value: null, matchMode: FilterMatchMode.STARTS_WITH },
+
+  });
+
   const user = JSON.parse(localStorage.getItem("user"));
   const token = JSON.parse(localStorage.getItem("user")).Token;
   const tokenSap = JSON.parse(localStorage.getItem("user")).TokenSAP;
@@ -100,7 +122,6 @@ function SincronizarEmpleados() {
       const responseGetCompanies = await axios.get(apiUrlCompanies, config);
 
       setCompanies(responseGetCompanies.data.data);
-
     } catch (error) {
       console.error("Error al obtener datos de la API:", error);
     }
@@ -133,7 +154,7 @@ function SincronizarEmpleados() {
       fetchDataGetEmpleados();
       // fetchData();
     } catch (error) {
-        console.error("Error al enviar la solicitud a SAP:", error);
+      console.error("Error al enviar la solicitud a SAP:", error);
       toast.current.show({
         severity: "error",
         summary: "Error",
@@ -152,6 +173,32 @@ function SincronizarEmpleados() {
   }, []);
 
   useEffect(() => {}, [fetchDataGetEmpleados, fetchDataGetCompanies]);
+
+  const onGlobalFilterChange = (e) => {
+    const value = e.target.value;
+    let _filters = { ...filters };
+
+    _filters["global"].value = value;
+
+    setFilters(_filters);
+    setGlobalFilterValue(value);
+  };
+  const renderHeader = () => {
+    return (
+      <div className="global-filter">
+        <IconField iconPosition="left">
+          <InputIcon className="pi pi-search" />
+          <InputText
+            value={globalFilterValue}
+            onChange={onGlobalFilterChange}
+            placeholder="Buscar ..."
+          />
+        </IconField>
+      </div>
+    );
+  };
+
+  const header = renderHeader();
   return (
     <Layout>
       <Card className="card-header">
@@ -218,6 +265,20 @@ function SincronizarEmpleados() {
           scrollHeight="400px"
           stripedRows
           tableStyle={{ minWidth: "50rem" }}
+          filters={filters}
+          filterDisplay="row"
+          globalFilterFields={[
+            "EmpId",
+            "FirstName",  
+            "BirthDate",
+            "Sexo",
+            "CompanyName",
+            "OcrCode",
+            "UpdateDate",
+            "Estatus",
+           
+          ]}
+          header={header}
           emptyMessage="No hay empleados registrados"
           paginator
           rows={5}

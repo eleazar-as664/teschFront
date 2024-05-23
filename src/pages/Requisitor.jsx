@@ -30,7 +30,7 @@ function Requisitor() {
   const [rowDataToCancel, setRowDataToCancel] = useState(null);
   const [rowDataToEnviarSap, setRowDataToEnviarSap] = useState(null);
   const [globalFilterValue, setGlobalFilterValue] = useState("");
-  const [statuses] = useState(["Abierta", "Cerrada"]);
+  const [statuses] = useState(["Abierto", "Cerrada"]);
   const [filters, setFilters] = useState({
     global: { value: null, matchMode: FilterMatchMode.CONTAINS },
     PurchaseRequestId: { value: null, matchMode: FilterMatchMode.STARTS_WITH },
@@ -50,7 +50,7 @@ function Requisitor() {
       case "Cerrada":
         return "danger";
 
-      case "Abierta":
+      case "Abierto":
         return "success";
 
       default:
