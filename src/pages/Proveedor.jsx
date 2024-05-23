@@ -26,7 +26,7 @@ function Proveedor() {
   const toast = useRef(null);
 
   const [purchaseOrderData, setPurchaseOrderData] = useState([]);
-  const [statuses] = useState(["Abierta", "Cerrada"]);
+  const [statuses] = useState(["Abierto", "Cerrada"]);
   const [PurchaseOrderId, setPurchaseOrderId] = useState([]);
 
   const [globalFilterValue, setGlobalFilterValue] = useState("");
@@ -189,7 +189,7 @@ function Proveedor() {
       case "Cerrada":
         return "danger";
 
-      case "Abierta":
+      case "Abierto":
         return "success";
 
       default:
