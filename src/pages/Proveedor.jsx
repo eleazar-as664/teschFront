@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { DataTable } from "primereact/datatable";
 import { FilterMatchMode } from "primereact/api";
 
@@ -14,6 +14,8 @@ import { InputText } from "primereact/inputtext";
 import { IconField } from "primereact/iconfield";
 import { InputIcon } from "primereact/inputicon";
 import { Tag } from "primereact/tag";
+import { Toast } from "primereact/toast";
+
 import routes from "../utils/routes";
 
 import "./Proveedor.css";
@@ -21,6 +23,7 @@ import "../Components/Styles/Global.css";
 import axios from "axios";
 function Proveedor() {
   const navigate = useNavigate();
+  const toast = useRef(null);
 
   const [purchaseOrderData, setPurchaseOrderData] = useState([]);
   const [statuses] = useState(["Abierta", "Cerrada"]);
@@ -52,18 +55,22 @@ function Proveedor() {
         },
       };
       const response = await axios.get(apiUrl, config);
-      // console.log(response.data.data);
-      // setpurchaseOrderData(response.data.data);
+
       const updatedData = response.data.data.map((item) => ({
         ...item,
         concatenatedInfo: `${item.BusinessName} - ${item.DocDate}`,
       }));
-      console.log(updatedData);
 
       setPurchaseOrderData(updatedData);
       // setpurchaseOrderData(response.data.data.purchaseRequestsHeaders);
     } catch (error) {
       console.error("Error al obtener datos de la API:", error);
+      toast.current.show({
+        severity: "error",
+        summary: "Error",
+        detail: "Error al obtener datos de la API",
+        life: 3000,
+      });
     }
   };
 
@@ -74,10 +81,7 @@ function Proveedor() {
         CompanyId: user.CompanyId,
       };
       console.clear();
-      console.log(
-        "********************************1OQE***********************************************"
-      );
-      console.log(data);
+     
 
       const apiUrl = `${routes.BASE_URL_SERVER}/SAPSyncPurchaseOrders`;
       const config = {
@@ -89,13 +93,18 @@ function Proveedor() {
 
       console.log(response.data);
     } catch (error) {
-      console.log(
-        "************************************ERROR************asasasa***********************************"
-      );
-      console.error("Error al obtener datos de la API:", error);
-      console.log(
-        "************************************ERROR***********************************************"
-      );
+      console.error("Error al obtener datos de la API:", error.response.data);
+
+      if (error.response.data.code == 401) {
+
+        toast.current.show({
+          severity: "warn",
+          summary: "Información",
+          detail:`${error.response.data.detailMessage}`,
+          life: 3000,
+        });
+      }
+      
     }
   };
 
@@ -139,9 +148,21 @@ function Proveedor() {
         config
       );
       fetchDataPurchaseOrder();
-      console.log("Response:", response.data);
+      setVvisibleArchivosProveedor(false);
+      toast.current.show({
+        severity: "success",
+        summary: "Notificación",
+        detail: "Se envio correctamente la solicitud a SAP",
+        life: 2000,
+      });
     } catch (error) {
-      console.error("Error:", error);
+      setVvisibleArchivosProveedor(false);
+      toast.current.show({
+        severity: "error",
+        summary: "Error",
+        detail: "Error al enviar la solicitud a SAP",
+        life: 2000,
+      });
     }
   };
   useEffect(() => {}, [fetchDataPurchaseOrder]);
@@ -160,7 +181,6 @@ function Proveedor() {
   };
 
   const redirectToDetalle = (event) => {
-    console.log("HOLAAAAAAAAAAAAAAAAAAAA ELEAZAR :b");
   };
 
   // Función para obtener el estado de la orden
@@ -243,6 +263,8 @@ function Proveedor() {
         </div>
       </Card>
       <Card title="" className="cardProveedor">
+        <Toast ref={toast} />
+
         <Dialog
           header="Enviar a SAP"
           visible={visibleArchivosProveedor}
@@ -269,16 +291,8 @@ function Proveedor() {
                   onClick={() => enviarArchivosSAP()}
                   className="pi pi-file-pdf"
                   rounded
-                  // severity="danger"
                   label="Enviar Archivos"
-                  // aria-label="Enviar"
                 />
-                //   <Button
-                //   label="Aceptar"
-                //   icon="pi pi-check"
-                //   onClick={handleSave}
-                //   className="p-button-primary"
-                // />
               )}
             </div>
             <div className="row">

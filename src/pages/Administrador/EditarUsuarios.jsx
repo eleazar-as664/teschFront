@@ -28,7 +28,6 @@ function EditarUsuarios() {
   const [loading, setLoading] = useState(true);
   const [empresasId, setEmpresasId] = useState();
 
-
   const [formErrors, setFormErrors] = useState({
     Email: false,
     ProfileId: false,
@@ -81,14 +80,12 @@ function EditarUsuarios() {
     const apiUrlEmpleados = `${routes.BASE_URL_SERVER}/GetEmployees/${CompanyId}`;
     console.log("urlGetEmployees: ", apiUrlEmpleados);
     try {
-      
       const config = {
         headers: {
           "x-access-token": token,
         },
       };
       const responseGetEmpleados = await axios.get(apiUrlEmpleados, config);
-      console.log("responseGetEmpleadosaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa:", responseGetEmpleados.data.data);
       const updateEmployees = responseGetEmpleados.data.data.map((item) => ({
         ...item,
         nombreCompleto: `${item.FirstName} ${item.LastName}`,
@@ -273,19 +270,18 @@ function EditarUsuarios() {
       summary: "Exito",
       detail: "Usuario editado correctamente",
       life: 3000,
-    })
+    });
     // Aquí podrías manejar la respuesta exitosa, por ejemplo, mostrar un mensaje de éxito al usuario
   };
 
   const handleErrorResponse = (error) => {
     console.log("Error al enviar el formulario:", error);
-    toast.current.show({        
+    toast.current.show({
       severity: "error",
       summary: "Error",
       detail: "Error al enviar el formulario",
       life: 3000,
-    })
-  
+    });
   };
 
   const handleEnviarNavigate = () => {
@@ -497,7 +493,7 @@ function EditarUsuarios() {
                     <Button
                       label="Cancelar"
                       type="button"
-                      // onClick={handleEnviarNavigate}
+                      onClick={handleEnviarNavigate}
                       className="p-button-secondary"
                     />
                   </div>

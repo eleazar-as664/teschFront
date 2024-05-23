@@ -10,7 +10,10 @@ import { Dialog } from "primereact/dialog";
 import { Layout } from "../../Components/Layout/Layout";
 import { TabMenu } from "primereact/tabmenu";
 import { Dropdown } from "primereact/dropdown";
-
+import { FilterMatchMode } from "primereact/api";
+import { IconField } from "primereact/iconfield";
+import { InputIcon } from "primereact/inputicon";
+import { InputText } from "primereact/inputtext";
 import { Toast } from "primereact/toast";
 import axios from "axios";
 import routes from "../../utils/routes";
@@ -22,6 +25,23 @@ function SincronizarEmpleados() {
   const [visibleEnviarSAP, setVisibleEnviarSAP] = useState(false);
   const [enviandoASAP, setEnviandoASAP] = useState(false);
   const [businessPartners, setBusinessPartners] = useState([]);
+  const [globalFilterValue, setGlobalFilterValue] = useState("");
+
+  const [filters, setFilters] = useState({
+    global: { value: null, matchMode: FilterMatchMode.CONTAINS },
+    CardCode: { value: null, matchMode: FilterMatchMode.STARTS_WITH },
+    CardName: { value: null, matchMode: FilterMatchMode.STARTS_WITH },
+    LicTradNum: { value: null, matchMode: FilterMatchMode.STARTS_WITH },
+    Sexo: { value: null, matchMode: FilterMatchMode.STARTS_WITH },
+    CompanyName: { value: null, matchMode: FilterMatchMode.STARTS_WITH },
+    CompanyName: {
+      value: null,
+      matchMode: FilterMatchMode.STARTS_WITH,
+    },
+    Status: { value: null, matchMode: FilterMatchMode.STARTS_WITH },
+      
+  });
+
 
   const [companies, setCompanies] = useState([]);
   const [selectedEmpresas, setSelectedEmpresas] = useState(null);
@@ -152,6 +172,31 @@ function SincronizarEmpleados() {
   }, []);
 
   useEffect(() => {}, [fetchDataGetAllBusinessPartners, fetchDataGetCompanies]);
+  const onGlobalFilterChange = (e) => {
+    const value = e.target.value;
+    let _filters = { ...filters };
+
+    _filters["global"].value = value;
+
+    setFilters(_filters);
+    setGlobalFilterValue(value);
+  };
+  const renderHeader = () => {
+    return (
+      <div className="global-filter">
+        <IconField iconPosition="left">
+          <InputIcon className="pi pi-search" />
+          <InputText
+            value={globalFilterValue}
+            onChange={onGlobalFilterChange}
+            placeholder="Buscar ..."
+          />
+        </IconField>
+      </div>
+    );
+  };
+
+  const header = renderHeader();
   return (
     <Layout>
       <Card className="card-header">
@@ -218,6 +263,18 @@ function SincronizarEmpleados() {
           scrollHeight="400px"
           stripedRows
           tableStyle={{ minWidth: "50rem" }}
+          filters={filters}
+          filterDisplay="row"
+          globalFilterFields={[
+            "CardCode", 
+            "CardName",
+            "LicTradNum",
+            "CompanyName",    
+            "Status",
+           
+           
+          ]}
+          header={header}
           emptyMessage="No hay registros"
           paginator
           rows={5}

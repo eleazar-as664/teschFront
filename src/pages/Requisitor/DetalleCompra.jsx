@@ -113,6 +113,8 @@ function DetalleCompra() {
         PurchaseRequestId: datosRequisitor.PurchaseRequestId,
         UserId: user.UserId,
         Notes: notasAgregar,
+        SAPTOKEN: user.TokenSAP,
+
       };
       console.log("data:", data);
       setEnviandoNota(true);

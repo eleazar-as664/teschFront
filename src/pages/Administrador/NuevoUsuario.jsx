@@ -534,7 +534,7 @@ function NuevoUsuario() {
                     <Button
                       label="Cancelar"
                       type="button"
-                      // onClick={handleEnviarNavigate}
+                      onClick={handleEnviarNavigate}
                       className="p-button-secondary"
                     />
                   </div>
