@@ -63,6 +63,7 @@ function EditarRequisicion() {
   const [materialToEdit, setMaterialToEdit] = useState(null);
   const [files, setFiles] = useState([]);
   const [primeraLetra,setPrimeraLetra] = useState('');
+  const [enviandoNota, setEnviandoNota] = useState(false);
 
   const filterMaterials = (event) => {
     const searchTerm = event.query.toLowerCase();
@@ -336,6 +337,8 @@ function EditarRequisicion() {
         PurchaseRequestId: datosRequisitor.PurchaseRequestId,
         UserId: user.UserId,
         Notes: notasAgregar,
+        SAPToken: user.TokenSAP,
+        
       };
       console.log("data:", data);
       try {

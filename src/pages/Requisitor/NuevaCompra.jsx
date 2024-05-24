@@ -321,6 +321,8 @@ function NuevaCompra() {
     );
     setArchivosSeleccionados(updatedItems);
   };
+
+  
   return (
     <Layout>
       <div className="body-ordenCompra">

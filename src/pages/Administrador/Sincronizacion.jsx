@@ -6,6 +6,10 @@ import { Button } from "primereact/button";
 import { useNavigate } from "react-router-dom";
 import { Dialog } from "primereact/dialog";
 import { Layout } from "../../Components/Layout/Layout";
+import { FilterMatchMode } from "primereact/api";
+import { IconField } from "primereact/iconfield";
+import { InputIcon } from "primereact/inputicon";
+import { InputText } from "primereact/inputtext";
 
 import { TabMenu } from "primereact/tabmenu";
 import { InputNumber } from "primereact/inputnumber";
@@ -31,6 +35,15 @@ function Sincronizacion() {
   const [inventoriable, setInventoriable] = useState();
   const [companySettingsId, setCompanySettingsId] = useState();
   const [isButtonDisabled, setIsButtonDisabled] = useState(false);
+  const [globalFilterValue, setGlobalFilterValue] = useState("");
+
+  const [filters, setFilters] = useState({
+    global: { value: null, matchMode: FilterMatchMode.CONTAINS },
+    CompanyCode: { value: null, matchMode: FilterMatchMode.STARTS_WITH },
+    Name: { value: null, matchMode: FilterMatchMode.STARTS_WITH },
+    DBName: { value: null, matchMode: FilterMatchMode.STARTS_WITH },
+  });
+
   const user = JSON.parse(localStorage.getItem("user"));
   const token = JSON.parse(localStorage.getItem("user")).Token;
   const tokenSap = JSON.parse(localStorage.getItem("user")).TokenSAP;
@@ -260,6 +273,32 @@ function Sincronizacion() {
 
     setVisibleEnviarSAP(false);
   };
+
+  const onGlobalFilterChange = (e) => {
+    const value = e.target.value;
+    let _filters = { ...filters };
+
+    _filters["global"].value = value;
+
+    setFilters(_filters);
+    setGlobalFilterValue(value);
+  };
+  const renderHeader = () => {
+    return (
+      <div className="global-filter">
+        <IconField iconPosition="left">
+          <InputIcon className="pi pi-search" />
+          <InputText
+            value={globalFilterValue}
+            onChange={onGlobalFilterChange}
+            placeholder="Buscar ..."
+          />
+        </IconField>
+      </div>
+    );
+  };
+
+  const header = renderHeader();
   return (
     <Layout>
       <Card className="card-header">
@@ -331,12 +370,11 @@ function Sincronizacion() {
                 )}
                 {getCompanySettings.length <= 0 && (
                   <InputNumber
-                  id="value1"
-                  value={value1nventariable}
-                  onValueChange={(e) => setValue1(e.value)}
-                />
+                    id="value1"
+                    value={value1nventariable}
+                    onValueChange={(e) => setValue1(e.value)}
+                  />
                 )}
-               
               </div>
               <div className="p-field">
                 <label>Limite de Gasto:</label>
@@ -348,13 +386,12 @@ function Sincronizacion() {
                   />
                 )}
                 {getCompanySettings.length <= 0 && (
-                 <InputNumber
-                 id="value2"
-                 value={value2}
-                 onValueChange={(e) => setValue2(e.value)}
-               />
+                  <InputNumber
+                    id="value2"
+                    value={value2}
+                    onValueChange={(e) => setValue2(e.value)}
+                  />
                 )}
-                
               </div>
             </div>
           </div>
@@ -387,7 +424,11 @@ function Sincronizacion() {
           scrollable
           scrollHeight="400px"
           stripedRows
-          tableStyle={{ minWidth: "50rem" }}
+          tableStyle={{ minWidth: "0rem" }}
+          filters={filters}
+          filterDisplay="row"
+          globalFilterFields={["CompanyCode", "Name", "DBName"]}
+          header={header}
           emptyMessage="No hay empresas registradas"
           paginator
           rows={5}

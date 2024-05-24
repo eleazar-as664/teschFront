@@ -30,7 +30,8 @@ function Requisitor() {
   const [rowDataToCancel, setRowDataToCancel] = useState(null);
   const [rowDataToEnviarSap, setRowDataToEnviarSap] = useState(null);
   const [globalFilterValue, setGlobalFilterValue] = useState("");
-  const [statuses] = useState(["Abierta", "Cerrada"]);
+  const [statuses] = useState(["Abierto", "Cerrado", "Pendiente", "Cancelado"]);
+
   const [filters, setFilters] = useState({
     global: { value: null, matchMode: FilterMatchMode.CONTAINS },
     PurchaseRequestId: { value: null, matchMode: FilterMatchMode.STARTS_WITH },
@@ -47,11 +48,16 @@ function Requisitor() {
 
   const getSeverity = (status) => {
     switch (status) {
-      case "Cerrada":
+      case "Cerrado":
         return "danger";
 
-      case "Abierta":
+      case "Abierto":
         return "success";
+      case "Pendiente":
+        return "warning";
+
+      case "Cancelado":
+        return "danger";
 
       default:
         return null;
@@ -81,24 +87,21 @@ function Requisitor() {
       };
       const response = await axios.post(apiUrl, data, config);
       console.log("Response:", response);
-       toast.current.show({
+      toast.current.show({
         severity: "success",
         summary: "Notificación",
         detail: "Se envio correctamente la solicitud a SAP",
         life: 2000,
       });
-       fetchData();
-     
-    
+      fetchData();
     } catch (error) {
-      console.error("Error al enviar la solicitud a SAP:",error);
+      console.error("Error al enviar la solicitud a SAP:", error);
       toast.current.show({
         severity: "error",
         summary: "Error",
         detail: "Error al enviar la solicitud a SAP",
         life: 2000,
-      })
-    
+      });
     } finally {
       // Indicar que se ha completado el envío a SAP
       setEnviandoASAP(false);
@@ -116,8 +119,8 @@ function Requisitor() {
         `${routes.BASE_URL_SERVER}/DeletePurchaseRequest/${purchaseRequestId}`
       )
       .then((response) => {
-        console.log("Solicitud de compra cancelada con éxito");
-        fetchData();
+        console.log("Solicitud de compra cancelada con éxito",response);
+
         toast.current.show({
           severity: "success",
           summary: "Notificación",
@@ -130,7 +133,10 @@ function Requisitor() {
         console.error("Error al cancelar la solicitud de compra:", error);
         // Manejar el error, como mostrar un mensaje al usuario
       });
-    console.log("handleDialogCancel", rowDataToCancel.PurchaseRequestId);
+
+    fetchData();
+
+   
     setRowDataToCancel(null);
     setVisible(false); // Esto cierra el Dialog
   };
@@ -156,7 +162,6 @@ function Requisitor() {
   useEffect(() => {
     localStorage.removeItem("datosRequisitor");
     fetchData();
-    
   }, []);
 
   useEffect(() => {}, [fetchData]);
@@ -188,12 +193,6 @@ function Requisitor() {
     console.clear();
     console.log(rowData);
 
-    // // Guardar solo los datos necesarios en el localStorage
-    // const selectedItem = {
-    //   orden: rowData.orden,
-    //   empresa: rowData.empresa,
-    //   // Añade más propiedades según sea necesario
-    // };
     localStorage.setItem("datosRequisitor", JSON.stringify(rowData));
 
     // Redirigir a la página de detalles
@@ -262,7 +261,7 @@ function Requisitor() {
   return (
     <Layout>
       <Card className="card-header">
-      <Toast ref={toast} />
+        <Toast ref={toast} />
         <div class="row">
           <div className="p-card-title">Solicitudes</div>
           <div class="gorup-search">
@@ -415,7 +414,11 @@ function Requisitor() {
             filter
             filterElement={statusRowFilterTemplate}
           />
-          <Column style={{ width: "15%" }} field="NumAtCard" header="Referencia" />
+          <Column
+            style={{ width: "15%" }}
+            field="NumAtCard"
+            header="Referencia"
+          />
           <Column
             style={{ width: "10%" }}
             body={(rowData) =>

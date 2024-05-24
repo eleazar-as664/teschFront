@@ -27,6 +27,7 @@ function  AutorizadorOrdenCompra() {
   const[purchaseOrderFiles,setPurchaseOrderFiles] = useState([]);
   const [materialesSolicitados, setMaterialesSolicitados] = useState([]);
   const [notas, setNotas] = useState([]);
+  const [primeraLetra, setPrimeraLetra] = useState("");
   const [notasAgregar, setNotasAgregar] = useState("");
   const[autorizando, setAutorizando] = useState(false);
   const[cancelando, setCancelando] = useState(false);
@@ -70,6 +71,7 @@ function  AutorizadorOrdenCompra() {
       const response = await axios.get(apiUrl, config);
       console.log(response.data.data);
       response.data.data.purchaseOrderHeader.Requester = purchaseOrderDataTemp.Requester;
+        setPrimeraLetra(response.data.data.purchaseOrderHeader.FirstName.charAt(0));
         setPurchaseOrderHeader(response.data.data.purchaseOrderHeader);
         setPurchaseOrderDetail(response.data.data.Detail);
         setPurchaseOrderFiles(response.data.data.Files);
@@ -99,6 +101,7 @@ function  AutorizadorOrdenCompra() {
         PurchaseRequestId: datosRequisitor.PurchaseRequestId,
         UserId: user.UserId,
         Notes: notasAgregar,
+        SAPToken: user.TokenSAP,
       };
       console.log("data:", data);
       try {
@@ -277,7 +280,7 @@ function  AutorizadorOrdenCompra() {
           <div className="p-grid p-nogutter">
           <div className="row">
             <div className="p-col">
-            <Avatar image="https://primefaces.org/cdn/primereact/images/avatar/amyelsner.png" className="mr-2" shape="circle" />
+            <Avatar label={primeraLetra} className="mr-2" shape="circle" />
             </div>
               <div className="p-col-field">
                 <div className="p-field">
