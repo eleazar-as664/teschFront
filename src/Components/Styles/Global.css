@@ -103,7 +103,7 @@ body {
     font-size: 1rem;
     color: #4b5563;
     background: #ffffff;
-    padding: 0.5rem;
+    /* padding: 0.25rem; */
     border: 1px solid #d1d5db;
     transition: background-color 0.2s, color 0.2s, border-color 0.2s, box-shadow 0.2s;
     appearance: none;
@@ -199,6 +199,7 @@ body {
 .p-inputtext {
     font-family: var(--c-font-rubik);
     border-radius: 6px;
+    padding: 0.5rem;
 }
 
 .text-input {
@@ -354,9 +355,17 @@ body {
 }
 
 .search-input{
-    padding-left: 35px  !important;
+    padding-left: 2rem  !important;
 }
 
 .note-list p{
     margin: .35rem 0rem
 }
+
+.p-datatable .p-datatable-header {
+    padding: .5rem;
+    }
+
+    .p-datatable .p-datatable-footer, .p-datatable .p-datatable-thead>tr>th {
+        padding: .5rem;
+        }

@@ -339,28 +339,29 @@ function Proveedor() {
           <Column
             field="DocNum"
             header="Orden"
-            style={{ width: "10%" }}
+            style={{ width: "5%" }}
           ></Column>
           <Column
             field="concatenatedInfo"
             header="Empresa/Fecha Solicitud"
-            style={{ width: "40%" }}
+            style={{ width: "30%" }}
           ></Column>
           <Column
             field="DocDueDate"
             header="Fecha Requerida"
-            style={{ width: "40%" }}
+            style={{ width: "10%" }}
           ></Column>
           <Column
             field="StatusSAP"
             header="Estatus"
-            style={{ width: "10%" }}
+            style={{ width: "15%" }}
             body={statusBodyTemplate}
             filter
             filterElement={statusRowFilterTemplate}
           ></Column>
           <Column
             header="Ver"
+            style={{ width: "10%" }}
             body={(rowData) => (
               <Button
                 onClick={() => redirectToDetalle(rowData.id)} // Agrega la función para redireccionar a la página de detalle
@@ -377,7 +378,7 @@ function Proveedor() {
 
           <Column
             header="Subir Factura"
-            style={{ width: "30%" }}
+            style={{ width: "15%" }}
             body={(rowData) => (
               <div
                 onClick={(e) => e.stopPropagation()}
