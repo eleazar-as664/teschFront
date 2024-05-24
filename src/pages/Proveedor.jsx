@@ -26,7 +26,7 @@ function Proveedor() {
   const toast = useRef(null);
 
   const [purchaseOrderData, setPurchaseOrderData] = useState([]);
-  const [statuses] = useState(["Abierto", "Cerrada", "Pendiente", "Cancelado"]);
+  const [statuses] = useState(["Abierto", "Cerrado", "Pendiente", "Cancelado"]);
   const [PurchaseOrderId, setPurchaseOrderId] = useState([]);
 
   const [globalFilterValue, setGlobalFilterValue] = useState("");
@@ -182,7 +182,7 @@ function Proveedor() {
   // Función para obtener el estado de la orden
   const getSeverity = (status) => {
     switch (status) {
-      case "Cerrada":
+      case "Cerrado":
         return "danger";
 
       case "Abierto":

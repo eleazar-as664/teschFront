@@ -30,7 +30,7 @@ function Requisitor() {
   const [rowDataToCancel, setRowDataToCancel] = useState(null);
   const [rowDataToEnviarSap, setRowDataToEnviarSap] = useState(null);
   const [globalFilterValue, setGlobalFilterValue] = useState("");
-  const [statuses] = useState(["Abierto", "Cerrada", "Pendiente", "Cancelado"]);
+  const [statuses] = useState(["Abierto", "Cerrado", "Pendiente", "Cancelado"]);
 
   const [filters, setFilters] = useState({
     global: { value: null, matchMode: FilterMatchMode.CONTAINS },
@@ -48,7 +48,7 @@ function Requisitor() {
 
   const getSeverity = (status) => {
     switch (status) {
-      case "Cerrada":
+      case "Cerrado":
         return "danger";
 
       case "Abierto":
