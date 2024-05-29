@@ -1,5 +1,5 @@
 @import url('https://fonts.googleapis.com/css2?family=Rubik:ital,wght@0,400;0,500;0,600;0,700;0,800;0,900;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
-@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@500&display=swap');
 
 
 
@@ -60,6 +60,7 @@ body {
 
 .p-component {
     font-family: var(--c-font-rubik);
+    font-size: 0.75rem;
 }
 
 .p-card {
@@ -68,6 +69,7 @@ body {
     box-shadow: 0 9px 20px rgba(46, 35, 94, .07);
     letter-spacing: .5px;
     margin-bottom: 30px;
+    font-size: 0.75rem;
 }
 
 .card-header {
@@ -193,13 +195,19 @@ body {
 }
 
 .p-card-title {
-    margin: 0px;
+    margin: 0px 10px;
+    font-weight: 500;
 }
 
 .p-inputtext {
     font-family: var(--c-font-rubik);
     border-radius: 6px;
     padding: 0.5rem;
+    font-size: 0.75rem;
+}
+
+.p-card .p-card-content {
+    padding: 0.75rem 0;
 }
 
 .text-input {
