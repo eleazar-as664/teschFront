@@ -92,10 +92,7 @@ export const Navbar = () => {
       },
       id: "11",
     },
-    {
-      separator: true,
-      id: "6",
-    },
+    
     {
       label: "Inicio",
       icon: "pi pi-home",
@@ -158,21 +155,18 @@ export const Navbar = () => {
       id: "6",
     },
   ];
-
-  let filteredItems10 = [];
+  let filteredItemsSet = new Set();
 
   if (user.Profiles.some((profile) => profile.Name === "Requisitor")) {
     const requisitorItems = items10.filter(
       (item) =>
         item.id === "1" ||
         item.id === "5" ||
-        item.id === "6" ||
         item.id === "7" ||
         item.id === "11"
     );
-    filteredItems10 = filteredItems10.concat(requisitorItems);
+    requisitorItems.forEach((item) => filteredItemsSet.add(item));
   }
-
   if (user.Profiles.some((profile) => profile.Name === "Proveedor")) {
     const solicitanteItems = items10.filter(
       (item) =>
@@ -180,21 +174,20 @@ export const Navbar = () => {
         item.id === "2" ||
         item.id === "5" ||
         item.id === "11" ||
-        item.id === "6" ||
         item.id === "22"
     );
-    filteredItems10 = filteredItems10.concat(solicitanteItems);
+    solicitanteItems.forEach((item) => filteredItemsSet.add(item));
   }
 
   if (user.Profiles.some((profile) => profile.Name === "Autorizador")) {
-    const solicitanteItems = items10.filter(
+    const autorizadorItems = items10.filter(
       (item) =>
         item.id === "12" ||
         item.id === "5" ||
         item.id === "11" ||
         item.id === "22"
     );
-    filteredItems10 = filteredItems10.concat(solicitanteItems);
+    autorizadorItems.forEach((item) => filteredItemsSet.add(item));
   }
 
   if (user.Profiles.some((profile) => profile.Name === "Admin")) {
@@ -203,12 +196,12 @@ export const Navbar = () => {
         item.id === "8" ||
         item.id === "9" ||
         item.id === "11" ||
-        item.id === "6" ||
         item.id === "5"
     );
-    filteredItems10 = filteredItems10.concat(adminItems);
+    adminItems.forEach((item) => filteredItemsSet.add(item));
   }
 
+  const filteredItems10 = Array.from(filteredItemsSet);
   return (
     <>
       <TieredMenu
@@ -218,12 +211,6 @@ export const Navbar = () => {
       />
 
       <Menubar model={items} className="menubarNavegador" />
-
-      <header>
-        {user?.profile === "solicitante" && <div className="user"></div>}
-        {user?.profile === "proveedor" && <div className="user"></div>}
-      </header>
-
       <Outlet />
     </>
   );
