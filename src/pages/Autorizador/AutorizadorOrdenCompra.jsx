@@ -101,7 +101,7 @@ function  AutorizadorOrdenCompra() {
         PurchaseRequestId: datosRequisitor.PurchaseRequestId,
         UserId: user.UserId,
         Notes: notasAgregar,
-        SAPTOKEN: user.TokenSAP,
+        SAPToken: user.TokenSAP,
       };
       console.log("data:", data);
       try {

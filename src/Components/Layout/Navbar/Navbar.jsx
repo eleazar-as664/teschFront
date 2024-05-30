@@ -60,7 +60,7 @@ export const Navbar = () => {
               <span className="name-user">
                 {user.FirstName + " " + user.LastName}
               </span>
-              <span className="text-sm">{user.Profiles[0].Name}</span>
+              <span className="profile-user">{user.Profiles[0].Name}</span>
             </div>
           </li>
         );

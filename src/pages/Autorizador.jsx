@@ -25,7 +25,7 @@ function Autorizador() {
   const navigate = useNavigate();
 
   const [purchaseOrderData, setPurchaseOrderData] = useState([]);
-  const [statuses] = useState(["Abierto", "Cerrada", "Cancelado", "Pendiente"]);
+  const [statuses] = useState(["Abierto", "Cerrado", "Cancelado", "Pendiente"]);
 
   const [globalFilterValue, setGlobalFilterValue] = useState("");
 
@@ -102,7 +102,7 @@ function Autorizador() {
   // Función para obtener el estado de la orden
   const getSeverity = (status) => {
     switch (status) {
-      case "Cerrada":
+      case "Cerrado":
         return "danger";
 
       case "Abierto":
