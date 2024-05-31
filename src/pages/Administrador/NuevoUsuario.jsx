@@ -10,6 +10,7 @@ import { Dropdown } from "primereact/dropdown";
 import { DataTable } from "primereact/datatable";
 import { Column } from "primereact/column";
 import { Dialog } from "primereact/dialog";
+import { Divider } from 'primereact/divider';
 
 import { useNavigate } from "react-router-dom";
 
@@ -466,7 +467,7 @@ function NuevoUsuario() {
                     </small>
                   )}
                 </div>
-                <div className="p-field" style={{ width: "31.9%" }}>
+                <div className="p-field">
                   <label>Correo:</label>
 
                   <InputText
@@ -479,9 +480,9 @@ function NuevoUsuario() {
                   )}
                 </div>
               </div>
-
+              <Divider type="solid" />
               <div className="row">
-                <div className="p-field" style={{ width: "31.9%" }}>
+                <div className="p-field">
                   {formData.ProfileId?.Id == 3 ? (
                     <Dropdown
                       value={formDataAutorizador.CompanyId}
@@ -496,6 +497,11 @@ function NuevoUsuario() {
                   ) : (
                     <></>
                   )}
+                  </div>
+                  <div className="p-field"></div>
+                </div>
+                <div className="row">
+                <div className="p-field">
                   {formData.ProfileId?.Id == 3 ? (
                     <DataTable value={selectedCompanies} className="mt-4">
                       <Column field="Id" header="ID" />
@@ -516,8 +522,8 @@ function NuevoUsuario() {
                   ) : (
                     <> </>
                   )}
+                  </div>
                 </div>
-              </div>
 
               <div className="row">
                 <div className="p-field" style={{ margin: "20px" }}></div>

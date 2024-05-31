@@ -94,6 +94,7 @@ body {
     margin-left: 10px;
     margin-bottom: 10px;
     flex-grow: 4;
+    width: 100%;
 }
 
 .upload-file {
