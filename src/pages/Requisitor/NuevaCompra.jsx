@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 
 import TextInput from "../../Components/Requisitor/TextInput";
 import DatesInput from "../../Components/Requisitor/DatesInput";
@@ -72,7 +72,7 @@ function NuevaCompra() {
   const token = JSON.parse(localStorage.getItem("user")).Token;
   const user = JSON.parse(localStorage.getItem("user"));
   const tokenSap = JSON.parse(localStorage.getItem("user")).TokenSAP;
-  let toast;
+  const toast = useRef(null);
   const handleAlmacenChange12 = (material) => {
     setSelectedMaterial(material);
     setDialogVisible(true); // Mostrar el MaterialDialog al seleccionar un material
@@ -81,7 +81,7 @@ function NuevaCompra() {
   const handleDialogClose = () => {
     setDialogVisible(false);
   };
-  const fetchDataCentroCostos = async () => {
+  const fetchDataCentroCostos = async (companyDBName) => {
     try {
       const apiUrl = `${routes.BASE_URL_SERVER}/GetCostCentersForEmployees`;
       const config = {
@@ -93,13 +93,12 @@ function NuevaCompra() {
       const data = {
         SAPToken: tokenSap,
         Dimension: 1,
-        DBName: user.CompanyDBName,
+        DBName:companyDBName,
       };
-      console.clear();
-      console.log(data);
-
+      
       const response = await axios.post(apiUrl, data, config);
-      console.log(response.data.data);
+      console.log("Centros de costos:",data);
+      console.log(response);
 
       setCentroCostos(response.data.data);
     } catch (error) {
@@ -132,12 +131,21 @@ function NuevaCompra() {
     };
 
     fetchData();
-    fetchDataCentroCostos();
+    fetchDataCentroCostos(user.CompanyDBName);
   }, [user.UserId]); // El array vacío indica que este efecto se ejecuta solo una vez, equivalente a componentDidMount
 
   const handleAlmacenChange = async (e) => {
+    console.clear();
+    console.log("Seleccionando almacen:",e.target.value);
     const selectedAlmacen = e.target.value;
-    setFormData({ ...formData, almacen: selectedAlmacen });
+    // setFormData({ ...formData, almacen: selectedAlmacen });
+    setFormData((prevState) => ({
+      ...prevState,
+      companies: selectedAlmacen,
+    }));
+    setCentroCostos([]);
+
+    fetchDataCentroCostos(selectedAlmacen.DBName);
 
     try {
       const apiUrl = `${routes.BASE_URL_SERVER}/GetItemsByCompany/${selectedAlmacen.Id}`;
@@ -147,8 +155,16 @@ function NuevaCompra() {
         },
       };
       const response = await axios.get(apiUrl, config);
+      console.log(response.data.data);
       setMaterialesData(response.data.data);
     } catch (error) {
+      let {response: {data: {detailMessage, message}}} = error;
+      toast.current.show({
+        severity: "warn",
+        summary: message,
+        detail:  detailMessage,
+        life: 3000,
+      });
       console.error("Error al obtener datos adicionales:", error);
     }
   };
@@ -167,7 +183,7 @@ function NuevaCompra() {
         handleErrorResponse(error);
       }
     } else {
-      toast.show({
+      toast.current.show({
         severity: "warn",
         summary: "Notificación",
         detail: "El formulario tiene que ser completado, para ser enviado",
@@ -221,7 +237,7 @@ function NuevaCompra() {
       },
     };
     if (data.PurchaseOrderRequestDetails.length === 0) {
-      toast.show({
+      toast.current.show({
         severity: "warn",
         summary: "Notificación",
         detail: "El formulario tiene que ser completado, para ser enviado",
@@ -332,7 +348,7 @@ function NuevaCompra() {
         </div>
       </Card>
       <Card className="cardOrdenCompra">
-        <Toast ref={(el) => (toast = el)} />
+      <Toast ref={toast} />
         <form onSubmit={handleSubmit}>
           <div className="p-field-group">
             <div className="row">
