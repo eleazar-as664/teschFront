@@ -42,11 +42,13 @@ export const LoginPage = () => {
       const firstProfilePath = user.Profiles[0]?.Path;
       navigate(firstProfilePath);
     } catch (error) {
-      setError("Credenciales incorrectas");
+      console.log(error);
+      let {response: {data: {detailMessage, message}}} = error;
+      setError(detailMessage);
       toast.current.show({
         severity: "warn",
-        summary: "Notificación",
-        detail: "¡Credenciales incorrectas!",
+        summary: message,
+        detail: detailMessage,
         life: 3000,
       });
     }
