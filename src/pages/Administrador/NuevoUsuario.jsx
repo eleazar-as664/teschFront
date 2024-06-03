@@ -40,6 +40,10 @@ function NuevoUsuario() {
     CompanyId: null,
   });
 
+  const [formDataRequester, setFormDataRequester] = useState({
+    CompanyId: null,
+  });
+
   const [empresasId, setEmpresasId] = useState();
 
   const [selectedCompanies, setSelectedCompanies] = useState([]);
@@ -93,13 +97,17 @@ function NuevoUsuario() {
       };
       const responseGetEmpleados = await axios.get(apiUrlEmpleados, config);
 
+      console.log("************  GetEmployees  ****************");
+      console.log(responseGetEmpleados.data.data);
       const updateEmployees = responseGetEmpleados.data.data.map((item) => ({
         ...item,
         nombreCompleto: `${item.FirstName} ${item.LastName}`,
       }));
       setEmployees(updateEmployees || []);
+      setLoading(false);
     } catch (error) {
       console.error("Error al obtener datos de la API:", error);
+      setLoading(true);
       setEmployees([]);
     }
   };
@@ -204,6 +212,8 @@ function NuevoUsuario() {
     const Profile = e.target.value;
     setSelectedCompanies([]);
     setBusinessPartners([]);
+    setEmployees([]);
+    setFormDataAutorizador({ ...formDataAutorizador, CompanyId: null });
     setFormData({ ...formData, ProfileId: Profile });
   };
   const handleSubmit = async (event) => {
@@ -216,7 +226,7 @@ function NuevoUsuario() {
         console.log("RequestDta: ",requestData);
         const response = await sendFormData(requestData);
         console.log(response);
-        handleSuccessResponse(response);
+        // handleSuccessResponse(response);
       } catch (error) {
         let {response: {data: {message,detailMessage}}} = error;
         toast.current.show({
@@ -252,7 +262,8 @@ function NuevoUsuario() {
     } else if (requestData.ProfileId === 2) {
       requestData.BusinessPartnerId = 0;
       requestData.EmployeeId = formData.EmployeeId.Id;
-      requestData.CompanyId = formData.CompanyId.Id;
+      const newIdArray = selectedCompanies.map((item) => item.Id);
+      requestData.CompanyId = newIdArray;
     } else if (requestData.ProfileId === 3) {
       console.log(selectedCompanies);
       const newIdArray = selectedCompanies.map((item) => item.Id);
@@ -269,21 +280,21 @@ function NuevoUsuario() {
     console.clear();
     console.log(data);
 
-    const config = {
-      headers: {
-        "x-access-token": token,
-      },
-    };
+    // const config = {
+    //   headers: {
+    //     "x-access-token": token,
+    //   },
+    // };
 
-    const response = await axios.post(
-      `${routes.BASE_URL_SERVER}/CreateUser`,
-      data,
-      config
-    );
-    console.log("Respuesta:", response.data);
+    // const response = await axios.post(
+    //   `${routes.BASE_URL_SERVER}/CreateUser`,
+    //   data,
+    //   config
+    // );
+    // console.log("Respuesta:", response.data);
 
-    console.log(response.data);
-    return response.data;
+    // console.log(response.data);
+    // return response.data;
   };
 
   const validateForm = () => {
@@ -374,6 +385,26 @@ function NuevoUsuario() {
 
   };
 
+  const handleCompanyRequesterChange = (e) => {
+    console.log(e.value);
+    const selectedCompany = companies.find((company) => company.Id === e.value);
+    if (
+      selectedCompany &&
+      !selectedCompanies.some((company) => company.Id === selectedCompany.Id)
+    ) {
+      console.log(selectedCompany)
+      if(employees.length === 0)
+      {
+        fetchDataGetEmployees(selectedCompany.Id);
+      }
+      setSelectedCompanies([...selectedCompanies, selectedCompany]);
+      // setLoading(true);
+
+    }
+    setFormDataRequester({ ...formDataRequester, CompanyId: e.value });
+
+  };
+
   const handleEmpresasChange = (e) => {
     const newCompanyId = e.target.value;
     console.log(newCompanyId.Id);
@@ -452,7 +483,7 @@ function NuevoUsuario() {
                     <></>
                   )}
                 </div> */}
-                <div className="p-field">
+                {/* <div className="p-field">
                   {formData.ProfileId?.Id === 2 && <label>Empleado:</label>}
                   {formData.ProfileId?.Id === 2 && (
                     <Dropdown
@@ -472,7 +503,7 @@ function NuevoUsuario() {
                       className="w-full md:w-14rem"
                     />
                   )}
-                </div>
+                </div> */}
               </div>
               <div className="row">
                 <div className="p-field">
@@ -507,7 +538,7 @@ function NuevoUsuario() {
                 {/* Asignacion de empresas para el proveedor */}
                 <div className="row">
                 <div className="p-field">
-                  {formData.ProfileId?.Id === 4 && (
+                  {formData.ProfileId?.Id === 4  && (
                     <label>Compañias:</label>
                   )}
                   {formData.ProfileId?.Id == 4 ? (
@@ -549,7 +580,60 @@ function NuevoUsuario() {
                       className="w-full md:w-14rem"
                     />
                   )}
+                  
                   </div>
+
+                  
+                </div>
+
+                {/* ASIGNACION DE LAS EMPRESAS PARA EL REQUISITOR */}
+                <div className="row">
+                <div className="p-field">
+                  {formData.ProfileId?.Id === 2  && (
+                    <label>Compañias:</label>
+                  )}
+                  {formData.ProfileId?.Id == 2 ? (
+                    <Dropdown
+                      value={formDataAutorizador.CompanyId}
+                      onChange={handleCompanyRequesterChange}
+                      options={companies.map((company) => ({
+                        label: company.Name,
+                        value: company.Id,
+                      }))}
+                      placeholder="Seleccionar Compañia"
+                      className="w-full md:w-14rem"
+                    />
+                  ) : (
+                    <></>
+                  )}
+                  </div>
+                  <div className="p-field">
+                  {formData.ProfileId?.Id === 2 && (
+                    <label> Empleado:</label>
+                  )}
+                  {formData.ProfileId?.Id === 2 && (
+                      <Dropdown
+                        value={formData.EmployeeId}
+                        onChange={(e) =>
+                          setFormData({
+                            ...formData,
+                            EmployeeId: e.target.value,
+                          })
+                        }
+                        options={employees}
+                        filter
+                        valueTemplate={selectedEmpleadoTemplate}
+                        itemTemplate={empleadoOpcionTemplate}
+                        optionLabel="nombreCompleto"
+                        disabled={loading}
+                        placeholder="Seleccionar empleado"
+                        className="w-full md:w-14rem"
+                      />
+                  )}
+                  
+                  </div>
+
+                  
                 </div>
                 <div className="row">
                 
@@ -575,7 +659,7 @@ function NuevoUsuario() {
                 </div>
                 <div className="row">
                 <div className="p-field">
-                  {formData.ProfileId?.Id == 3 || formData.ProfileId?.Id == 4  ? (
+                  {formData.ProfileId?.Id == 3 || formData.ProfileId?.Id == 4 || formData.ProfileId?.Id == 2  ? (
                     <DataTable value={selectedCompanies} className="mt-4">
                       <Column field="Id" header="ID" />
                       <Column field="Name" header="Nombre" />
