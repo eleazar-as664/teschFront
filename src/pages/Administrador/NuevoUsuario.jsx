@@ -226,7 +226,7 @@ function NuevoUsuario() {
         console.log("RequestDta: ",requestData);
         const response = await sendFormData(requestData);
         console.log(response);
-        // handleSuccessResponse(response);
+        handleSuccessResponse(response);
       } catch (error) {
         let {response: {data: {message,detailMessage}}} = error;
         toast.current.show({
@@ -280,21 +280,21 @@ function NuevoUsuario() {
     console.clear();
     console.log(data);
 
-    // const config = {
-    //   headers: {
-    //     "x-access-token": token,
-    //   },
-    // };
+    const config = {
+      headers: {
+        "x-access-token": token,
+      },
+    };
 
-    // const response = await axios.post(
-    //   `${routes.BASE_URL_SERVER}/CreateUser`,
-    //   data,
-    //   config
-    // );
-    // console.log("Respuesta:", response.data);
+    const response = await axios.post(
+      `${routes.BASE_URL_SERVER}/CreateUser`,
+      data,
+      config
+    );
+    console.log("Respuesta:", response.data);
 
-    // console.log(response.data);
-    // return response.data;
+    console.log(response.data);
+    return response.data;
   };
 
   const validateForm = () => {
