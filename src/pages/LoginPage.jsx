@@ -36,7 +36,7 @@ export const LoginPage = () => {
         Password: password,
         SecretKey: "O6XcIjRgEOvvRyO0QFHzf5jllsuzCiLEZj9YftaOwg",
       });
-      console.log(response);
+      console.log(response.data.data);
       const user = response.data.data;
       localStorage.setItem("user", JSON.stringify(user));
       const firstProfilePath = user.Profiles[0]?.Path;
