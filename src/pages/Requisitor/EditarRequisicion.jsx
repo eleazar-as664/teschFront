@@ -160,6 +160,7 @@ function EditarRequisicion() {
       setSelectedItems(newSelectedItems);
       setFormData({
         ...formData,
+        CompanyId: detalesRequisicion.CompanyId,
         Comments: detalesRequisicion.Comments,
         NumAtCard: detalesRequisicion.NumAtCard,
         fecha: moment(detalesRequisicion.DocDueDate).toDate(),
@@ -248,7 +249,7 @@ function EditarRequisicion() {
       UserId: user.UserId,
       NumAtCard: formData.NumAtCard,
       Comments: formData.Comments,
-      CompanyId: formData.companies.Id,
+      CompanyId: formData.CompanyId,
       PurchaseOrderRequestDetails,
     };
   };

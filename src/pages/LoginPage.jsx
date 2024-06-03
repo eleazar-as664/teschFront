@@ -36,17 +36,19 @@ export const LoginPage = () => {
         Password: password,
         SecretKey: "O6XcIjRgEOvvRyO0QFHzf5jllsuzCiLEZj9YftaOwg",
       });
-      console.log(response);
+      console.log(response.data.data);
       const user = response.data.data;
       localStorage.setItem("user", JSON.stringify(user));
       const firstProfilePath = user.Profiles[0]?.Path;
       navigate(firstProfilePath);
     } catch (error) {
-      setError("Credenciales incorrectas");
+      console.log(error);
+      let {response: {data: {detailMessage, message}}} = error;
+      setError(detailMessage);
       toast.current.show({
         severity: "warn",
-        summary: "Notificación",
-        detail: "¡Credenciales incorrectas!",
+        summary: message,
+        detail: detailMessage,
         life: 3000,
       });
     }
