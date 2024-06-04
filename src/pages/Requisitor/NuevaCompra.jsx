@@ -151,6 +151,10 @@ function NuevaCompra() {
     } catch (error) {
       console.error("Error al obtener datos adicionales:", error);
     }
+    finally{
+      console.clear();
+      setSelectedItems([]);
+    }
   };
 
   const handleSubmit = async (event) => {
@@ -180,9 +184,7 @@ function NuevaCompra() {
     const momentDate = moment(formData.fecha);
     const formattedDate = momentDate.format("YYYY-MM-DD");
     console.clear();
-    console.log('HLOLAAAAAAAAAAAAAAAAAAAAAAAAAA SOY FORMA DATA');
-    console.log(formData.CostCenterCode ? formData.CostCenterCode.CenterCode : '');
-    console.log(formData);
+  
     const PurchaseOrderRequestDetails = selectedItems.map((obj) => ({
       Description: obj.Description,
       BuyUnitMsr: obj.BuyUnitMsr,
@@ -254,11 +256,6 @@ function NuevaCompra() {
       errors.fecha = "La fecha es obligatoria.";
       formIsValid = false;
     }
-
-    // if (!formData.NumAtCard.trim()) {
-    //   errors.NumAtCard = "El número de referencia es obligatorio.";
-    //   formIsValid = false;
-    // }
 
     if (!formData.companies) {
       errors.companies = "Seleccione una compañía.";

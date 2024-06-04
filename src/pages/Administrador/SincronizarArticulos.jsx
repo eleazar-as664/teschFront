@@ -242,7 +242,7 @@ function SincronizarEmpleados() {
             ) : (
               <Button
                 onClick={handleDialogEnviarSap}
-                label="Enviar"
+                label="Aceptar"
                 className="p-button-secondary"
               />
             )}
