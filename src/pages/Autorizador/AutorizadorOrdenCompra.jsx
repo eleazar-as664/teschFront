@@ -89,127 +89,14 @@ function  AutorizadorOrdenCompra() {
 
   useEffect(() => {}, [materialesSolicitados,getDatosCompra,getDatosFiles]);
 
-  const handleInputChange = (e) => {
-    setNotasAgregar(e.target.value);
-  };
 
-  const handleAddNote = async () => {
-    console.clear();
-    console.log("notas:", notasAgregar);
-    if (notasAgregar) {
-      const data = {
-        PurchaseRequestId: datosRequisitor.PurchaseRequestId,
-        UserId: user.UserId,
-        Notes: notasAgregar,
-        SAPToken: user.TokenSAP,
-      };
-      console.log("data:", data);
-      try {
-        const apiUrl = `${routes.BASE_URL_SERVER}/CreatePurchaseRequestNote`;
-        const config = {
-          headers: {
-            "x-access-token": token,
-          },
-        };
-        const response = await axios.post(apiUrl, data, config);
-        getDatosCompra();
-  
-        console.log("Response:", response.data.data);
-        toast.show({
-          severity: "success",
-          summary: "Notificación",
-          detail: "Nota agregada con exito",
-          life: 2000,
-        });
-      } catch (error) {}
-    }else{      
 
-      toast.show({
-        severity: "warn",
-        summary: "Notificación",
-        detail: "Debe agregar una nota",
-        life: 2000,
-      });
-    }
-   
-  
- 
-  };
-  const eliminarFiles = (rowData) => {
-    axios
-      .delete(
-        `${routes.BASE_URL_SERVER}/DeleteAttachmentsFromPurchaseRequest/${rowData.AttachId}/${rowData.LineId}`
-      )
-      .then((response) => {
-        getDatosFiles();
-        toast.show({
-          severity: "warn",
-          summary: "Notificación",
-          detail: "Archivo eliminado con exito",
-          life: 3000,
-        });
-        console.log("Response:", response.data.data);
-      })
-      .catch((error) => {
-        console.error("Error al cancelar la solicitud de compra:", error);
-        // Manejar el error, como mostrar un mensaje al usuario
-      });
-  };
-  const handleFileSelect = (event) => {
-    const archivoPDF = event.files[0]; // Obtener el primer archivo seleccionado
 
-    toast.show({
-      severity: "success",
-      summary: "Notificación",
-      detail: "archivo agregado con exito",
-      life: 2000,
-    });
-    console.log("Archivo seleccionado:", archivoPDF);
-    try {
-      const requestData = {
-        PurchaseRequestId: datosRequisitor.PurchaseRequestId,
-        UserId: user.UserId,
-      };
-      const response = sendFormData(requestData, archivoPDF);
-      handleSuccessResponse(response);
-    } catch (error) {
-      handleErrorResponse(error);
-    }
-  };
 
-  const sendFormData = async (data, pdf) => {
-    const formData = new FormData();
 
-    formData.append("data", JSON.stringify(data));
 
-    formData.append("FilesToUpload", pdf);
 
-    // Configurar los encabezados
-    const config = {
-      headers: {
-        "x-access-token": token,
-        "Content-Type": "multipart/form-data",
-      },
-    };
 
-    const response = await axios.post(
-      `${routes.BASE_URL_SERVER}/AddAttachmentsToPurchaseRequest`,
-      formData,
-      config
-    );
-    getDatosFiles();
-    return response.data;
-  };
-
-  const handleSuccessResponse = (response) => {
-   
-    console.log("Respuesta del servidor:", response);
-    // Aquí podrías manejar la respuesta exitosa, por ejemplo, mostrar un mensaje de éxito al usuario
-  };
-
-    const handleErrorResponse = (error) => {
-        console.error("Error al enviar el formulario:", error);
-    };
 
     const handleAprobarOrden = async () => {  
         setAutorizando(true);

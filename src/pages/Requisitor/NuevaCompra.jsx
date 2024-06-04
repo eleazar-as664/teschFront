@@ -267,6 +267,10 @@ function NuevaCompra() {
   const validateForm = () => {
     const errors = {};
     let formIsValid = true;
+    if (!formData.CostCenterCode) {
+      errors.CostCenterCode = "El centro de costo es obligatorio.";
+      formIsValid = false;
+    }
 
     if (!formData.fecha) {
       errors.fecha = "La fecha es obligatoria.";
@@ -392,6 +396,7 @@ function NuevaCompra() {
                     setFormData({ ...formData, CostCenterCode: e.target.value })}
                   placeholder="Seleccione un centro de costos"
                   options={Array.isArray(centroCostos) ? centroCostos : []}
+                  error={formErrors.CostCenterCode}
                 />
               </div>
               <div className="p-field" style={{ width: "31.9%" }}>
