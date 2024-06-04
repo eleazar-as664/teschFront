@@ -349,7 +349,6 @@ function NuevaCompra() {
         <form onSubmit={handleSubmit}>
           <div className="p-field-group">
             <div className="row">
-              <div className="p-field">
                 <DropdownInput
                   id="compañia"
                   label="Compañia:"
@@ -361,15 +360,11 @@ function NuevaCompra() {
                   error={formErrors.nombre}
                   disabled={companies.length <= 1}
                 />
-              </div>
-              <div className="p-field">
                 <DatesInput
                   value={formData.fecha}
                   onChange={(e) => setFormData({ ...formData, fecha: e.value })}
                   error={formErrors.fecha}
                 />
-              </div>
-              <div className="p-field">
                 <TextInput
                   id="NumAtCard"
                   label="Referencia:"
@@ -379,10 +374,8 @@ function NuevaCompra() {
                   }
                   error={formErrors.NumAtCard}
                 />
-              </div>
             </div>
             <div className="row">
-              <div className="p-field">
                 <DropdownInput
                   id="costos"
                   label="Centro de Costos:"
@@ -393,8 +386,6 @@ function NuevaCompra() {
                   placeholder="Seleccione un centro de costos"
                   options={Array.isArray(centroCostos) ? centroCostos : []}
                 />
-              </div>
-              <div className="p-field" style={{ width: "31.9%" }}>
                 <TextTareaInput
                   id="comentario"
                   label="Comentarios"
@@ -405,11 +396,9 @@ function NuevaCompra() {
                   rows={3}
                   cols={10}
                 />
-              </div>
             </div>
 
             <div className="row">
-              <div className="p-field" style={{ margin: "20px" }}>
                 <AutoComplete
                   value={searchValue}
                   suggestions={filteredMaterials}
@@ -423,7 +412,6 @@ function NuevaCompra() {
                   }}
                   placeholder="Buscar material..."
                 />
-              </div>
               <div className="p-field button-conteiner">
                 <div className="botonEnviar">
                   <Button

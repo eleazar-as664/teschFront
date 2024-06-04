@@ -65,7 +65,7 @@ function Sincronizacion() {
       },
     },
     {
-      label: "Articulos",
+      label: "Artículos",
       icon: "pi pi-link",
       command: () => {
         navigate("/Administrador/Administrador/SincronizarArticulos");
