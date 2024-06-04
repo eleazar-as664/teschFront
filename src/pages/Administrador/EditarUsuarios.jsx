@@ -38,11 +38,10 @@ function EditarUsuarios() {
     CompanyId: null,
   });
   const [selectedCompanies, setSelectedCompanies] = useState([]);
-  const validateEmail = (email) => {
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    return emailRegex.test(email);
-  };
+
   const toast = useRef(null);
+  const centerToast = useRef(null);
+
   // Agregar event listener al cambio de archivos
   const user = JSON.parse(localStorage.getItem("user"));
   const token = JSON.parse(localStorage.getItem("user")).Token;
@@ -318,6 +317,71 @@ function EditarUsuarios() {
 
     console.log("Elemento eliminado:", rowData);
   };
+
+  const updatePassword = async () => {
+    centerToast.current.clear();
+    try {
+      console.clear();
+    
+      const UserId = employeesEditar.UserId;
+      const data = {
+        UserId: UserId,
+      };
+      console.log(data);
+      const apiUrl = `${routes.BASE_URL_SERVER}/RessetPassword`;
+      const config = {
+        headers: {
+          "x-access-token": token,
+        },
+      };
+      const response = await axios.post(apiUrl, data, config);
+      console.log(response.data);
+
+      toast.current.show({
+        severity: "success",
+        summary: "Exito",
+        detail: "Contraseña cambiada correctamente",
+        life: 3000,
+      });
+    } catch (error) {
+      console.error("Error al obtener datos de la API:", error);
+      toast.current.show({
+        severity: "error",
+        summary: "Error",
+        detail: "Error al obtener datos de la API",
+        life: 3000,
+      })
+    } finally {
+    }
+  };
+
+  const alertaPassword = async () => {
+    centerToast.current.show({
+      severity: "success",
+      summary: "Can you send me the report?",
+      sticky: true,
+      content: (props) => (
+        <div
+          className="flex flex-column align-items-left"
+          style={{ flex: "1" }}
+        >
+          <div className="flex align-items-center gap-2">
+            <span className="font-bold text-900">
+              ¿Desea cambiar la contraseña?
+            </span>
+          </div>
+          <div className="flex align-items-center gap-2">
+            <Button
+              className="p-button-sm flex"
+              label="Cambiar contraseña"
+              severity="success"
+              onClick={updatePassword}
+            ></Button>
+          </div>
+        </div>
+      ),
+    });
+  };
   return (
     <Layout>
       <div class="body-ordenCompra">
@@ -327,7 +391,7 @@ function EditarUsuarios() {
           </div>
         </Card>
         <Toast ref={toast} />
-
+        <Toast ref={centerToast} position="center" />
         <Card className="cardOrdenCompra">
           <Dialog
             visible={dialogVisibleNuevaCompra}
@@ -486,21 +550,32 @@ function EditarUsuarios() {
               <div className="row">
                 <div className="p-field" style={{ margin: "20px" }}></div>
                 <div className="p-field button-conteiner">
-                  <div className="botonEnviar">
-                    <Button
-                      label="Guardar"
-                      type="submit"
-                      icon="pi pi-check"
-                      className="p-button-primary"
-                    />
-                  </div>
-                  <div className="botonCancelar">
-                    <Button
-                      label="Cancelar"
-                      type="button"
-                      onClick={handleEnviarNavigate}
-                      className="p-button-secondary"
-                    />
+                  <div className="row">
+                    <div className="p-field">
+                      <Button
+                        label="Cancelar"
+                        type="button"
+                        onClick={handleEnviarNavigate}
+                        className="p-button-secondary"
+                      />
+                    </div>
+                    <div className="p-field">
+                      <Button
+                        label="Restablecer contraseña"
+                        type="button"
+                        onClick={alertaPassword}
+                        icon="pi pi-undo"
+                        className="p-button-secondary"
+                      />
+                    </div>
+                    <div className="p-field">
+                      <Button
+                        label="Guardar"
+                        type="submit"
+                        icon="pi pi-check"
+                        className="p-button-primary"
+                      />
+                    </div>
                   </div>
                 </div>
               </div>

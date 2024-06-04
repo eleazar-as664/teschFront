@@ -305,6 +305,7 @@ function NuevoUsuario() {
       errors.Email = "El correo es obligatorio.";
       formIsValid = false;
     }
+    if(formData.ProfileId?.Id === 2)
 
     if (!formData.UserName) {
       errors.UserName = "El nombre del  usuario es obligatorio.";
@@ -319,6 +320,10 @@ function NuevoUsuario() {
     console.log(formData.BusinessPartnerId);
     if (formData.ProfileId.Id == 4 &&  !formData.BusinessPartnerId) {
       errors.BusinessPartnerId = "Seleccione un Socio de Negocios.";
+      formIsValid = false;
+    }
+    if (formData.ProfileId?.Id === 2 && !formData.EmployeeId) {
+      errors.EmployeeId = "Seleccione un empleado.";
       formIsValid = false;
     }
     console.log(errors);

@@ -229,6 +229,8 @@ function Sincronizacion() {
     } finally {
       setVisibleConfiguracionEmpresa(false);
       setIsButtonDisabled(false);
+      setEnviandoASAP(false);
+
     }
   };
   const handleCreateCompanySettings = async () => {
@@ -341,7 +343,7 @@ function Sincronizacion() {
             ) : (
               <Button
                 onClick={handleDialogEnviarSap}
-                label="Enviar"
+                label="Aceptar"
                 className="p-button-secondary"
               />
             )}
