@@ -223,21 +223,24 @@ function SincronizarEmpleados() {
         </div>
       </Card>
       <Dialog
-        header="Sincronizar Empresas"
+        header="Sincronizar Empleados"
         visible={visibleEnviarSAP}
         style={{ width: "30vw" }}
         onHide={() => setVisibleEnviarSAP(false)}
       >
-        <div className="">
-          <div className="p-field-group">
-            <Dropdown
-              value={selectedEmpresas}
-              onChange={(e) => setSelectedEmpresas(e.value)}
-              options={companies}
-              optionLabel="Name"
-              placeholder="Seleccionar Compañia"
-              className="w-full md:w-14rem"
-            />
+        <div className="p-field-group">
+          <div className="row">
+            <div className="p-field">
+              <Dropdown
+                value={selectedEmpresas}
+                onChange={(e) => setSelectedEmpresas(e.value)}
+                options={companies}
+                optionLabel="Name"
+                placeholder="Seleccionar Compañ&iacute;a"
+                className="w-full md:w-14rem"
+              />
+              </div>
+            <div className="p-field"></div>
           </div>
 
           <div class="row">
@@ -249,7 +252,7 @@ function SincronizarEmpleados() {
             ) : (
               <Button
                 onClick={handleDialogEnviarSap}
-                label="Enviar"
+                label="Aceptar"
                 className="p-button-secondary"
               />
             )}

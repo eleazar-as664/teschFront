@@ -65,7 +65,7 @@ function Sincronizacion() {
       },
     },
     {
-      label: "Articulos",
+      label: "Artículos",
       icon: "pi pi-link",
       command: () => {
         navigate("/Administrador/Administrador/SincronizarArticulos");
@@ -341,7 +341,7 @@ function Sincronizacion() {
             ) : (
               <Button
                 onClick={handleDialogEnviarSap}
-                label="Enviar"
+                label="Aceptar"
                 className="p-button-secondary"
               />
             )}
