@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect } from "react";
 import { DataTable } from "primereact/datatable";
 import { FilterMatchMode } from "primereact/api";
 
@@ -14,55 +14,43 @@ import { InputText } from "primereact/inputtext";
 import { IconField } from "primereact/iconfield";
 import { InputIcon } from "primereact/inputicon";
 import { TabMenu } from "primereact/tabmenu";
-import { RadioButton } from "primereact/radiobutton";
+
 import { Toast } from "primereact/toast";
 
 import { Tag } from "primereact/tag";
+// import routes from "../../routes../utils/routes";
 import routes from "../../utils/routes";
 
-import "../Proveedor.css";
+import "../../Components/Styles/Global.css";
 import axios from "axios";
 function OrdenesNoAprobadas() {
-  const toast = useRef(null);
-
   const navigate = useNavigate();
   const [activeIndex] = useState(1);
 
+  const [purchaseOrderData, setPurchaseOrderData] = useState([]);
   const [statuses] = useState(["Abierto", "Cerrado", "Cancelado", "Pendiente"]);
 
   const [globalFilterValue, setGlobalFilterValue] = useState("");
 
+  const [archivosSeleccionados, setArchivosSeleccionados] = useState([]);
+
   const [filters, setFilters] = useState({
     global: { value: null, matchMode: FilterMatchMode.CONTAINS },
     DocNum: { value: null, matchMode: FilterMatchMode.STARTS_WITH },
-    BusinessPartnerCardName: {
-      value: null,
-      matchMode: FilterMatchMode.STARTS_WITH,
-    },
+    concatenatedInfo: { value: null, matchMode: FilterMatchMode.STARTS_WITH },
     DocDueDate: { value: null, matchMode: FilterMatchMode.STARTS_WITH },
-    BusinessPartnerCardCode: { value: null, matchMode: FilterMatchMode.EQUALS },
-    DBName: { value: null, matchMode: FilterMatchMode.EQUALS },
-    TotalWithoutTaxes: { value: null, matchMode: FilterMatchMode.EQUALS },
-    Comments: { value: null, matchMode: FilterMatchMode.EQUALS },
+    StatusSAP: { value: null, matchMode: FilterMatchMode.EQUALS },
   });
 
   const user = JSON.parse(localStorage.getItem("user"));
   const token = JSON.parse(localStorage.getItem("user")).Token;
 
-  const [expandedRows, setExpandedRows] = useState(null);
-
-  const [approvedProducts, setApprovedProducts] = useState([]);
-  const [rejectedProducts, setRejectedProducts] = useState([]);
-  const [products, setProducts] = useState([ ]);
-  const [enviandoASAP, setEnviandoASAP] = useState(false);
-
-
-  const fetchDataGetPurchaseOrdersPendingApproval = async () => {
+  const fetchDataPurchaseOrderHeadersPendingApproval = async () => {
     try {
       console.clear();
       console.log("Cargando datos de la API...");
       const IdUsuario = user.UserId;
-      const apiUrl = `${routes.BASE_URL_SERVER}/GetPurchaseOrdersPendingApproval/${IdUsuario}`;
+      const apiUrl = `${routes.BASE_URL_SERVER}/GetPurchaseOrderHeadersPendingApproval/${IdUsuario}`;
       const config = {
         headers: {
           "x-access-token": token,
@@ -70,9 +58,16 @@ function OrdenesNoAprobadas() {
       };
       console.log(apiUrl);
       const response = await axios.get(apiUrl, config);
-      const data = response.data.data;
-      setProducts(data);
-      console.log(data);
+      console.log(response.data.data);
+      // setpurchaseOrderData(response.data.data);
+      const updatedData = response.data.data.map((item) => ({
+        ...item,
+        concatenatedInfo: `${item.BusinessName} - ${item.DocDate}`,
+      }));
+      console.log(updatedData);
+
+      setPurchaseOrderData(updatedData);
+      // setpurchaseOrderData(response.data.data.purchaseRequestsHeaders);
     } catch (error) {
       console.error(
         "Error al obtener datos de la API:",
@@ -81,43 +76,31 @@ function OrdenesNoAprobadas() {
     }
   };
 
-  const rowExpansionTemplate = (data) => {
-    return (
-      <div className="p-grid p-dir-col">
-        <div className="p-col-12">
-          <h5>Articulos de {data.DocNum}</h5>
-          <DataTable value={data.Details}>
-            <Column field="Id" header="Id"></Column>
-            <Column
-              field="PurchaseOrderId"
-              header="Codigo del articulo"
-            ></Column>
-            <Column field="ItemDescription" header="Descrpcion"></Column>
-            <Column field="ItemBuyUnitMsr" header="Unidad"></Column>
-            <Column field="ItemQuantity" header="Cantidad"></Column>
-            <Column field="ItemOcrCode" header="Centro de Costo"></Column>
-          </DataTable>
-        </div>
-      </div>
-    );
+  const handleFileSelect = (event) => {
+    const nuevosArchivosPDF = Array.from(event.files);
+    setArchivosSeleccionados([...archivosSeleccionados, ...nuevosArchivosPDF]);
   };
 
   useEffect(() => {
     localStorage.removeItem("purchaseOrderData");
-    const authorizedIds = products
-      .filter((product) => product.ApprovalStatus === "Autorizar")
-      .map((product) => product.Id);
-    const rejectedIds = products
-      .filter((product) => product.ApprovalStatus === "Rechazar")
-      .map((product) => product.Id);
-    setApprovedProducts(authorizedIds);
-    setRejectedProducts(rejectedIds);
-  }, [products]);
-
-  useEffect(() => {
-    fetchDataGetPurchaseOrdersPendingApproval();
-
+    fetchDataPurchaseOrderHeadersPendingApproval();
   }, []);
+
+  const handleRowClick = (event) => {
+    console.clear();
+    console.log("Clic en la fila", event.data);
+    const rowData = event.data;
+    localStorage.setItem("purchaseOrderData", JSON.stringify(rowData));
+
+    // Redirigir a la página de detalles
+    navigate("/Autorizador/Autorizador/AutorizadorOrdenCompra");
+  };
+
+  const redirectToDetalle = (datos) => {
+    console.clear();
+    console.log("Boton presionado");
+    console.log(datos.Id);
+  };
 
   // Función para obtener el estado de la orden
   const getSeverity = (status) => {
@@ -193,128 +176,31 @@ function OrdenesNoAprobadas() {
 
   const items = [
     {
-      label: "Aprobadas ",
+      label: "Por aprobar",
       icon: "pi pi-check",
       command: () => {
         navigate("/Autorizador");
       },
     },
     {
-      label: "Por aprobar",
+      label: "Todas las ordenes",
       icon: "pi pi-file-edit",
       command: () => {
         navigate("/Autorizador/Autorizador/OrdenesNoAprobadas");
       },
     },
   ];
-
-  const approvalStatusTemplate = (rowData) => {
-    const statuses = ["Pendiente", "Autorizar", "Rechazar"];
-
-    const handleRadioChange = (e) => {
-      const updatedProducts = products.map((product) =>
-        product.Id === rowData.Id
-          ? { ...product, ApprovalStatus: e.value }
-          : product
-      );
-      setProducts(updatedProducts);
-    };
-
-    return (
-      <div>
-        {statuses.map((status) => (
-          <div key={status} className="p-field-radiobutton">
-            <RadioButton
-              inputId={status + rowData.Id}
-              name={"status" + rowData.Id}
-              value={status}
-              onChange={handleRadioChange}
-              checked={rowData.ApprovalStatus === status}
-            />
-            <label htmlFor={status + rowData.Id}>{status}</label>
-          </div>
-        ))}
-      </div>
-    );
-  };
-
-  const statusTemplate = (rowData) => {
-    return <span>{rowData.ApprovalStatus}</span>;
-  };
-  const enviarAutorizaciones  = async () => {
-    console.clear();
-    setEnviandoASAP(true);
-    try {
-        const data = {
-            Authorized: rejectedProducts,
-            Rejected: approvedProducts,
-            UserId: user.UserId,
-            SAPToken: user.TokenSAP,
-          };
-
-          console.log("data:", data);
-  
-        const apiUrl = `${routes.BASE_URL_SERVER}/MassivePurchaseOrderAuthorization`;
-        const config = {
-          headers: {
-            "x-access-token": token,
-          },
-        };
-        const response = await axios.post(apiUrl, data, config);
-        console.log("Response:", response);
-        toast.current.show({
-          severity: "success",
-          summary: "Notificación",
-          detail: "Se envio correctamente la auditorizaciones a SAP",
-          life: 4000,
-        });
-        fetchDataGetPurchaseOrdersPendingApproval();
-      } catch (error) {
-        console.error("Error al enviar en auditorizaciones a SAP:", error);
-        toast.current.show({
-          severity: "error",
-          summary: "Error",
-          detail: "Error al enviar la solicitud a SAP",
-          life: 1000,
-        });
-      } finally {
-        setEnviandoASAP(false);       
-      }
-  };
   return (
     <Layout>
       <Card className="card-header">
-      <Toast ref={toast} />
         <div class="row">
           <div className="p-card-title">Ordenes de compra</div>
-          <div class="gorup-search">
-            <div>
-            {enviandoASAP ? (
-              <Button
-                icon="pi pi-spin pi-spinner"
-                className="botonInsertarRequisitor"
-                severity="primary"
-              />
-            ) : (
-                <Button
-                label="Enviar autorizaciones"
-                severity="primary"
-                raised
-                icon="pi pi-plus-circle"
-                iconPos="left"
-                onClick={enviarAutorizaciones}
-                className="botonInsertarRequisitor"
-              />
-            )}
-              
-            </div>
-          </div>
         </div>
       </Card>
       <Card title="" className="cardProveedor">
         <TabMenu model={items} activeIndex={activeIndex} />
         <div className="p-grid p-fluid">
-          {/* <DataTable
+          <DataTable
             value={purchaseOrderData}
             selectionMode="single"
             // selection={selectedItem}
@@ -410,49 +296,6 @@ function OrdenesNoAprobadas() {
             <Column
               headerStyle={{ width: "5%", minWidth: "5rem" }}
               bodyStyle={{ textAlign: "center" }}
-            ></Column>
-          </DataTable> */}
-          <DataTable
-            value={products}
-            expandedRows={expandedRows}
-            onRowToggle={(e) => setExpandedRows(e.data)}
-            rowExpansionTemplate={rowExpansionTemplate}
-            dataKey="Id"
-            scrollable
-            scrollHeight="400px"
-            filters={filters}
-            filterDisplay="row"
-            globalFilterFields={[
-              "DocNum",
-              "BusinessPartnerCardName",
-              "DocDueDate",
-              "BusinessPartnerCardCode",
-              "DBName",
-              "TotalWithoutTaxes",
-              "Comments",
-            ]}
-            emptyMessage="No hay resultados"
-            header={header}
-            stripedRows
-            tableStyle={{ minWidth: "50rem" }}
-            paginator
-            rows={5}
-          >
-            <Column expander style={{ width: "3em" }} />
-            <Column field="DocNum" header="Orden"></Column>
-            <Column field="BusinessPartnerCardName" header="Proveedor"></Column>
-            <Column field="DocDueDate" header="Fecha de orden"></Column>
-            <Column
-              field="OcrCode"
-              header="Centro Costo"
-            ></Column>
-            <Column field="DBName" header="Empresa"></Column>
-            <Column field="TotalWithoutTaxes" header="Importe"></Column>
-            <Column field="Comments" header="Comentarios"></Column>
-            <Column header="Estatus" body={statusTemplate}></Column>
-            <Column
-              header="Autorizacion"
-              body={approvalStatusTemplate}
             ></Column>
           </DataTable>
         </div>
