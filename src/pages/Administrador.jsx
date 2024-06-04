@@ -22,6 +22,7 @@ function Administrador() {
   const [employees, setEmployees] = useState([]);
   const [enviandoASAP, setEnviandoASAP] = useState(false);
   const [visible, setVisible] = useState(false);
+  const [visibleActiveUser, setVisibleActiveUser] = useState(false);
   const [visibleEnviarSAP, setVisibleEnviarSAP] = useState(false);
   const [rowDataToCancel, setRowDataToCancel] = useState(null);
   const [rowDataToEnviarSap, setRowDataToEnviarSap] = useState(null);
@@ -44,10 +45,18 @@ function Administrador() {
   const tokenSap = JSON.parse(localStorage.getItem("user")).TokenSAP;
 
   const desactivarUsuario = (rowData) => {
-    console.clear();
-    console.log(rowData);
+    let {UserActive} = rowData;
+    console.log("rowData", rowData);
+    console.log(UserActive);
     setRowDataToCancel(rowData);
-    setVisible(true); // Esto abre el Dialog
+    if(UserActive === "Activo")
+    {
+      setVisible(true); // Esto abre el Dialog
+    }
+    else
+    {
+      setVisibleActiveUser(true);
+    }
   };
 
   const handleDialogEnviarSap = async () => {
@@ -93,6 +102,8 @@ function Administrador() {
           detail: "El usuario ha sido desactivado con exito",
           life: 3000,
         });
+        // navigate("/Administrador");
+        fetchDataGetEmployees()
         // Realizar cualquier acción adicional después de cancelar la solicitud, como actualizar la lista de solicitudes de compra
       })
       .catch((error) => {
@@ -107,6 +118,7 @@ function Administrador() {
       });
     setRowDataToCancel(null);
     setVisible(false); // Esto cierra el Dialog
+    setVisibleActiveUser(false); // Esto cierra el Dialog
   };
 
   const fetchDataGetEmployees = async () => {
@@ -269,6 +281,28 @@ function Administrador() {
             </div>
           )}
         </Dialog>
+
+        <Dialog
+          header="Activar usuario"
+          visible={visibleActiveUser}
+          style={{ width: "30vw" }}
+          onHide={() => setVisibleActiveUser(false)}
+        >
+          {rowDataToCancel && (
+            <div>
+              <p>¿Estás seguro que deseas activar el usuario?</p>
+              <p> {rowDataToCancel.UserName}</p>
+              <div class="row">
+                <Button
+                  onClick={handleDialogCancel}
+                  label="Si"
+                  className="p-button-secondary"
+                />
+                {/* Agregar aquí el botón para confirmar la cancelación si es necesario */}
+              </div>
+            </div>
+          )}
+        </Dialog>
         <DataTable
           value={employees}
           selectionMode="single"
@@ -313,7 +347,7 @@ function Administrador() {
             style={{ width: "10%", padding: "8px" }}
           />
           <Column field="UserProfileName" header="Perfil" />
-          <Column field="UserLastModification" header="Ultima Modificación" />
+          <Column field="UserActive" header="Estatus" />
 
           <Column
             style={{ width: "10%" }}
@@ -326,9 +360,9 @@ function Administrador() {
                   <Button
                     outlined
                     onClick={() => desactivarUsuario(rowData)}
-                    icon="pi pi-times"
+                    icon={rowData.UserActive === "Activo" ? "pi pi-times" : "pi pi-check"}
                     rounded
-                    severity="danger"
+                    severity={rowData.UserActive === "Activo" ? "danger" : ""}
                     aria-label="Cancel"
                   />
                   <Button
