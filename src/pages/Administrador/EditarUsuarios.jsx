@@ -344,11 +344,12 @@ function EditarUsuarios() {
         life: 3000,
       });
     } catch (error) {
+      let {response: {data: {detailMessage, message}}} = error;
       console.error("Error al obtener datos de la API:", error);
       toast.current.show({
-        severity: "error",
-        summary: "Error",
-        detail: "Error al obtener datos de la API",
+        severity: "warn",
+        summary: "Atención",
+        detail: message,
         life: 3000,
       })
     } finally {
