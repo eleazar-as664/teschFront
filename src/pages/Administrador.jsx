@@ -317,6 +317,7 @@ function Administrador() {
 
           <Column
             style={{ width: "10%" }}
+            className="column-action"
             body={(rowData) =>
               rowData.Sent ? (
                 <span></span>

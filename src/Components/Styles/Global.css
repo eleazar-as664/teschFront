@@ -378,3 +378,14 @@ body {
     .p-datatable .p-datatable-footer, .p-datatable .p-datatable-thead>tr>th {
         padding: .5rem;
         }
+
+        .p-datatable .p-datatable-tbody>tr>td {
+            padding-top: 3px;
+            padding-bottom: 2px;
+        }
+
+@media only screen and (min-width: 800px) and (max-width: 1490px) {
+    .column-action{
+        width: 15% !important;
+    }
+}

@@ -10,6 +10,7 @@ import { Dropdown } from "primereact/dropdown";
 import { DataTable } from "primereact/datatable";
 import { Column } from "primereact/column";
 import { Dialog } from "primereact/dialog";
+import { Divider } from 'primereact/divider';
 
 import { useNavigate } from "react-router-dom";
 
@@ -496,29 +497,33 @@ function EditarUsuarios() {
                   <label>Usuario:</label>
                   <InputText value={employeesEditar.UserName} disabled />
                 </div>
-                <div className="p-field" style={{ width: "31.9%" }}>
+                <div className="p-field">
                   <label>Correo:</label>
-
                   <InputText value={employeesEditar.UserEmail} disabled />
                 </div>
               </div>
-
+              <Divider type="solid" />
               <div className="row">
-                <div className="p-field" style={{ width: "31.9%" }}>
-                  {formData.ProfileId?.Id == 3 ? (
-                    <Dropdown
-                      value={formDataAutorizador.CompanyId}
-                      onChange={handleCompanyChange}
-                      options={companies.map((company) => ({
-                        label: company.Name,
-                        value: company.Id,
-                      }))}
-                      placeholder="Seleccionar Compañia"
-                      className="w-full md:w-14rem"
-                    />
-                  ) : (
-                    <></>
-                  )}
+                  <div className="p-field">
+                    {formData.ProfileId?.Id == 3 ? (
+                      <Dropdown
+                        value={formDataAutorizador.CompanyId}
+                        onChange={handleCompanyChange}
+                        options={companies.map((company) => ({
+                          label: company.Name,
+                          value: company.Id,
+                        }))}
+                        placeholder="Seleccionar Compañia"
+                        className="w-full md:w-14rem"
+                      />
+                    ) : (
+                      <></>
+                    )}
+                  </div>
+                  <div className="p-field"></div>
+              </div>
+                <div className="row">  
+                <div className="p-field">
                   {formData.ProfileId?.Id == 3 ? (
                     <DataTable value={selectedCompanies} className="mt-4">
                       <Column field="Id" header="ID" />
