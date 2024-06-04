@@ -229,6 +229,8 @@ function Sincronizacion() {
     } finally {
       setVisibleConfiguracionEmpresa(false);
       setIsButtonDisabled(false);
+      setEnviandoASAP(false);
+
     }
   };
   const handleCreateCompanySettings = async () => {
