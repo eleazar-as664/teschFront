@@ -183,7 +183,7 @@ function OrdenesNoAprobadas() {
       },
     },
     {
-      label: "Todas las ordenes",
+      label: "Todas",
       icon: "pi pi-file-edit",
       command: () => {
         navigate("/Autorizador/Autorizador/OrdenesNoAprobadas");

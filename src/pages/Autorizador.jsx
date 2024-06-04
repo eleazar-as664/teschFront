@@ -41,7 +41,7 @@ function Autorizador() {
     },
     DocDueDate: { value: null, matchMode: FilterMatchMode.STARTS_WITH },
     BusinessPartnerCardCode: { value: null, matchMode: FilterMatchMode.EQUALS },
-    DBName: { value: null, matchMode: FilterMatchMode.EQUALS },
+    CompanyName: { value: null, matchMode: FilterMatchMode.EQUALS },
     TotalWithoutTaxes: { value: null, matchMode: FilterMatchMode.EQUALS },
     Comments: { value: null, matchMode: FilterMatchMode.EQUALS },
   });
@@ -200,7 +200,7 @@ function Autorizador() {
       },
     },
     {
-      label: "Todas las ordenes",
+      label: "Todas",
       icon: "pi pi-file-edit",
       command: () => {
         navigate("/Autorizador/Autorizador/OrdenesNoAprobadas");
@@ -427,7 +427,7 @@ function Autorizador() {
               "BusinessPartnerCardName",
               "DocDueDate",
               "BusinessPartnerCardCode",
-              "DBName",
+              "CompanyName",
               "TotalWithoutTaxes",
               "Comments",
             ]}
@@ -446,7 +446,7 @@ function Autorizador() {
               field="OcrCode"
               header="Centro Costo"
             ></Column>
-            <Column field="DBName" header="Empresa"></Column>
+            <Column field="CompanyName" header="Empresa"></Column>
             <Column field="TotalWithoutTaxes" header="Importe"></Column>
             <Column field="Comments" header="Comentarios"></Column>
             <Column header="Estatus" body={statusTemplate}></Column>
