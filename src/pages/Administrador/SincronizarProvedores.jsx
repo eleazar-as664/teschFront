@@ -226,18 +226,20 @@ function SincronizarEmpleados() {
         style={{ width: "30vw" }}
         onHide={() => setVisibleEnviarSAP(false)}
       >
-        <div className="">
           <div className="p-field-group">
-            <Dropdown
-              value={selectedEmpresas}
-              onChange={(e) => setSelectedEmpresas(e.value)}
-              options={companies}
-              optionLabel="Name"
-              placeholder="Seleccionar Compañia"
-              className="w-full md:w-14rem"
-            />
+          <div class="row">
+              <div className="p-field">
+                <Dropdown
+                  value={selectedEmpresas}
+                  onChange={(e) => setSelectedEmpresas(e.value)}
+                  options={companies}
+                  optionLabel="Name"
+                  placeholder="Seleccionar Compañ&iacute;a"
+                  className="w-full md:w-14rem"
+                />
+            </div>
+            <div className="p-field"></div>
           </div>
-
           <div class="row">
             {enviandoASAP ? (
               <Button
