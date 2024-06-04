@@ -443,7 +443,7 @@ function OrdenesNoAprobadas() {
             <Column field="BusinessPartnerCardName" header="Proveedor"></Column>
             <Column field="DocDueDate" header="Fecha de orden"></Column>
             <Column
-              field="BusinessPartnerCardCode"
+              field="OcrCode"
               header="Centro Costo"
             ></Column>
             <Column field="DBName" header="Empresa"></Column>
