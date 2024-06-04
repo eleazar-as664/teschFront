@@ -62,7 +62,7 @@ function Autorizador() {
       console.clear();
       console.log("Cargando datos de la API...");
       const IdUsuario = user.UserId;
-      const apiUrl = `${routes.BASE_URL_SERVER}/GetAllPurchaseOrders/${IdUsuario}`;
+      const apiUrl = `${routes.BASE_URL_SERVER}/GetPurchaseOrdersPendingApproval/${IdUsuario}`;
       const config = {
         headers: {
           "x-access-token": token,
@@ -443,7 +443,7 @@ function Autorizador() {
             <Column field="BusinessPartnerCardName" header="Proveedor"></Column>
             <Column field="DocDueDate" header="Fecha de orden"></Column>
             <Column
-              field="BusinessPartnerCardCode"
+              field="OcrCode"
               header="Centro Costo"
             ></Column>
             <Column field="DBName" header="Empresa"></Column>

@@ -50,7 +50,7 @@ function OrdenesNoAprobadas() {
       console.clear();
       console.log("Cargando datos de la API...");
       const IdUsuario = user.UserId;
-      const apiUrl = `${routes.BASE_URL_SERVER}/GetPurchaseOrderHeadersPendingApproval/${IdUsuario}`;
+      const apiUrl = `${routes.BASE_URL_SERVER}/GetAllPurchaseOrders/${IdUsuario}`;
       const config = {
         headers: {
           "x-access-token": token,
