@@ -243,6 +243,7 @@ function OrdenesNoAprobadas() {
               field="ApprovalStatus"
               header="Estatus"
               style={{ width: "20%" }}
+              sortable 
               body={(rowData) => {
                 switch (rowData.ApprovalStatus) {
                   case "Para Autorizar":
