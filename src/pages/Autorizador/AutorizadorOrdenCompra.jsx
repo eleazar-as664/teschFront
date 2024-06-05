@@ -90,14 +90,6 @@ function  AutorizadorOrdenCompra() {
   useEffect(() => {}, [materialesSolicitados,getDatosCompra,getDatosFiles]);
 
 
-
-
-
-
-
-
-
-
     const handleAprobarOrden = async () => {  
         setAutorizando(true);
         console.log("Aprobar orden de compra")

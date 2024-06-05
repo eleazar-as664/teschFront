@@ -76,10 +76,7 @@ function OrdenesNoAprobadas() {
     }
   };
 
-  const handleFileSelect = (event) => {
-    const nuevosArchivosPDF = Array.from(event.files);
-    setArchivosSeleccionados([...archivosSeleccionados, ...nuevosArchivosPDF]);
-  };
+
 
   useEffect(() => {
     localStorage.removeItem("purchaseOrderData");
@@ -96,11 +93,7 @@ function OrdenesNoAprobadas() {
     navigate("/Autorizador/Autorizador/AutorizadorOrdenCompra");
   };
 
-  const redirectToDetalle = (datos) => {
-    console.clear();
-    console.log("Boton presionado");
-    console.log(datos.Id);
-  };
+
 
   // Función para obtener el estado de la orden
   const getSeverity = (status) => {
@@ -225,22 +218,26 @@ function OrdenesNoAprobadas() {
             <Column
               field="DocNum"
               header="Orden"
+              sortable 
               style={{ width: "10%" }}
             ></Column>
             <Column
               field="CompanyName"
               header="Empresa"
               style={{ width: "20%" }}
+              sortable 
             ></Column>
             <Column
               field="DocDate"
               header="Fecha Orden"
               style={{ width: "20%" }}
+              sortable 
             ></Column>
             <Column
               field="Requester"
               header="Solicitó"
               style={{ width: "20%" }}
+              sortable 
             ></Column>
             <Column
               field="ApprovalStatus"
