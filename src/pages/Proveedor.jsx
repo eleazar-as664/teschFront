@@ -355,12 +355,12 @@ function Proveedor() {
           <Column
             field="DocNum"
             header="Orden"
-            style={{ width: "5%" }}
+            style={{ width: "10%" }}
           ></Column>
           <Column
             field="concatenatedInfo"
             header="Empresa/Fecha Solicitud"
-            style={{ width: "30%" }}
+            style={{ width: "40%" }}
           ></Column>
           <Column
             field="DocDueDate"
@@ -370,7 +370,7 @@ function Proveedor() {
           <Column
             field="StatusSAP"
             header="Estatus"
-            style={{ width: "15%" }}
+            style={{ width: "20%" }}
             body={statusBodyTemplate}
             filter
             filterElement={statusRowFilterTemplate}
@@ -394,7 +394,7 @@ function Proveedor() {
 
           <Column
             header="Subir Factura"
-            style={{ width: "15%" }}
+            style={{ width: "10%" }}
             body={(rowData) => (
               <div
                 onClick={(e) => e.stopPropagation()}
@@ -415,10 +415,10 @@ function Proveedor() {
               </div>
             )}
           />
-          <Column
+          {/* <Column
             headerStyle={{ width: "5%", minWidth: "5rem" }}
             bodyStyle={{ textAlign: "center" }}
-          ></Column>
+          ></Column> */}
         </DataTable>
       </Card>
     </Layout>

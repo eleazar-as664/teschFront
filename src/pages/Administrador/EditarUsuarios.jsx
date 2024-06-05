@@ -549,10 +549,19 @@ function EditarUsuarios() {
               </div>
 
               <div className="row">
-                <div className="p-field" style={{ margin: "20px" }}></div>
+                <div className="p-field button-conteiner"  style={{ justifyContent: "flex-start" }}>
+                <div className="botonEnviar">
+                      <Button
+                        label="Restablecer contraseña"
+                        type="button"
+                        onClick={alertaPassword}
+                        icon="pi pi-undo"
+                        className="p-button-warning"
+                      />
+                  </div>
+                </div>
                 <div className="p-field button-conteiner">
-                  <div className="row">
-                    <div className="p-field">
+                   <div className="botonEnviar">
                       <Button
                         label="Cancelar"
                         type="button"
@@ -560,16 +569,7 @@ function EditarUsuarios() {
                         className="p-button-secondary"
                       />
                     </div>
-                    <div className="p-field">
-                      <Button
-                        label="Restablecer contraseña"
-                        type="button"
-                        onClick={alertaPassword}
-                        icon="pi pi-undo"
-                        className="p-button-secondary"
-                      />
-                    </div>
-                    <div className="p-field">
+                    <div className="botonCancelar">                      
                       <Button
                         label="Guardar"
                         type="submit"
@@ -577,7 +577,6 @@ function EditarUsuarios() {
                         className="p-button-primary"
                       />
                     </div>
-                  </div>
                 </div>
               </div>
             </div>

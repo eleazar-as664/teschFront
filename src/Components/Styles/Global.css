@@ -24,6 +24,7 @@
     --c-font-rubik: 'Rubik';
     /* 
     --theme-default: #7366ff; */
+    --warning-color: #e7b230;
     --danger-color: #fc4438;
     --info-color: #16c7f9;
     --success-color: #22c55e;
@@ -169,6 +170,10 @@ body {
 .p-button-success {
     background-color: var(--success-color) !important;
     border-color: var(--success-color) !important;
+}
+.p-button-warning {
+    background-color: var(--warning-color) !important;
+    border-color: var(--warning-color) !important;
 }
 
 .p-button-secondary {
