@@ -15,7 +15,8 @@ import { IconField } from "primereact/iconfield";
 import { InputIcon } from "primereact/inputicon";
 import { Tag } from "primereact/tag";
 import { Toast } from "primereact/toast";
-
+// import generatePDF from './generatePDF'; 
+import generatePDF from "../Components/PDFDocumento";
 import routes from "../utils/routes";
 
 import "./Proveedor.css";
@@ -33,7 +34,7 @@ function Proveedor() {
   const [visibleArchivosProveedor, setVvisibleArchivosProveedor] =
     useState(false);
   const [archivosSeleccionados, setArchivosSeleccionados] = useState([]);
-
+  const [pdfInstance, setPdfInstance] = useState(null);
   const [filters, setFilters] = useState({
     global: { value: null, matchMode: FilterMatchMode.CONTAINS },
     DocNum: { value: null, matchMode: FilterMatchMode.STARTS_WITH },
@@ -64,7 +65,11 @@ function Proveedor() {
       setPurchaseOrderData(updatedData);
       // setpurchaseOrderData(response.data.data.purchaseRequestsHeaders);
     } catch (error) {
-      let {response: {data: {detailMessage, message}}} = error;
+      let {
+        response: {
+          data: { detailMessage, message },
+        },
+      } = error;
       console.error("Error al obtener datos de la API:", error);
       toast.current.show({
         severity: "warn",
@@ -178,7 +183,13 @@ function Proveedor() {
     navigate("./Proveedor/OrdenCompra");
   };
 
-  const redirectToDetalle = (event) => {};
+  const redirectToDetalle = (event) => {
+    console.clear();
+    console.log(event);
+    const dataPDF = event;
+    
+    generatePDF(dataPDF); // Generar el PDF con los datos del rowData
+  };
 
   // Función para obtener el estado de la orden
   const getSeverity = (status) => {
@@ -257,11 +268,13 @@ function Proveedor() {
     setArchivosSeleccionados([]);
     setVvisibleArchivosProveedor(true);
   };
+ 
   return (
     <Layout>
       <Card className="card-header">
         <div class="row">
           <div className="p-card-title">Ordenes de compra</div>
+        
         </div>
       </Card>
       <Card title="" className="cardProveedor">
@@ -379,19 +392,24 @@ function Proveedor() {
             header="Ver"
             style={{ width: "10%" }}
             body={(rowData) => (
-              <Button
-                onClick={() => redirectToDetalle(rowData.id)} // Agrega la función para redireccionar a la página de detalle
-                label={
-                  <i
-                    className="pi pi-file-pdf"
-                    style={{ fontSize: "24px", color: "#f73164" }}
-                  />
-                }
-                text
-              />
+              <div
+                onClick={(e) => e.stopPropagation()}
+                style={{ display: "flex" }}
+              >
+                <Button
+                  onClick={() => redirectToDetalle(rowData)} // Agrega la función para redireccionar a la página de detalle
+                  label={
+                    <i
+                      className="pi pi-file-pdf"
+                      style={{ fontSize: "24px", color: "#f73164" }}
+                    />
+                  }
+                  text
+                />
+              </div>
             )}
           ></Column>
-
+         
           <Column
             header="Subir Factura"
             style={{ width: "10%" }}

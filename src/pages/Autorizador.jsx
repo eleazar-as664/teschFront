@@ -31,7 +31,8 @@ function Autorizador() {
   const [statuses] = useState(["Abierto", "Cerrado", "Cancelado", "Pendiente"]);
 
   const [globalFilterValue, setGlobalFilterValue] = useState("");
-
+  const [showModal, setShowModal] = useState(false);
+  const [rejectReason, setRejectReason] = useState("");
   const [filters, setFilters] = useState({
     global: { value: null, matchMode: FilterMatchMode.CONTAINS },
     DocNum: { value: null, matchMode: FilterMatchMode.STARTS_WITH },
@@ -53,10 +54,9 @@ function Autorizador() {
 
   const [approvedProducts, setApprovedProducts] = useState([]);
   const [rejectedProducts, setRejectedProducts] = useState([]);
-  const [products, setProducts] = useState([ ]);
+  const [products, setProducts] = useState([]);
   const [enviandoASAP, setEnviandoASAP] = useState(false);
-
-
+  const [error, setError] = useState(false);
   const fetchDataGetPurchaseOrdersPendingApproval = async () => {
     try {
       console.clear();
@@ -107,16 +107,22 @@ function Autorizador() {
     const authorizedIds = products
       .filter((product) => product.ApprovalStatus === "Autorizar")
       .map((product) => product.Id);
-    const rejectedIds = products
-      .filter((product) => product.ApprovalStatus === "Rechazar")
-      .map((product) => product.Id);
+    // const rejectedIds = products
+    //   .filter((product) => product.ApprovalStatus === "Rechazar")
+    //   .map((product) => product.Id);
+
+    const rejectedProducts = products
+    .filter((product) => product.ApprovalStatus === "Rechazar")
+    .map((product) => ({
+      PurchaseOrderId: product.Id,
+      Reason: product.RejectReason,
+    }));
     setApprovedProducts(authorizedIds);
-    setRejectedProducts(rejectedIds);
+    setRejectedProducts(rejectedProducts);
   }, [products]);
 
   useEffect(() => {
     fetchDataGetPurchaseOrdersPendingApproval();
-
   }, []);
 
   // Función para obtener el estado de la orden
@@ -211,102 +217,175 @@ function Autorizador() {
   const approvalStatusTemplate = (rowData) => {
     const statuses = ["Pendiente", "Autorizar", "Rechazar"];
 
+    // const handleRadioChange = (e) => {
+    //   const updatedProducts = products.map((product) =>
+    //     product.Id === rowData.Id
+    //       ? { ...product, ApprovalStatus: e.value }
+    //       : product
+    //   );
+    //   setProducts(updatedProducts);
+    // };
     const handleRadioChange = (e) => {
-      const updatedProducts = products.map((product) =>
-        product.Id === rowData.Id
-          ? { ...product, ApprovalStatus: e.value }
-          : product
-      );
-      setProducts(updatedProducts);
+      if (e.value === "Rechazar") {
+        setShowModal(true);
+      } else {
+        const updatedProducts = products.map((product) =>
+          product.Id === rowData.Id
+            ? { ...product, ApprovalStatus: e.value }
+            : product
+        );
+        setProducts(updatedProducts);
+      }
     };
 
+    const handleReject = () => {
+      if (rejectReason.trim() !== '') { // Validación de comentario no vacío
+        const updatedProducts = products.map((product) =>
+          product.Id === rowData.Id
+            ? { ...product, ApprovalStatus: "Rechazar", RejectReason: rejectReason }
+            : product
+        );
+        setProducts(updatedProducts);
+        setShowModal(false);
+        setRejectReason(''); // Limpiar el comentario después de aceptar
+        setError(false); // Reiniciar el estado de error
+      } else {
+        setError(true); // Mostrar error si el comentario está vacío
+      }
+    };
+
+    // return (
+    //   <div>
+    //     {statuses.map((status) => (
+    //       <div key={status} className="p-field-radiobutton">
+    //         <RadioButton
+    //           inputId={status + rowData.Id}
+    //           name={"status" + rowData.Id}
+    //           value={status}
+    //           onChange={handleRadioChange}
+    //           checked={rowData.ApprovalStatus === status}
+    //         />
+    //         <label htmlFor={status + rowData.Id}>{status}</label>
+    //       </div>
+    //     ))}
+    //   </div>
+    // );
+
     return (
-      <div>
-        {statuses.map((status) => (
-          <div key={status} className="p-field-radiobutton">
-            <RadioButton
-              inputId={status + rowData.Id}
-              name={"status" + rowData.Id}
-              value={status}
-              onChange={handleRadioChange}
-              checked={rowData.ApprovalStatus === status}
-            />
-            <label htmlFor={status + rowData.Id}>{status}</label>
+      <>
+        <div>
+          {statuses.map((status) => (
+            <div key={status} className="p-field-radiobutton">
+              <RadioButton
+                inputId={status + rowData.Id}
+                name={"status" + rowData.Id}
+                value={status}
+                onChange={handleRadioChange}
+                checked={rowData.ApprovalStatus === status}
+              />
+              <label htmlFor={status + rowData.Id}>{status}</label>
+            </div>
+          ))}
+        </div>
+
+        <Dialog
+        visible={showModal}
+        onHide={() => setShowModal(false)}
+        header="Motivo de Rechazo"
+        modal
+        footer={
+          <div>
+            <Button label="Cancelar" icon="pi pi-times" onClick={() => setShowModal(false)} className="p-button-text" />
+            <Button label="Aceptar" icon="pi pi-check" onClick={handleReject} />
           </div>
-        ))}
-      </div>
+        }
+      >
+        <div className="p-grid p-fluid">
+          <div className="p-col-12">
+            <label htmlFor="rejectReason">Motivo de rechazo:</label>
+            <InputText
+              id="rejectReason"
+              value={rejectReason}
+              onChange={(e) => setRejectReason(e.target.value)}
+              placeholder="Motivo de rechazo"
+              className={error ? 'p-invalid' : ''}
+            />
+            {error && <small className="p-error">Debe ingresar un motivo de rechazo</small>}
+          </div>
+        </div>
+      </Dialog>
+      </>
     );
   };
 
   const statusTemplate = (rowData) => {
     return <span>{rowData.ApprovalStatus}</span>;
   };
-  const enviarAutorizaciones  = async () => {
+  const enviarAutorizaciones = async () => {
     console.clear();
     setEnviandoASAP(true);
     try {
-        const data = {
-            Authorized:approvedProducts ,
-            Rejected: rejectedProducts,
-            UserId: user.UserId,
-            SAPToken: user.TokenSAP,
-          };
+      const data = {
+        Authorized: approvedProducts,
+        Rejected: rejectedProducts,
+        UserId: user.UserId,
+        SAPToken: user.TokenSAP,
+      }; 
 
-          console.log("data:", data);
-  
-        const apiUrl = `${routes.BASE_URL_SERVER}/MassivePurchaseOrderAuthorization`;
-        const config = {
-          headers: {
-            "x-access-token": token,
-          },
-        };
-        const response = await axios.post(apiUrl, data, config);
-        console.log("Response:", response);
-        toast.current.show({
-          severity: "success",
-          summary: "Notificación",
-          detail: "Se envio correctamente la auditorizaciones a SAP",
-          life: 4000,
-        });
-        fetchDataGetPurchaseOrdersPendingApproval();
-      } catch (error) {
-        console.error("Error al enviar en auditorizaciones a SAP:", error);
-        toast.current.show({
-          severity: "error",
-          summary: "Error",
-          detail: "Error al enviar la solicitud a SAP",
-          life: 1000,
-        });
-      } finally {
-        setEnviandoASAP(false);       
-      }
+      console.log("data:", data);
+
+      const apiUrl = `${routes.BASE_URL_SERVER}/MassivePurchaseOrderAuthorization`;
+      const config = {
+        headers: {
+          "x-access-token": token,
+        },
+      };
+      const response = await axios.post(apiUrl, data, config);
+      console.log("Response:", response);
+      toast.current.show({
+        severity: "success",
+        summary: "Notificación",
+        detail: "Se envio correctamente la auditorizaciones a SAP",
+        life: 4000,
+      });
+      fetchDataGetPurchaseOrdersPendingApproval();
+    } catch (error) {
+      console.error("Error al enviar en auditorizaciones a SAP:", error);
+      toast.current.show({
+        severity: "error",
+        summary: "Error",
+        detail: "Error al enviar la solicitud a SAP",
+        life: 1000,
+      });
+    } finally {
+      setEnviandoASAP(false);
+    }
   };
   return (
     <Layout>
       <Card className="card-header">
-      <Toast ref={toast} />
+        <Toast ref={toast} />
         <div class="row">
           <div className="p-card-title">Ordenes de compra</div>
           <div class="gorup-search">
             <div>
-            {enviandoASAP ? (
-              <Button
-                icon="pi pi-spin pi-spinner"
-                className="botonInsertarRequisitor"
-                severity="primary"
-              />
-            ) : (
+              {enviandoASAP ? (
                 <Button
-                label="Enviar autorizaciones"
-                severity="primary"
-                raised
-                icon="pi pi-plus-circle"
-                iconPos="left"
-                onClick={enviarAutorizaciones}
-                className="botonInsertarRequisitor"
-              />
-            )}
-              
+                  icon="pi pi-spin pi-spinner"
+                  className="botonInsertarRequisitor"
+                  severity="primary"
+                />
+              ) : (
+                <Button
+                  label="Enviar autorizaciones"
+                  severity="primary"
+                  raised
+                  icon="pi pi-plus-circle"
+                  iconPos="left"
+                  onClick={enviarAutorizaciones}
+                  className="botonInsertarRequisitor"
+                />
+              )}
             </div>
           </div>
         </div>
@@ -314,104 +393,6 @@ function Autorizador() {
       <Card title="" className="cardProveedor">
         <TabMenu model={items} activeIndex={activeIndex} />
         <div className="p-grid p-fluid">
-          {/* <DataTable
-            value={purchaseOrderData}
-            selectionMode="single"
-            // selection={selectedItem}
-            onRowClick={handleRowClick} // Capturar el clic en la fila
-            scrollable
-            scrollHeight="400px"
-            stripedRows
-            tableStyle={{ minWidth: "50rem" }}
-            filters={filters}
-            filterDisplay="row"
-            globalFilterFields={[
-              "DocNum",
-              "CompanyName",
-              "DocDate",
-              "StatusSAP",
-            ]}
-            emptyMessage="No hay resultados"
-            header={header}
-            paginator
-            rows={5}
-          >
-            <Column
-              field="DocNum"
-              header="Orden"
-              style={{ width: "10%" }}
-            ></Column>
-            <Column
-              field="CompanyName"
-              header="Empresa"
-              style={{ width: "20%" }}
-            ></Column>
-            <Column
-              field="DocDate"
-              header="Fecha Orden"
-              style={{ width: "20%" }}
-            ></Column>
-            <Column
-              field="Requester"
-              header="Solicitó"
-              style={{ width: "20%" }}
-            ></Column>
-            <Column
-              field="ApprovalStatus"
-              header="Estatus"
-              style={{ width: "20%" }}
-              body={(rowData) => {
-                switch (rowData.ApprovalStatus) {
-                  case "Para Autorizar":
-                    return (
-                      <div>
-                        <i
-                          className="pi pi-exclamation-triangle"
-                          style={{ color: "orange" }}
-                        ></i>
-                        {rowData.ApprovalStatus}
-                      </div>
-                    );
-                  case "Abierto":
-                    return (
-                      <div>
-                        <i
-                          className="pi pi-lock-open"
-                          style={{ color: "purple" }}
-                        ></i>
-                        {rowData.ApprovalStatus}
-                      </div>
-                    );
-                  case "Cerrado":
-                    return (
-                      <div>
-                        <i
-                          className="pi pi-check-circle"
-                          style={{ color: "green" }}
-                        ></i>
-                        {rowData.ApprovalStatus}
-                      </div>
-                    );
-                  case "Cancelado":
-                    return (
-                      <div>
-                        <i
-                          className="pi pi-times-circle"
-                          style={{ color: "red" }}
-                        ></i>
-                        {rowData.ApprovalStatus}
-                      </div>
-                    );
-                  default:
-                    return rowData.ApprovalStatus;
-                }
-              }}
-            ></Column>
-            <Column
-              headerStyle={{ width: "5%", minWidth: "5rem" }}
-              bodyStyle={{ textAlign: "center" }}
-            ></Column>
-          </DataTable> */}
           <DataTable
             value={products}
             expandedRows={expandedRows}
@@ -442,10 +423,7 @@ function Autorizador() {
             <Column field="DocNum" header="Orden"></Column>
             <Column field="BusinessPartnerCardName" header="Proveedor"></Column>
             <Column field="DocDueDate" header="Fecha de orden"></Column>
-            <Column
-              field="OcrCode"
-              header="Centro Costo"
-            ></Column>
+            <Column field="OcrCode" header="Centro Costo"></Column>
             <Column field="CompanyName" header="Empresa"></Column>
             <Column field="TotalWithoutTaxes" header="Importe"></Column>
             <Column field="Comments" header="Comentarios"></Column>
