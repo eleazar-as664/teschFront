@@ -145,6 +145,8 @@ function Proveedor() {
         formData,
         config
       );
+
+      console.log(response);
       fetchDataPurchaseOrder();
       setVvisibleArchivosProveedor(false);
       toast.current.show({
@@ -154,12 +156,14 @@ function Proveedor() {
         life: 2000,
       });
     } catch (error) {
+      let { response: { data: { detailMessage, message } } } = error;
+      console.error("Error al enviar la solicitud a SAP:", error);
       setVvisibleArchivosProveedor(false);
       toast.current.show({
         severity: "error",
-        summary: "Error",
-        detail: "Error al enviar la solicitud a SAP",
-        life: 2000,
+        summary: message,
+        detail: detailMessage,
+        life: 5000,
       });
     }
   };
