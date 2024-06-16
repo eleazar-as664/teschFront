@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import { DataTable } from "primereact/datatable";
 import { FilterMatchMode } from "primereact/api";
+import { ProgressSpinner } from 'primereact/progressspinner';
 
 import { Column } from "primereact/column";
 import { Card } from "primereact/card";
@@ -31,8 +32,11 @@ function Proveedor() {
   const [PurchaseOrderId, setPurchaseOrderId] = useState([]);
 
   const [globalFilterValue, setGlobalFilterValue] = useState("");
-  const [visibleArchivosProveedor, setVvisibleArchivosProveedor] =
+  const [visibleArchivosProveedor, setVisibleArchivosProveedor] =
     useState(false);
+  const[visibleDifereciasEnMontos, setVisibleDifereciasEnMontos] = useState(false); 
+  const [diferenciaMontosXMLMensaje, setDiferenciaMontosXMLMensaje] = useState("");
+  const [loading, setLoading] = useState(false);
   const [archivosSeleccionados, setArchivosSeleccionados] = useState([]);
   const [pdfInstance, setPdfInstance] = useState(null);
   const [filters, setFilters] = useState({
@@ -123,13 +127,21 @@ function Proveedor() {
     setArchivosSeleccionados(updatedItems);
   };
 
-  const enviarArchivosSAP = async () => {
+  const cancelarEnviarArchivosSAP = () => {
+    setVisibleArchivosProveedor(false);
+    setVisibleDifereciasEnMontos(false);
+  };
+
+  const enviarArchivosSAP = async (XMLAuthorized=false) => {
+
+    setLoading(true);
     const formData = new FormData();
 
     const data = {
       PurchaseOrderId: PurchaseOrderId,
       UserId: user.UserId,
       SAPToken: user.TokenSAP,
+      XMLAuthorized
     };
     formData.append("data", JSON.stringify(data));
     formData.append("FilesToUpload", archivosSeleccionados);
@@ -151,24 +163,38 @@ function Proveedor() {
         config
       );
 
+      console.log("Respuesta de envio de documentos a SAP")
       console.log(response);
+      let { data: { code,message, detailMessage } } = response;
+      if(code == 201)
+      {
+        setLoading(false);
+        setVisibleArchivosProveedor(false);
+        setDiferenciaMontosXMLMensaje(detailMessage);
+        setVisibleDifereciasEnMontos(true);
+        return;
+      }
+      setLoading(false);
       fetchDataPurchaseOrder();
-      setVvisibleArchivosProveedor(false);
+      setVisibleArchivosProveedor(false);
+      setVisibleDifereciasEnMontos(false);
       toast.current.show({
         severity: "success",
-        summary: "Notificación",
-        detail: "Se envio correctamente la solicitud a SAP",
-        life: 2000,
+        summary: message,
+        detail: detailMessage,
+        life: 8000,
       });
     } catch (error) {
+      setLoading(false);
       let { response: { data: { detailMessage, message } } } = error;
       console.error("Error al enviar la solicitud a SAP:", error);
-      setVvisibleArchivosProveedor(false);
+      setVisibleArchivosProveedor(false);
+      setVisibleDifereciasEnMontos(false);
       toast.current.show({
         severity: "error",
         summary: message,
         detail: detailMessage,
-        life: 5000,
+        life: 8000,
       });
     }
   };
@@ -270,7 +296,7 @@ function Proveedor() {
   const activarArchivosModal = (data) => {
     setPurchaseOrderId(data);
     setArchivosSeleccionados([]);
-    setVvisibleArchivosProveedor(true);
+    setVisibleArchivosProveedor(true);
   };
  
   return (
@@ -288,7 +314,7 @@ function Proveedor() {
           header="Enviar a SAP"
           visible={visibleArchivosProveedor}
           style={{ width: "30vw" }}
-          onHide={() => setVvisibleArchivosProveedor(false)}
+          onHide={() => setVisibleArchivosProveedor(false)}
         >
           <div className="p-field-group">
             <div className="row align-right">
@@ -306,13 +332,23 @@ function Proveedor() {
                 />
               )}
               {archivosSeleccionados.length >= 3 && (
-                <Button
+               
+
+                  <Button
                   onClick={() => enviarArchivosSAP()}
-                  className="pi pi-file-pdf"
+                  loading={loading}
+                  className={loading ? "" : "pi pi-file-pdf"}
                   rounded
                   label="Enviar Archivos"
                 />
+
+
+
+
               )}
+
+
+
             </div>
             <div className="row">
               <div className="p-col-field">
@@ -344,6 +380,42 @@ function Proveedor() {
                   ></Column>
                 </DataTable>
               </div>
+            </div>
+          </div>
+        </Dialog>
+
+        <Dialog
+          header="Atención"
+          visible={visibleDifereciasEnMontos}
+          style={{ width: "30vw" }}
+          onHide={() => setVisibleDifereciasEnMontos(false)}
+        >
+          <div className="p-field-group">
+            <div className="row align-center mb-2">
+              <p>{diferenciaMontosXMLMensaje}</p>
+            </div>
+
+            <div className="p-field-group  mb-2">
+              <h3>¿Deseas continuar?</h3>
+            </div>
+          </div>
+          <div className="p-field-group">
+            <div className="row align-right">
+            <Button
+                onClick={() => cancelarEnviarArchivosSAP()}
+                className="pi pi-times"
+                severity="danger"
+                rounded
+                disabled={loading}
+                label="Cancelar"
+              />              
+              <Button
+                onClick={() => enviarArchivosSAP(true)}
+                className={loading ? "" : "pi pi-file-pdf"}
+                loading={loading}
+                rounded
+                label="Continuar"
+              />
             </div>
           </div>
         </Dialog>
