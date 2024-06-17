@@ -404,6 +404,7 @@ function NuevaCompra() {
             </div>
 
             <div className="row">
+            <div className="p-field" >
                 <AutoComplete
                   value={searchValue}
                   suggestions={filteredMaterials}
@@ -417,6 +418,7 @@ function NuevaCompra() {
                   }}
                   placeholder="Buscar material..."
                 />
+              </div>
               <div className="p-field button-conteiner">
                 <div className="botonEnviar">
                   <Button
@@ -464,14 +466,23 @@ function NuevaCompra() {
           <div>¡La operación se completó con éxito!</div>
         </Dialog>
         <div className="table-container">
+<<<<<<< HEAD
           <DataTable value={selectedItems} scrollHeight="400px">
             <Column field="ItemCode" header="Codigo"sortable  />
             <Column field="Description" header="Description" sortable />
             <Column field="BuyUnitMsr" header="Unidad" sortable ></Column>
             <Column field="Quantity" header="Cantidad"sortable  />
+=======
+          <DataTable value={selectedItems} scrollHeight="400px" >
+            <Column field="ItemCode" header="C&oacute;digo" style={{ width: "20%" }}/>
+            <Column field="Description" header="Descripci&oacute;n" style={{ width: "45%" }}/>
+            <Column field="BuyUnitMsr" header="Unidad" style={{ width: "10%" }}></Column>
+            <Column field="Quantity" header="Cantidad" style={{ width: "10%" }}/>
+>>>>>>> fb6d5a239559d3790cdc428e7b9dca56c6253ff4
             {/* <Column field="IVAName" header="Impuesto" /> */}
             <Column
               field=""
+              style={{ width: "15%" }}
               body={(rowData) => (
                 <div>
                   <Button
@@ -483,6 +494,7 @@ function NuevaCompra() {
                   <Button
                     icon="pi pi-trash"
                     onClick={() => handleDelete(rowData)}
+                    rounded
                     className="p-button-danger"
                   />
                 </div>

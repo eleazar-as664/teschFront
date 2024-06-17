@@ -346,21 +346,15 @@ function Proveedor() {
                 />
               )}
               {archivosSeleccionados.length >= 3 && (
-               
-
+              
                   <Button
                   onClick={() => enviarArchivosSAP()}
                   loading={loading}
                   className={loading ? "" : "pi pi-file-pdf"}
                   rounded
-                  label="Enviar Archivos"
+                  label=" Enviar"
                 />
-
-
-
-
               )}
-
 
 
             </div>
@@ -417,17 +411,14 @@ function Proveedor() {
             <div className="row align-right">
             <Button
                 onClick={() => cancelarEnviarArchivosSAP()}
-                className="pi pi-times"
-                severity="danger"
-                rounded
+                className="p-button-secondary"
                 disabled={loading}
                 label="Cancelar"
               />              
               <Button
                 onClick={() => enviarArchivosSAP(true)}
-                className={loading ? "" : "pi pi-file-pdf"}
+                className={loading ? "" : "p-button-primary"}
                 loading={loading}
-                rounded
                 label="Continuar"
               />
             </div>
@@ -518,10 +509,13 @@ function Proveedor() {
                       onClick={() =>
                         activarArchivosModal(rowData.PurchaseOrderId)
                       }
-                      className="pi pi-file-import"
-                      style={{ fontSize: "24px" }}
-                      rounded
+                      // className="pi pi-file-import"
+                      // style={{ fontSize: "24px" }}
                       aria-label="Cancel"
+                      
+                      icon="pi pi-file-import"
+                      rounded
+                      severity="info"
                     />
                   ))}
               </div>

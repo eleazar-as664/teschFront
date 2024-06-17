@@ -407,7 +407,7 @@ function EditarUsuarios() {
             <div className="p-field-group">
               <div className="row">
                 <div className="p-field">
-                  <label>Perfil Usuario:</label>
+                  <label>Perfil de usuario:</label>
                   <Dropdown
                     value={formData.ProfileId}
                     onChange={(e) =>
@@ -561,20 +561,20 @@ function EditarUsuarios() {
                   </div>
                 </div>
                 <div className="p-field button-conteiner">
+                    <div className="botonCancelar">                      
+                        <Button
+                          label="Guardar"
+                          type="submit"
+                          icon="pi pi-check"
+                          className="p-button-primary"
+                        />
+                    </div>
                    <div className="botonEnviar">
                       <Button
                         label="Cancelar"
                         type="button"
                         onClick={handleEnviarNavigate}
                         className="p-button-secondary"
-                      />
-                    </div>
-                    <div className="botonCancelar">                      
-                      <Button
-                        label="Guardar"
-                        type="submit"
-                        icon="pi pi-check"
-                        className="p-button-primary"
                       />
                     </div>
                 </div>

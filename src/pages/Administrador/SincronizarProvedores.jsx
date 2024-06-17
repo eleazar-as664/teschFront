@@ -249,7 +249,7 @@ function SincronizarEmpleados() {
             ) : (
               <Button
                 onClick={handleDialogEnviarSap}
-                label="Aceptar"
+                label="Sincronizar"
                 className="p-button-secondary"
               />
             )}
@@ -284,7 +284,7 @@ function SincronizarEmpleados() {
           <Column
             sortable
             field="CardCode"
-            header="Codigo"
+            header="C&oacute;digo"
             style={{ width: "10%" }}
           />
 

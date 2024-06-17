@@ -128,7 +128,7 @@ function MaterialDialog({ visible, material, onClose, onSave }) {
           />
           <Button
             label="Cancelar"
-            icon="pi pi-times"
+            // icon="pi pi-times"
             onClick={onClose}
             className="p-button-secondary"
           />

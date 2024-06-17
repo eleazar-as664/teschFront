@@ -248,10 +248,11 @@ function  AutorizadorOrdenCompra() {
             scrollHeight="200px"
             tableStyle={{ minWidth: "50rem" }}
           >
-            <Column field="ItemCode" header="Código"sortable  />
-            <Column field="Description" header="Descripción"sortable  />
-            <Column field="BuyUnitMsr" header="Unidad"sortable  />
-            <Column field="Quantity" header="Cantidad"sortable  />
+            <Column field="ItemCode" header="Código" />
+            <Column field="Description" header="Descripción" />
+            <Column field="BuyUnitMsr" header="Unidad" />
+            <Column field="Quantity" header="Cantidad" />
+            <Column field="PriceByUnit" header="Precio Por Unidad" />
           </DataTable>
         </Card>
 

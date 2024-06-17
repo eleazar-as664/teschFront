@@ -201,7 +201,7 @@ function Administrador() {
             <div>
               <Link to="./Administrador/NuevoUsuario">
                 <Button
-                  label="Nueva usuario"
+                  label="Nuevo usuario"
                   severity="primary"
                   raised
                   icon="pi pi-plus-circle"
@@ -331,7 +331,7 @@ function Administrador() {
             header="Nombre de usuario"
             style={{ width: "10%" }}
           />
-          <Column field="UserEmail" header="Email" style={{ width: "20%" }} />
+          <Column field="UserEmail" header="Correo" style={{ width: "20%" }} />
 
           <Column
             field="CompanyName"

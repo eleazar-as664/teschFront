@@ -295,13 +295,13 @@ function Requisitor() {
                 </div>
                 <div className="p-field">
                   <p>
-                    Numero de Solicitud: {rowDataToEnviarSap.PurchaseRequestId}
+                    N&uacute;mero de Solicitud: {rowDataToEnviarSap.PurchaseRequestId}
                   </p>
                 </div>
               </div>
               <div className="row">
                 <div className="p-field">
-                  <p>Fecha Requerida: {rowDataToEnviarSap.DocDate}</p>
+                  <p>Fecha requerida: {rowDataToEnviarSap.DocDate}</p>
                 </div>
                 <div className="p-field">
                   <p>Referencia: {rowDataToEnviarSap.NumAtCard}</p>
@@ -336,7 +336,7 @@ function Requisitor() {
           {rowDataToCancel && (
             <div>
               <p>¿Estás seguro que deseas cancelar la solicitud?</p>
-              <p>Detalles de la solicitud: {rowDataToCancel.NumAtCard}</p>
+              <p>Referencia de la solicitud: {rowDataToCancel.NumAtCard}</p>
               <div class="row">
                 <Button
                   onClick={handleDialogCancel}
@@ -380,7 +380,7 @@ function Requisitor() {
           />
           <Column
             field="Company"
-            header="Empresa/No.SAP"
+            header="Empresa"
             style={{ width: "25%" }}
             sortable 
           />
@@ -403,7 +403,7 @@ function Requisitor() {
           ></Column>
           <Column
             field="DocDate"
-            header="F.Creación"
+            header="Fecha de solicitud"
             style={{ width: "15%" }}
             sortable 
           />

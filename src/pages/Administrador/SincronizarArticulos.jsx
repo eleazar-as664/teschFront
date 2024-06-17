@@ -245,7 +245,7 @@ function SincronizarEmpleados() {
             ) : (
               <Button
                 onClick={handleDialogEnviarSap}
-                label="Aceptar"
+                label="Sincronizar"
                 className="p-button-secondary"
               />
             )}
@@ -280,14 +280,13 @@ function SincronizarEmpleados() {
           <Column
             sortable
             field="ItemCode"
-            header="Codigo"
+            header="C&oacute;digo"
             style={{ width: "10%" }}
           />
 
           <Column
             field="Description"
-            sortable 
-            header="Descripcion"
+            header="Descripci&oacute;n"
             style={{ width: "20%" }}
           />
 
@@ -306,8 +305,7 @@ function SincronizarEmpleados() {
           />
           <Column
             field="UltimaActualizacion"
-            header="Ultima Actualizacion"
-            sortable 
+            header="&Uacute;ltima actualizaci&oacute;n"
             style={{ width: "20%" }}
           />
           <Column field="Estatus" header="Estatus" sortable  style={{ width: "20%" }} />

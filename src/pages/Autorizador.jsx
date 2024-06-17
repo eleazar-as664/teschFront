@@ -208,6 +208,7 @@ function Autorizador() {
             <Column field="ItemDescription" header="Descrpcion"></Column>
             <Column field="ItemBuyUnitMsr" header="Unidad"></Column>
             <Column field="ItemQuantity" header="Cantidad"></Column>
+            <Column field="PriceByUnit" header="Precio Por Unidad"></Column>
             <Column field="ItemOcrCode" header="Centro de Costo"></Column>
           </DataTable>
         </div>
