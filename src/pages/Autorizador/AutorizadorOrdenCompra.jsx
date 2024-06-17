@@ -252,6 +252,7 @@ function  AutorizadorOrdenCompra() {
             <Column field="Description" header="Descripción" />
             <Column field="BuyUnitMsr" header="Unidad" />
             <Column field="Quantity" header="Cantidad" />
+            <Column field="PriceByUnit" header="Precio Por Unidad" />
           </DataTable>
         </Card>
 
