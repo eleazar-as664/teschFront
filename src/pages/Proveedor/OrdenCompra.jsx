@@ -215,7 +215,7 @@ function NuevaCompra() {
                     onClick={enviarArchivosSAP}
                     className="pi pi-file-pdf"
                     rounded
-                    label="Enviar Archivos"
+                    label="Enviar"
                   />
                 )}
               </div>

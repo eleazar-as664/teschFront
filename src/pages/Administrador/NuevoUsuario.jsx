@@ -512,7 +512,7 @@ function NuevoUsuario() {
               </div>
               <div className="row">
                 <div className="p-field">
-                  <label>Nombre de usuario:</label>
+                  <label>Usuario:</label>
                   <InputText
                     value={formData.UserName}
                     onChange={(e) =>

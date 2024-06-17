@@ -495,7 +495,7 @@ function EditarUsuarios() {
               </div>
               <div className="row">
                 <div className="p-field">
-                  <label>Nombre de usuario:</label>
+                  <label>Usuario:</label>
                   <InputText value={employeesEditar.UserName} disabled />
                 </div>
                 <div className="p-field">
