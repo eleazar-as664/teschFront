@@ -31,7 +31,7 @@ function Autorizador() {
   const [statuses] = useState(["Abierto", "Cerrado", "Cancelado", "Pendiente"]);
 
   const [globalFilterValue, setGlobalFilterValue] = useState("");
-  const [showModal, setShowModal] = useState(false);
+  const [showModal, setShowModal] = useState({});
   const [rejectReason, setRejectReason] = useState("");
   const [filters, setFilters] = useState({
     global: { value: null, matchMode: FilterMatchMode.CONTAINS },
@@ -51,7 +51,6 @@ function Autorizador() {
   const token = JSON.parse(localStorage.getItem("user")).Token;
 
   const [expandedRows, setExpandedRows] = useState(null);
-
   const [approvedProducts, setApprovedProducts] = useState([]);
   const [rejectedProducts, setRejectedProducts] = useState([]);
   const [products, setProducts] = useState([]);
@@ -70,7 +69,121 @@ function Autorizador() {
       };
       console.log(apiUrl);
       const response = await axios.get(apiUrl, config);
-      const data = response.data.data;
+      // const data = response.data.data;
+      const data = [
+        {
+          ApprovalStatus: "Pendiente",
+          Approved: "0",
+          BusinessPartnerCardCode: "A-ACREEDORESDIV",
+          BusinessPartnerCardName: "Acreedores Diversos Generales",
+          BusinessPartnerId: 7516,
+          Comments: "CENTRO DE COSTOS :G Basado en Solicitud de compra 3694.",
+          CompanyId: 20,
+          CompanyName: "ZZZ TECHMID 06 MAY",
+          DBName: "ZZZ_TECHMID",
+          DeliveryDate: "",
+          Details: [
+            {
+              ItemBuyUnitMsr: "Caja",
+              ItemDescription: "hGH (Hormona de Crecimiento Humana) 200t",
+              ItemId: 1508,
+              ItemOcrCode: "",
+              ItemOcrCode2: "",
+              ItemOcrCode3: "",
+              ItemQuantity: 56,
+              PurchaseOrderId: 8,
+            },
+          ],
+          DocDate: "2024-05-14",
+          DocDueDate: "2024-05-09",
+          DocNum: 996,
+          EmployeeFirstName: "RUBEN",
+          EmployeeLastName: "GUTIERREZ ROSAS",
+          EmployeeMiddleName: "HUMBERTO",
+          Id: 18,
+          OcrCode: "",
+          PurchaseRequestId: 44,
+          Requester: "RUBEN HUMBERTO GUTIERREZ ROSAS",
+          StatusSAP: "Abierto",
+          TotalWithoutTaxes: 0,
+        },
+
+        {
+          ApprovalStatus: "Pendiente",
+          Approved: "0",
+          BusinessPartnerCardCode: "B-ACREEDORESDIV",
+          BusinessPartnerCardName: "Acreedores Diversos Generales",
+          BusinessPartnerId: 7517,
+          Comments: "CENTRO DE COSTOS :H Basado en Solicitud de compra 3695.",
+          CompanyId: 21,
+          CompanyName: "ZZZ TECHMID 07 MAY",
+          DBName: "ZZZ_TECHMID2",
+          DeliveryDate: "",
+          Details: [
+            {
+              ItemBuyUnitMsr: "Caja",
+              ItemDescription: "hGH (Hormona de Crecimiento Humana) 300t",
+              ItemId: 1509,
+              ItemOcrCode: "",
+              ItemOcrCode2: "",
+              ItemOcrCode3: "",
+              ItemQuantity: 60,
+              PurchaseOrderId: 10,
+            },
+          ],
+          DocDate: "2024-06-14",
+          DocDueDate: "2024-06-09",
+          DocNum: 997,
+          EmployeeFirstName: "JUAN",
+          EmployeeLastName: "PEREZ",
+          EmployeeMiddleName: "LOPEZ",
+          Id: 19,
+          OcrCode: "",
+          PurchaseRequestId: 45,
+          Requester: "JUAN PEREZ LOPEZ",
+          StatusSAP: "Abierto",
+          TotalWithoutTaxes: 0,
+        },
+        {
+          ApprovalStatus: "Pendiente",
+          Approved: "0",
+          BusinessPartnerCardCode: "A-ACREEDORESDIV",
+          BusinessPartnerCardName: "Acreedores Diversos Generales",
+          BusinessPartnerId: 7516,
+          Comments: "CENTRO DE COSTOS :G Basado en Solicitud de compra 3694.",
+          CompanyId: 20,
+          CompanyName: "ZZZ TECHMID 06 MAY",
+          DBName: "ZZZ_TECHMID",
+          DeliveryDate: "",
+          Details: [
+            {
+              ItemBuyUnitMsr: "Caja",
+              ItemDescription: "hGH (Hormona de Crecimiento Humana) 200t",
+              ItemId: 1508,
+              ItemOcrCode: "",
+              ItemOcrCode2: "",
+              ItemOcrCode3: "",
+              ItemQuantity: 56,
+              PurchaseOrderId: 18,
+            },
+          ],
+          DocDate: "2024-05-14",
+          DocDueDate: "2024-05-09",
+          DocNum: 998,
+          EmployeeFirstName: "RUBEN",
+          EmployeeLastName: "GUTIERREZ ROSAS",
+          EmployeeMiddleName: "HUMBERTO",
+          Id: 8,
+          OcrCode: "",
+          PurchaseRequestId: 244,
+          Requester: "RUBEN HUMBERTO GUTIERREZ ROSAS",
+          StatusSAP: "Abierto",
+          TotalWithoutTaxes: 0,
+        },
+        // Añadir 8 objetos más con diferentes valores
+      ];
+      console.log(data);
+
       setProducts(data);
       console.log(data);
     } catch (error) {
@@ -112,11 +225,11 @@ function Autorizador() {
     //   .map((product) => product.Id);
 
     const rejectedProducts = products
-    .filter((product) => product.ApprovalStatus === "Rechazar")
-    .map((product) => ({
-      PurchaseOrderId: product.Id,
-      Reason: product.RejectReason,
-    }));
+      .filter((product) => product.ApprovalStatus === "Rechazar")
+      .map((product) => ({
+        PurchaseOrderId: product.Id,
+        Reason: product.RejectReason,
+      }));
     setApprovedProducts(authorizedIds);
     setRejectedProducts(rejectedProducts);
   }, [products]);
@@ -225,51 +338,45 @@ function Autorizador() {
     //   );
     //   setProducts(updatedProducts);
     // };
-    const handleRadioChange = (e) => {
-      if (e.value === "Rechazar") {
-        setShowModal(true);
+    const handleRadioChange = (rowData, e) => {
+      const { value } = e.target;
+    
+      if (value === "Rechazar") {
+        setShowModal({ ...showModal, [rowData.Id]: true });
       } else {
+        setShowModal({ ...showModal, [rowData.Id]: false });
+    
         const updatedProducts = products.map((product) =>
-          product.Id === rowData.Id
-            ? { ...product, ApprovalStatus: e.value }
-            : product
+          product.Id === rowData.Id ? { ...product, ApprovalStatus: value } : product
         );
         setProducts(updatedProducts);
       }
     };
 
     const handleReject = () => {
-      if (rejectReason.trim() !== '') { // Validación de comentario no vacío
+      if (rejectReason.trim() !== "") {
+        // Validación de comentario no vacío
         const updatedProducts = products.map((product) =>
           product.Id === rowData.Id
-            ? { ...product, ApprovalStatus: "Rechazar", RejectReason: rejectReason }
+            ? {
+                ...product,
+                ApprovalStatus: "Rechazar",
+                RejectReason: rejectReason,
+              }
             : product
         );
         setProducts(updatedProducts);
-        setShowModal(false);
-        setRejectReason(''); // Limpiar el comentario después de aceptar
-        setError(false); // Reiniciar el estado de error
+        resetModal();
       } else {
         setError(true); // Mostrar error si el comentario está vacío
       }
     };
 
-    // return (
-    //   <div>
-    //     {statuses.map((status) => (
-    //       <div key={status} className="p-field-radiobutton">
-    //         <RadioButton
-    //           inputId={status + rowData.Id}
-    //           name={"status" + rowData.Id}
-    //           value={status}
-    //           onChange={handleRadioChange}
-    //           checked={rowData.ApprovalStatus === status}
-    //         />
-    //         <label htmlFor={status + rowData.Id}>{status}</label>
-    //       </div>
-    //     ))}
-    //   </div>
-    // );
+    const resetModal = () => {
+      setShowModal({ });
+      setRejectReason("");
+      setError(false);
+    };
 
     return (
       <>
@@ -280,8 +387,11 @@ function Autorizador() {
                 inputId={status + rowData.Id}
                 name={"status" + rowData.Id}
                 value={status}
-                onChange={handleRadioChange}
+                //  onChange={handleRadioChange}
+                onChange={(e) => handleRadioChange(rowData, e)}
                 checked={rowData.ApprovalStatus === status}
+                // checked={rowData.ApprovalStatus === status}
+                // checked={rowData.ApprovalStatus === status || (status === "Rechazar" && showModal)}
               />
               <label htmlFor={status + rowData.Id}>{status}</label>
             </div>
@@ -289,16 +399,20 @@ function Autorizador() {
         </div>
 
         <Dialog
-        visible={showModal}
-        onHide={() => setShowModal(false)}
+        visible={showModal[rowData.Id] || false}
+        onHide={() => {}}
         header="Motivo de Rechazo"
         modal
         footer={
           <div>
-            <Button label="Cancelar" icon="pi pi-times" onClick={() => setShowModal(false)} className="p-button-text" />
-            <Button label="Aceptar" icon="pi pi-check" onClick={handleReject} />
+            <Button
+              label="Aceptar"
+              icon="pi pi-check"
+              onClick={handleReject}
+            />
           </div>
         }
+        closable={false}
       >
         <div className="p-grid p-fluid">
           <div className="p-col-12">
@@ -308,9 +422,13 @@ function Autorizador() {
               value={rejectReason}
               onChange={(e) => setRejectReason(e.target.value)}
               placeholder="Motivo de rechazo"
-              className={error ? 'p-invalid' : ''}
+              className={error ? "p-invalid" : ""}
             />
-            {error && <small className="p-error">Debe ingresar un motivo de rechazo</small>}
+            {error && (
+              <small className="p-error">
+                Debe ingresar un motivo de rechazo
+              </small>
+            )}
           </div>
         </div>
       </Dialog>
@@ -330,25 +448,25 @@ function Autorizador() {
         Rejected: rejectedProducts,
         UserId: user.UserId,
         SAPToken: user.TokenSAP,
-      }; 
+      };
 
       console.log("data:", data);
 
-      const apiUrl = `${routes.BASE_URL_SERVER}/MassivePurchaseOrderAuthorization`;
-      const config = {
-        headers: {
-          "x-access-token": token,
-        },
-      };
-      const response = await axios.post(apiUrl, data, config);
-      console.log("Response:", response);
-      toast.current.show({
-        severity: "success",
-        summary: "Notificación",
-        detail: "Se envio correctamente la auditorizaciones a SAP",
-        life: 4000,
-      });
-      fetchDataGetPurchaseOrdersPendingApproval();
+      // const apiUrl = `${routes.BASE_URL_SERVER}/MassivePurchaseOrderAuthorization`;
+      // const config = {
+      //   headers: {
+      //     "x-access-token": token,
+      //   },
+      // };
+      // const response = await axios.post(apiUrl, data, config);
+      // console.log("Response:", response);
+      // toast.current.show({
+      //   severity: "success",
+      //   summary: "Notificación",
+      //   detail: "Se envio correctamente la auditorizaciones a SAP",
+      //   life: 4000,
+      // });
+      // fetchDataGetPurchaseOrdersPendingApproval();
     } catch (error) {
       console.error("Error al enviar en auditorizaciones a SAP:", error);
       toast.current.show({

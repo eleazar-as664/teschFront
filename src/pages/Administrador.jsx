@@ -336,11 +336,13 @@ function Administrador() {
           <Column
             field="CompanyName"
             header="Empresa"
+            sortable 
             style={{ width: "20%" }}
           />
 
           <Column
             field="UserEmployeeName"
+            sortable 
             header="Empleado"
             showFilterMenu={false}
             filterMenuStyle={{ width: "14rem" }}
@@ -352,6 +354,7 @@ function Administrador() {
           <Column
             style={{ width: "10%" }}
             className="column-action"
+            sortable 
             body={(rowData) =>
               rowData.Sent ? (
                 <span></span>

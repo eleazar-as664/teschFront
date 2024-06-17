@@ -43,7 +43,7 @@ function NuevaCompra() {
       setFilesProceedor(response.data.data.Files);
 
       setPurchaseOrderDataDetail(response.data.data.Detail);
-      console.log(response.data.data.Detail);
+      console.log(response.data.data);
 
       setPurchaseOrderDataHeader(response.data.data.purchaseOrderHeader);
       // setpurchaseRequesData(response.data.data.purchaseRequestsHeaders);

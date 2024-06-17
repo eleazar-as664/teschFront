@@ -440,13 +440,15 @@ function Sincronizacion() {
             field="CompanyCode"
             header="Código"
             style={{ width: "10%" }}
+            
           />
-          <Column field="Name" header="Empresa" style={{ width: "20%" }} />
+          <Column field="Name" header="Empresa" sortable  style={{ width: "20%" }} />
 
           <Column
             field="DBName"
             header="Base de datos"
             style={{ width: "20%" }}
+            sortable 
           />
           <Column
             style={{ width: "10%" }}

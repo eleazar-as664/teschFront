@@ -66,6 +66,7 @@ function Proveedor() {
         concatenatedInfo: `${item.BusinessName} - ${item.DocDate}`,
       }));
 
+      console.log(updatedData);
       setPurchaseOrderData(updatedData);
       // setpurchaseOrderData(response.data.data.purchaseRequestsHeaders);
     } catch (error) {
@@ -213,14 +214,27 @@ function Proveedor() {
     navigate("./Proveedor/OrdenCompra");
   };
 
-  const redirectToDetalle = (event) => {
+  const redirectToDetalle = async (event) => {
     console.clear();
-    console.log(event);
+        // console.log(event);
     const dataPDF = event;
-    
-    generatePDF(dataPDF); // Generar el PDF con los datos del rowData
+    const PurchaseOrderId = event.PurchaseOrderId;
+    const apiUrl = `${routes.BASE_URL_SERVER}/GetPurchaseOrder/${PurchaseOrderId}`;
+    const config = {
+      headers: {
+        "x-access-token": token,
+      },
+    };
+    const response = await axios.get(apiUrl, config);
+    console.log(response.data.data);
+    const datosPDf = response.data.data.purchaseOrderHeader;
+    const detail = response.data.data.Detail;
+    datosPDf.details = detail;
+    console.clear();
+    console.log(datosPDf);
+     generatePDF(datosPDf);// Generar el PDF con los datos del rowData
   };
-
+  
   // Función para obtener el estado de la orden
   const getSeverity = (status) => {
     switch (status) {
@@ -444,23 +458,27 @@ function Proveedor() {
           <Column
             field="DocNum"
             header="Orden"
+            sortable 
             style={{ width: "10%" }}
           ></Column>
           <Column
             field="concatenatedInfo"
             header="Empresa/Fecha Solicitud"
             style={{ width: "40%" }}
+            sortable 
           ></Column>
           <Column
             field="DocDueDate"
             header="Fecha Requerida"
             style={{ width: "10%" }}
+            sortable 
           ></Column>
           <Column
             field="StatusSAP"
             header="Estatus"
             style={{ width: "20%" }}
             body={statusBodyTemplate}
+            sortable 
             filter
             filterElement={statusRowFilterTemplate}
           ></Column>

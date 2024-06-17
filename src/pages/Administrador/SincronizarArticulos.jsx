@@ -286,27 +286,31 @@ function SincronizarEmpleados() {
 
           <Column
             field="Description"
+            sortable 
             header="Descripcion"
             style={{ width: "20%" }}
           />
 
           <Column
             field="CompanyName"
+            sortable 
             header="Empresa"
             style={{ width: "20%" }}
           />
-          <Column field="Tipo" header="Tipo" style={{ width: "20%" }} />
+          <Column field="Tipo" header="Tipo" sortable  style={{ width: "20%" }} />
           <Column
             field="CentroDeCosto"
+            sortable 
             header="Centro de costos"
             style={{ width: "20%" }}
           />
           <Column
             field="UltimaActualizacion"
             header="Ultima Actualizacion"
+            sortable 
             style={{ width: "20%" }}
           />
-          <Column field="Estatus" header="Estatus" style={{ width: "20%" }} />
+          <Column field="Estatus" header="Estatus" sortable  style={{ width: "20%" }} />
         </DataTable>
       </Card>
     </Layout>

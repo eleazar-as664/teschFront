@@ -465,10 +465,10 @@ function NuevaCompra() {
         </Dialog>
         <div className="table-container">
           <DataTable value={selectedItems} scrollHeight="400px">
-            <Column field="ItemCode" header="Codigo" />
-            <Column field="Description" header="Description" />
-            <Column field="BuyUnitMsr" header="Unidad"></Column>
-            <Column field="Quantity" header="Cantidad" />
+            <Column field="ItemCode" header="Codigo"sortable  />
+            <Column field="Description" header="Description" sortable />
+            <Column field="BuyUnitMsr" header="Unidad" sortable ></Column>
+            <Column field="Quantity" header="Cantidad"sortable  />
             {/* <Column field="IVAName" header="Impuesto" /> */}
             <Column
               field=""

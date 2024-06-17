@@ -288,15 +288,16 @@ function SincronizarEmpleados() {
             style={{ width: "10%" }}
           />
 
-          <Column field="CardName" header="Nombre" style={{ width: "20%" }} />
+          <Column field="CardName"sortable  header="Nombre" style={{ width: "20%" }} />
 
-          <Column field="LicTradNum" header="RFC" style={{ width: "20%" }} />
+          <Column field="LicTradNum" sortable  header="RFC" style={{ width: "20%" }} />
           <Column
             field="CompanyName"
             header="Empresas"
             style={{ width: "20%" }}
+            sortable 
           />
-          <Column field="Status" header="Estatus" style={{ width: "20%" }} />
+          <Column field="Status"sortable   header="Estatus" style={{ width: "20%" }} />
         </DataTable>
       </Card>
     </Layout>
