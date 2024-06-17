@@ -451,7 +451,7 @@ function NuevoUsuario() {
             <div className="p-field-group">
               <div className="row">
                 <div className="p-field">
-                  <label>Perfil Usuario:</label>
+                  <label>Perfil de usuario:</label>
                   <Dropdown
                     value={formData.ProfileId}
                     onChange={handleProfileChange
@@ -512,7 +512,7 @@ function NuevoUsuario() {
               </div>
               <div className="row">
                 <div className="p-field">
-                  <label>Usuario:</label>
+                  <label>Nombre de usuario:</label>
                   <InputText
                     value={formData.UserName}
                     onChange={(e) =>

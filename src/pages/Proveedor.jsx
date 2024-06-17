@@ -500,10 +500,13 @@ function Proveedor() {
                       onClick={() =>
                         activarArchivosModal(rowData.PurchaseOrderId)
                       }
-                      className="pi pi-file-import"
-                      style={{ fontSize: "24px" }}
-                      rounded
+                      // className="pi pi-file-import"
+                      // style={{ fontSize: "24px" }}
                       aria-label="Cancel"
+                      
+                      icon="pi pi-file-import"
+                      rounded
+                      severity="success"
                     />
                   ))}
               </div>

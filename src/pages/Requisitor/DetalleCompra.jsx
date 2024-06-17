@@ -320,7 +320,7 @@ function DetalleCompra() {
                     <Divider align="center">
                       {`Nota ${index + 1}: ${nota.FirstName} ${nota.LastName}`}
                     </Divider>
-                    <p>Código: {nota.Code}</p>
+                    {/* <p>Código: {nota.Code}</p> */}
                     <p>
                       Fecha de Creación:{" "}
                       {new Date(nota.CreateDate).toLocaleDateString()}

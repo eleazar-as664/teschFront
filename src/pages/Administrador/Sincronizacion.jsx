@@ -351,7 +351,7 @@ function Sincronizacion() {
         </div>
       </Dialog>
       <Dialog
-        header="Configuracion de Empresas"
+        header="Configuraci&oacute;n de Empresas"
         visible={visibleConfiguracionEmpresa}
         style={{ width: "30vw" }}
         onHide={() => setVisibleConfiguracionEmpresa(false)}
@@ -362,7 +362,7 @@ function Sincronizacion() {
 
             <div className="row">
               <div className="p-field">
-                <label>Limite Inventariable:</label>
+                <label>L&iacute;mite Inventariable:</label>
                 {getCompanySettings.length > 0 && (
                   <InputNumber
                     id="value1"
@@ -379,7 +379,7 @@ function Sincronizacion() {
                 )}
               </div>
               <div className="p-field">
-                <label>Limite de Gasto:</label>
+                <label>L&iacute;mite de Gasto:</label>
                 {getCompanySettings.length > 0 && (
                   <InputNumber
                     id="value1"
@@ -402,7 +402,7 @@ function Sincronizacion() {
             {getCompanySettings.length <= 0 && (
               <Button
                 onClick={handleCreateCompanySettings}
-                label="Crear"
+                label="Guardar"
                 className="p-button-secondary"
                 disabled={isButtonDisabled}
               />

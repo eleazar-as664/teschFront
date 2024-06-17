@@ -591,12 +591,12 @@ function EditarRequisicion() {
             <DataTable value={selectedItems} scrollHeight="400px">
               <Column
                 field="ItemCode"
-                header="Codigo"
+                header="C&oacute;digo"
                 style={{ width: "15%" }}
               />
               <Column
                 field="Description"
-                header="Description"
+                header="Descripci&oacute;n"
                 style={{ width: "35%" }}
               />
               <Column
@@ -624,6 +624,7 @@ function EditarRequisicion() {
                     />
                     <Button
                       icon="pi pi-trash"
+                      rounded
                       onClick={() => handleDelete(rowData)}
                       className="p-button-danger"
                     />
@@ -650,7 +651,7 @@ function EditarRequisicion() {
                     <Divider align="center">
                       {`Nota ${index + 1}: ${nota.FirstName} ${nota.LastName}`}
                     </Divider>
-                    <p>Código: {nota.Code}</p>
+                    {/* <p>Código: {nota.Code}</p> */}
                     <p>
                       Fecha de Creación:{" "}
                       {new Date(nota.CreateDate).toLocaleDateString()}
