@@ -69,119 +69,8 @@ function Autorizador() {
       };
       console.log(apiUrl);
       const response = await axios.get(apiUrl, config);
-      // const data = response.data.data;
-      const data = [
-        {
-          ApprovalStatus: "Pendiente",
-          Approved: "0",
-          BusinessPartnerCardCode: "A-ACREEDORESDIV",
-          BusinessPartnerCardName: "Acreedores Diversos Generales",
-          BusinessPartnerId: 7516,
-          Comments: "CENTRO DE COSTOS :G Basado en Solicitud de compra 3694.",
-          CompanyId: 20,
-          CompanyName: "ZZZ TECHMID 06 MAY",
-          DBName: "ZZZ_TECHMID",
-          DeliveryDate: "",
-          Details: [
-            {
-              ItemBuyUnitMsr: "Caja",
-              ItemDescription: "hGH (Hormona de Crecimiento Humana) 200t",
-              ItemId: 1508,
-              ItemOcrCode: "",
-              ItemOcrCode2: "",
-              ItemOcrCode3: "",
-              ItemQuantity: 56,
-              PurchaseOrderId: 8,
-            },
-          ],
-          DocDate: "2024-05-14",
-          DocDueDate: "2024-05-09",
-          DocNum: 996,
-          EmployeeFirstName: "RUBEN",
-          EmployeeLastName: "GUTIERREZ ROSAS",
-          EmployeeMiddleName: "HUMBERTO",
-          Id: 18,
-          OcrCode: "",
-          PurchaseRequestId: 44,
-          Requester: "RUBEN HUMBERTO GUTIERREZ ROSAS",
-          StatusSAP: "Abierto",
-          TotalWithoutTaxes: 0,
-        },
-
-        {
-          ApprovalStatus: "Pendiente",
-          Approved: "0",
-          BusinessPartnerCardCode: "B-ACREEDORESDIV",
-          BusinessPartnerCardName: "Acreedores Diversos Generales",
-          BusinessPartnerId: 7517,
-          Comments: "CENTRO DE COSTOS :H Basado en Solicitud de compra 3695.",
-          CompanyId: 21,
-          CompanyName: "ZZZ TECHMID 07 MAY",
-          DBName: "ZZZ_TECHMID2",
-          DeliveryDate: "",
-          Details: [
-            {
-              ItemBuyUnitMsr: "Caja",
-              ItemDescription: "hGH (Hormona de Crecimiento Humana) 300t",
-              ItemId: 1509,
-              ItemOcrCode: "",
-              ItemOcrCode2: "",
-              ItemOcrCode3: "",
-              ItemQuantity: 60,
-              PurchaseOrderId: 10,
-            },
-          ],
-          DocDate: "2024-06-14",
-          DocDueDate: "2024-06-09",
-          DocNum: 997,
-          EmployeeFirstName: "JUAN",
-          EmployeeLastName: "PEREZ",
-          EmployeeMiddleName: "LOPEZ",
-          Id: 19,
-          OcrCode: "",
-          PurchaseRequestId: 45,
-          Requester: "JUAN PEREZ LOPEZ",
-          StatusSAP: "Abierto",
-          TotalWithoutTaxes: 0,
-        },
-        {
-          ApprovalStatus: "Pendiente",
-          Approved: "0",
-          BusinessPartnerCardCode: "A-ACREEDORESDIV",
-          BusinessPartnerCardName: "Acreedores Diversos Generales",
-          BusinessPartnerId: 7516,
-          Comments: "CENTRO DE COSTOS :G Basado en Solicitud de compra 3694.",
-          CompanyId: 20,
-          CompanyName: "ZZZ TECHMID 06 MAY",
-          DBName: "ZZZ_TECHMID",
-          DeliveryDate: "",
-          Details: [
-            {
-              ItemBuyUnitMsr: "Caja",
-              ItemDescription: "hGH (Hormona de Crecimiento Humana) 200t",
-              ItemId: 1508,
-              ItemOcrCode: "",
-              ItemOcrCode2: "",
-              ItemOcrCode3: "",
-              ItemQuantity: 56,
-              PurchaseOrderId: 18,
-            },
-          ],
-          DocDate: "2024-05-14",
-          DocDueDate: "2024-05-09",
-          DocNum: 998,
-          EmployeeFirstName: "RUBEN",
-          EmployeeLastName: "GUTIERREZ ROSAS",
-          EmployeeMiddleName: "HUMBERTO",
-          Id: 8,
-          OcrCode: "",
-          PurchaseRequestId: 244,
-          Requester: "RUBEN HUMBERTO GUTIERREZ ROSAS",
-          StatusSAP: "Abierto",
-          TotalWithoutTaxes: 0,
-        },
-        // Añadir 8 objetos más con diferentes valores
-      ];
+       const data = response.data.data;
+    ;
       console.log(data);
 
       setProducts(data);
@@ -453,21 +342,21 @@ function Autorizador() {
 
       console.log("data:", data);
 
-      // const apiUrl = `${routes.BASE_URL_SERVER}/MassivePurchaseOrderAuthorization`;
-      // const config = {
-      //   headers: {
-      //     "x-access-token": token,
-      //   },
-      // };
-      // const response = await axios.post(apiUrl, data, config);
-      // console.log("Response:", response);
-      // toast.current.show({
-      //   severity: "success",
-      //   summary: "Notificación",
-      //   detail: "Se envio correctamente la auditorizaciones a SAP",
-      //   life: 4000,
-      // });
-      // fetchDataGetPurchaseOrdersPendingApproval();
+      const apiUrl = `${routes.BASE_URL_SERVER}/MassivePurchaseOrderAuthorization`;
+      const config = {
+        headers: {
+          "x-access-token": token,
+        },
+      };
+      const response = await axios.post(apiUrl, data, config);
+      console.log("Response:", response);
+      toast.current.show({
+        severity: "success",
+        summary: "Notificación",
+        detail: "Se envio correctamente la auditorizaciones a SAP",
+        life: 4000,
+      });
+      fetchDataGetPurchaseOrdersPendingApproval();
     } catch (error) {
       console.error("Error al enviar en auditorizaciones a SAP:", error);
       toast.current.show({
