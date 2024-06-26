@@ -60,7 +60,7 @@ export const LoginPage = () => {
 
       <form onSubmit={onLoginPrueba}>
         <div className="login-container">
-          <h2>TeschConsulting</h2>
+          <h2>Hormadi</h2>
           <div className="p-inputgroup">
             <span className="p-inputgroup-addon">
               <i className="pi pi-user" />

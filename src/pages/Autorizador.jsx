@@ -433,7 +433,7 @@ function Autorizador() {
             <Column field="DocDueDate" header="Fecha de orden"></Column>
             <Column field="OcrCode" header="Centro Costo"></Column>
             <Column field="CompanyName" header="Empresa"></Column>
-            <Column field="TotalWithoutTaxes" header="Importe"></Column>
+            <Column field="TotalWithoutTaxes" header="Importe antes de IVA"></Column>
             <Column field="Comments" header="Comentarios"></Column>
             <Column header="Estatus" body={statusTemplate}></Column>
             <Column
