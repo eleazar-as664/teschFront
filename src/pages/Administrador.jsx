@@ -2,6 +2,7 @@ import React, { useRef, useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { useMountEffect } from "primereact/hooks";
 import { DataTable } from "primereact/datatable";
+import { ProgressBar } from 'primereact/progressbar';
 import { FilterMatchMode } from "primereact/api";
 import { Column } from "primereact/column";
 import { Card } from "primereact/card";
@@ -27,7 +28,7 @@ function Administrador() {
   const [rowDataToCancel, setRowDataToCancel] = useState(null);
   const [rowDataToEnviarSap, setRowDataToEnviarSap] = useState(null);
   const [globalFilterValue, setGlobalFilterValue] = useState("");
-
+  const [loadingSpinner, setLoadingSpinner] = useState(true);
   const [filters, setFilters] = useState({
     global: { value: null, matchMode: FilterMatchMode.CONTAINS },
     UserName: { value: null, matchMode: FilterMatchMode.STARTS_WITH },
@@ -139,6 +140,10 @@ function Administrador() {
       setEmployees(response.data.data);
     } catch (error) {
       console.error("Error al obtener datos de la API:", error);
+    }
+    finally
+    {
+      setLoadingSpinner(false);
     }
   };
   useEffect(() => {
@@ -321,6 +326,11 @@ function Administrador() {
             </div>
           )}
         </Dialog>
+        {loadingSpinner ? (
+            <div className="spinner-container">
+               <ProgressBar mode="indeterminate" style={{ height: '6px' }}></ProgressBar>
+            </div>
+        ) : (
         <DataTable
           value={employees}
           selectionMode="single"
@@ -367,7 +377,7 @@ function Administrador() {
             filterMenuStyle={{ width: "14rem" }}
             style={{ width: "10%", padding: "8px" }}
           />
-          <Column field="UserProfileName" header="Perfil" />
+          <Column field="UserProfileName" header="Perfil" sortable  />
           <Column field="UserActive" header="Estatus" />
 
           <Column
@@ -399,6 +409,7 @@ function Administrador() {
             }
           ></Column>
         </DataTable>
+          )}
       </Card>
     </Layout>
   );
