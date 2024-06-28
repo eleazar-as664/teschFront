@@ -353,7 +353,7 @@ function Autorizador() {
       toast.current.show({
         severity: "success",
         summary: "Notificación",
-        detail: "Se envio correctamente la auditorizaciones a SAP",
+        detail: "Se envio correctamente la autorizaciones a SAP",
         life: 4000,
       });
       fetchDataGetPurchaseOrdersPendingApproval();
