@@ -18,6 +18,7 @@ import NotFount from "../Components/NotFount";
 import Autorizador from "../pages/Autorizador";
 import AutorizadorOrdenCompra from "../pages/Autorizador/AutorizadorOrdenCompra";
 import OrdenesNoAprobadas from "../pages/Autorizador/OrdenesNoAprobadas";
+import DetalleUsuario from "../pages/Administrador/DetalleUsuario";
 import "primeicons/primeicons.css";
 import "primereact/resources/themes/saga-blue/theme.css";
 import "primereact/resources/primereact.min.css";
@@ -85,12 +86,21 @@ export const AppRouter = () => {
               />
             }
           />
-          
+
           <Route
             path="Administrador/Administrador/EditarUsuarios"
             element={
               <PrivateRoute
                 element={<EditarUsuarios />}
+                allowedProfiles={["Admin"]}
+              />
+            }
+          />
+          <Route
+            path="/Administrador/Administrador/DetalleUsuario"
+            element={
+              <PrivateRoute
+                element={<DetalleUsuario />}
                 allowedProfiles={["Admin"]}
               />
             }
@@ -159,7 +169,7 @@ export const AppRouter = () => {
               />
             }
           />
-           <Route
+          <Route
             path="Autorizador/Autorizador/AutorizadorOrdenCompra"
             element={
               <PrivateRoute

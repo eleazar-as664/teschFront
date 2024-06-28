@@ -125,13 +125,17 @@ function Administrador() {
     try {
       console.clear();
 
-      const apiUrl = `${routes.BASE_URL_SERVER}/GetUsers`;
+      // const apiUrl = `${routes.BASE_URL_SERVER}/GetUsers`;
+      const apiUrl = `https://purchase.grupohormadi.com:446/api/v1/GetUsers`;
+
       const config = {
         headers: {
           "x-access-token": token,
         },
       };
       const response = await axios.get(apiUrl, config);
+      console.log("Response:", response);
+      console.log(response.data.data);
       setEmployees(response.data.data);
     } catch (error) {
       console.error("Error al obtener datos de la API:", error);
@@ -189,6 +193,20 @@ function Administrador() {
   };
 
   const header = renderHeader();
+
+  const handleRowClick = (event) => {
+    // Obtener los datos de la fila seleccionada
+    const rowData = event.data;
+    console.clear();
+    console.log(rowData);
+
+    // localStorage.setItem("datosRequisitor", JSON.stringify(rowData));
+
+  
+
+    localStorage.setItem("empleadosEditar", JSON.stringify(rowData));
+    navigate("/Administrador/Administrador/DetalleUsuario");
+  };
 
   return (
     <Layout>
@@ -309,6 +327,7 @@ function Administrador() {
           scrollable
           scrollHeight="400px"
           stripedRows
+          onRowClick={handleRowClick}
           tableStyle={{ minWidth: "50rem" }}
           filters={filters}
           filterDisplay="row"

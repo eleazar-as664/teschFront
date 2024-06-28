@@ -69,7 +69,7 @@ function Autorizador() {
       };
       console.log(apiUrl);
       const response = await axios.get(apiUrl, config);
-       const data = response.data.data;
+      const data = response.data.data;
     ;
       console.log(data);
 
