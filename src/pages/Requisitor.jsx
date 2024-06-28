@@ -6,6 +6,8 @@ import { DataTable } from "primereact/datatable";
 import { FilterMatchMode } from "primereact/api";
 import { Column } from "primereact/column";
 import { Card } from "primereact/card";
+import { ProgressBar } from 'primereact/progressbar';
+
 import { Button } from "primereact/button";
 import { useNavigate } from "react-router-dom";
 import { Dialog } from "primereact/dialog";
@@ -21,6 +23,7 @@ import "./Requisitor.css";
 import "../Components/Styles/Global.css";
 function Requisitor() {
   const msgs = useRef(null);
+  const [loadingSpinner, setLoadingSpinner] = useState(true);
 
   const [selectedItem, setSelectedItem] = useState(null);
   const [enviandoASAP, setEnviandoASAP] = useState(false);
@@ -157,6 +160,9 @@ function Requisitor() {
       setpurchaseRequesData(response.data.data.purchaseRequestsHeaders);
     } catch (error) {
       console.error("Error al obtener datos de la API:", error);
+    }
+    finally {
+      setLoadingSpinner(false);
     }
   };
   useEffect(() => {
@@ -348,6 +354,11 @@ function Requisitor() {
             </div>
           )}
         </Dialog>
+        {loadingSpinner ? (
+            <div className="spinner-container">
+               <ProgressBar mode="indeterminate" style={{ height: '6px' }}></ProgressBar>
+            </div>
+        ) : (
         <DataTable
           value={purchaseRequesData}
           selectionMode="single"
@@ -453,6 +464,7 @@ function Requisitor() {
             }
           ></Column>
         </DataTable>
+)}
       </Card>
     </Layout>
   );

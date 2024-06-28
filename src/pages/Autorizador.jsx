@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import { DataTable } from "primereact/datatable";
 import { FilterMatchMode } from "primereact/api";
-
+import { ProgressBar } from "primereact/progressbar";
 import { Column } from "primereact/column";
 import { Card } from "primereact/card";
 import { FileUpload } from "primereact/fileupload";
@@ -23,7 +23,28 @@ import routes from "../utils/routes";
 // import "../Proveedor.css";
 import axios from "axios";
 function Autorizador() {
+  const hideDialog = (id) => {
+    setShowModal({ ...showModal, [id]: false });
+  };
+
   const toast = useRef(null);
+
+  const formatCurrency = (value) => {
+    const formattedValue = new Intl.NumberFormat("en-US", {
+      style: "currency",
+      currency: "USD",
+    }).format(value);
+
+    return formattedValue;
+  };
+
+  const priceBodyTemplate = (rowData) => {
+    return formatCurrency(rowData.TotalWithoutTaxes);
+  };
+
+  const priceBodyTemplateU = (Details) => {
+    return formatCurrency(Details.PriceByUnit);
+  };
 
   const navigate = useNavigate();
   const [activeIndex] = useState(0);
@@ -49,6 +70,7 @@ function Autorizador() {
 
   const user = JSON.parse(localStorage.getItem("user"));
   const token = JSON.parse(localStorage.getItem("user")).Token;
+  const [loadingSpinner, setLoadingSpinner] = useState(true);
 
   const [expandedRows, setExpandedRows] = useState(null);
   const [approvedProducts, setApprovedProducts] = useState([]);
@@ -69,8 +91,7 @@ function Autorizador() {
       };
       console.log(apiUrl);
       const response = await axios.get(apiUrl, config);
-       const data = response.data.data;
-    ;
+      const data = response.data.data;
       console.log(data);
 
       setProducts(data);
@@ -80,6 +101,8 @@ function Autorizador() {
         "Error al obtener datos de la API:",
         error.response.data.message
       );
+    } finally {
+      setLoadingSpinner(false);
     }
   };
 
@@ -97,7 +120,11 @@ function Autorizador() {
             <Column field="ItemDescription" header="Descrpcion"></Column>
             <Column field="ItemBuyUnitMsr" header="Unidad"></Column>
             <Column field="ItemQuantity" header="Cantidad"></Column>
-            <Column field="PriceByUnit" header="Precio Por Unidad"></Column>
+            <Column
+              field="PriceByUnit"
+              body={priceBodyTemplateU}
+              header="Precio Por Unidad"
+            ></Column>
             <Column field="ItemOcrCode" header="Centro de Costo"></Column>
           </DataTable>
         </div>
@@ -230,14 +257,16 @@ function Autorizador() {
     // };
     const handleRadioChange = (rowData, e) => {
       const { value } = e.target;
-    
+
       if (value === "Rechazar") {
         setShowModal({ ...showModal, [rowData.Id]: true });
       } else {
         setShowModal({ ...showModal, [rowData.Id]: false });
-    
+
         const updatedProducts = products.map((product) =>
-          product.Id === rowData.Id ? { ...product, ApprovalStatus: value } : product
+          product.Id === rowData.Id
+            ? { ...product, ApprovalStatus: value }
+            : product
         );
         setProducts(updatedProducts);
       }
@@ -263,7 +292,7 @@ function Autorizador() {
     };
 
     const resetModal = () => {
-      setShowModal({ });
+      setShowModal({});
       setRejectReason("");
       setError(false);
     };
@@ -289,39 +318,45 @@ function Autorizador() {
         </div>
 
         <Dialog
-        visible={showModal[rowData.Id] || false}
-        onHide={() => {}}
-        header="Motivo de Rechazo"
-        modal
-        footer={
-          <div>
-            <Button
-              label="Aceptar"
-              icon="pi pi-check"
-              onClick={handleReject}
-            />
+          visible={showModal[rowData.Id] || false}
+          onHide={() => hideDialog(rowData.Id)}
+          header="Motivo de Rechazo"
+          modal
+          footer={
+            <div class="row">
+              <Button
+                label="Aceptar"
+                icon="pi pi-check"
+                onClick={handleReject}
+                className="p-button-primary forty-percent"
+              />
+              <Button
+                label="Cancelar"
+                onClick={() => hideDialog(rowData.Id)}
+                className="p-button-secondary forty-percent"
+              />
+            </div>
+          }
+          closable={false}
+        >
+          <div className="p-grid p-fluid">
+            <div className="p-col-12">
+              <label htmlFor="rejectReason">Motivo de rechazo:</label>
+              <InputText
+                id="rejectReason"
+                value={rejectReason}
+                onChange={(e) => setRejectReason(e.target.value)}
+                placeholder="Motivo de rechazo"
+                className={error ? "p-invalid" : ""}
+              />
+              {error && (
+                <small className="p-error">
+                  Debe ingresar un motivo de rechazo
+                </small>
+              )}
+            </div>
           </div>
-        }
-        closable={false}
-      >
-        <div className="p-grid p-fluid">
-          <div className="p-col-12">
-            <label htmlFor="rejectReason">Motivo de rechazo:</label>
-            <InputText
-              id="rejectReason"
-              value={rejectReason}
-              onChange={(e) => setRejectReason(e.target.value)}
-              placeholder="Motivo de rechazo"
-              className={error ? "p-invalid" : ""}
-            />
-            {error && (
-              <small className="p-error">
-                Debe ingresar un motivo de rechazo
-              </small>
-            )}
-          </div>
-        </div>
-      </Dialog>
+        </Dialog>
       </>
     );
   };
@@ -401,46 +436,68 @@ function Autorizador() {
       <Card title="" className="cardProveedor">
         <TabMenu model={items} activeIndex={activeIndex} />
         <div className="p-grid p-fluid">
-          <DataTable
-            value={products}
-            expandedRows={expandedRows}
-            onRowToggle={(e) => setExpandedRows(e.data)}
-            rowExpansionTemplate={rowExpansionTemplate}
-            dataKey="Id"
-            scrollable
-            scrollHeight="400px"
-            filters={filters}
-            filterDisplay="row"
-            globalFilterFields={[
-              "DocNum",
-              "BusinessPartnerCardName",
-              "DocDueDate",
-              "BusinessPartnerCardCode",
-              "CompanyName",
-              "TotalWithoutTaxes",
-              "Comments",
-            ]}
-            emptyMessage="No hay resultados"
-            header={header}
-            stripedRows
-            tableStyle={{ minWidth: "50rem" }}
-            paginator
-            rows={5}
-          >
-            <Column expander style={{ width: "3em" }} />
-            <Column field="DocNum" header="Orden"></Column>
-            <Column field="BusinessPartnerCardName" header="Proveedor"></Column>
-            <Column field="DocDueDate" header="Fecha de orden"></Column>
-            <Column field="OcrCode" header="Centro Costo"></Column>
-            <Column field="CompanyName" header="Empresa"></Column>
-            <Column field="TotalWithoutTaxes" header="Importe"></Column>
-            <Column field="Comments" header="Comentarios"></Column>
-            <Column header="Estatus" body={statusTemplate}></Column>
-            <Column
-              header="Autorizacion"
-              body={approvalStatusTemplate}
-            ></Column>
-          </DataTable>
+          {loadingSpinner ? (
+            <div className="spinner-container">
+              <ProgressBar
+                mode="indeterminate"
+                style={{ height: "6px" }}
+              ></ProgressBar>
+            </div>
+          ) : (
+            <DataTable
+              value={products}
+              expandedRows={expandedRows}
+              onRowToggle={(e) => setExpandedRows(e.data)}
+              rowExpansionTemplate={rowExpansionTemplate}
+              dataKey="Id"
+              scrollable
+              scrollHeight="400px"
+              filters={filters}
+              filterDisplay="row"
+              globalFilterFields={[
+                "DocNum",
+                "BusinessPartnerCardName",
+                "DocDueDate",
+                "BusinessPartnerCardCode",
+                "CompanyName",
+                "TotalWithoutTaxes",
+                "Comments",
+              ]}
+              emptyMessage="No hay resultados"
+              header={header}
+              stripedRows
+              tableStyle={{ minWidth: "50rem" }}
+              paginator
+              rows={5}
+            >
+              <Column expander style={{ width: "3em" }} />
+              <Column field="DocNum" header="Orden" sortable></Column>
+              <Column
+                field="BusinessPartnerCardName"
+                header="Proveedor"
+                sortable
+              ></Column>
+              <Column
+                field="DocDueDate"
+                header="Fecha de orden"
+                sortable
+              ></Column>
+              <Column field="OcrCode" header="Centro Costo" sortable></Column>
+              <Column field="CompanyName" header="Empresa" sortable></Column>
+              <Column
+                field="TotalWithoutTaxes"
+                body={priceBodyTemplate}
+                header="Importe antes de IVA"
+                sortable
+              ></Column>
+              <Column field="Comments" header="Comentarios"></Column>
+              <Column header="Estatus" body={statusTemplate}></Column>
+              <Column
+                header="Autorizacion"
+                body={approvalStatusTemplate}
+              ></Column>
+            </DataTable>
+          )}
         </div>
       </Card>
     </Layout>
