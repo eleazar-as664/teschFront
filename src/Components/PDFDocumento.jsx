@@ -9,24 +9,24 @@ const generatePDF = (data) => {
         {          
           descripcion: {
                       content: "ORDEN DE COMPRA",
-                      styles: { valign: 'middle', fontSize:'12', halign: 'center', fillColor : [255,255,255],  },
+                      styles: { valign: 'middle', fontSize:'10', halign: 'center', fillColor : [255,255,255],  },
                       }
         },
         {
           descripcion: {
             content: data.BusinessName,
-            styles: { valign: 'middle', fontSize:'14', fontStyle: 'bold', halign: 'center', fillColor : [255,255,255],  },
+            styles: { valign: 'middle', fontSize:'12', fontStyle: 'bold', halign: 'center', fillColor : [255,255,255],  },
             }
         },
         {
           descripcion: {
-            content: "Direccion completa de la empresa a la que pertencece la orden de dddddcompra ",
-            styles: { valign: 'middle', fontSize:'10', halign: 'center', fillColor : [255,255,255],  },
+            content: data.Address,
+            styles: { valign: 'middle', fontSize:'8', halign: 'center', fillColor : [255,255,255],  },
             }
         },
         {
           descripcion: {
-            content: "XAXX010101000",
+            content: data.LicTradNum,
             styles: { valign: 'middle', fontSize:'10', fontStyle: 'bold', halign: 'center', fillColor : [255,255,255],  },
             }
         }
@@ -59,7 +59,7 @@ const generatePDF = (data) => {
       );
       return doc.lastAutoTable.finalY + 15;  
     }
-    addTableToPDF(dataREP, "Logo de la empresa", doc, 5);
+    addTableToPDF(dataREP, "", doc, 5);
 
    doc.autoTable({
           startY: doc.lastAutoTable.finalY + 5,
@@ -90,12 +90,12 @@ const generatePDF = (data) => {
                         2: { fontSize:'8', font:'helvetica', fillColor: [255,255,255], cellWidth: 59},
                       },
         body: [
-            ['Proveedor:', 'No. de orden de compra:', '1212'],
+            ['Proveedor:', 'No. de orden de compra:', data.DocNum],
             [data.CardName, 'Fecha contable:', data.DocDate],
             ['RFC:', 'Fecha de entrega:', data.DocDueDate],
-            ['ELRFCDELRPOVE01' , 'Comprador:', data.FirstName +' '+ data.MiddleName +' '+ data.LastName],
-            ['Dirección:', 'Condición de pago:', '15 dias'],
-            ['LADIRECCIPN COMPLEDA DE LA EMPRRESA pjtf hogdb kjbkhb 54654hn', 'Descuento:', '%%%']
+            [data.BusinessPartnerLicTradNum , 'Comprador:', data.FirstName +' '+ data.MiddleName +' '+ data.LastName],
+            ['Dirección:', 'Condición de pago:', data.BusinessPartnerPymntGroup],
+            [data.BusinessPartnerAddress, 'Descuento:', '%']
         ],
     });
 
@@ -108,8 +108,8 @@ const generatePDF = (data) => {
         item.OcrCode2 || '',
         item.Quantity || '',
         item.BuyUnitMsr || '',
-        item.PriceByUnit || '',
-        item.PriceByUnit * item.Quantity
+        item.PriceByUnit +' MXP' || '',
+        item.PriceByUnit * item.Quantity +' MXP'
       ]);
     
     
@@ -137,9 +137,9 @@ const generatePDF = (data) => {
                         3: { fontSize:'8', font:'helvetica', fillColor: [255,255,255], cellWidth: 35},                        
                       },
         body: [
-            ['Forma de pago:', '99', 'Subtotal','100 MXP'],
-            ['Uso CFDI:', 'G03', 'Ret. IVA:','0.0 MXP'],
-            ['Metodo de pago:', 'PPD', 'Ret. ISR:','0.0 MXP']
+            ['Forma de pago:', data.U_FormaPago33, 'Subtotal',data.Subtotal +' MXP'],
+            ['Uso CFDI:', data.U_UsoCFDI, 'Ret. IVA:','0.0 MXP'],
+            ['Metodo de pago:', data.U_MetodoPago33, 'Ret. ISR:','0.0 MXP']
         ],
     });      
 
@@ -151,8 +151,8 @@ const generatePDF = (data) => {
                       2: { fontSize:'8', font:'helvetica', fillColor: [255,255,255], cellWidth: 35},                        
                     },
       body: [
-          ['Referencia de documento:', 'Impuesto:','8.00 MXP'] ,
-          [ 'ROC-0020', 'Total documento:','108.00 MXP'],
+          ['Referencia de documento:', 'Impuesto:',data.IVA +' MXP'] ,
+          [ data.NumAtCard, 'Total documento:',data.Total +' MXP'],
       ],
   });  
 
@@ -163,7 +163,7 @@ const generatePDF = (data) => {
 
     doc.setFontSize(8); // Tamaño de fuente para el título de la sección
     doc.setFont('helvetica', 'normal');
-    doc.text('Aqui ks dfgsd sdfsdu df sdfgsdfsdfg sfsrgs df hhfb dfbdfbfbd dfgerb df dbfbgn fdfgda hge fdgdg dfgdg', 16, startY + 10); // Título de la sección
+    doc.text(data.DireccionEnvio, 16, startY + 10); // Título de la sección
 
     const addFooters = doc => {
       const pageCount = doc.internal.getNumberOfPages()
@@ -180,6 +180,15 @@ const generatePDF = (data) => {
 
     addFooters(doc)
 
+  //  doc.addImage('data:image/png;base64,'+ data.LogoPath, 'PNG', 32, 1);
+
+  if (data.LogoPath != '' )
+    {
+        const imgProps= doc.getImageProperties('data:image/png;base64,'+ data.LogoPath);
+        const pdfWidth = 50;
+        const pdfHeight = (imgProps.height * pdfWidth) / imgProps.width;
+        doc.addImage('data:image/png;base64,'+ data.LogoPath, 'PNG', 30, 5, pdfWidth, pdfHeight);
+    }
   // Guardar el PDF
   doc.save('orden_de_compra.pdf');
 };

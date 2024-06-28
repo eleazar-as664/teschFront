@@ -23,7 +23,30 @@ import routes from "../utils/routes";
 // import "../Proveedor.css";
 import axios from "axios";
 function Autorizador() {
+
+  const hideDialog = (id) => {
+    setShowModal({ ...showModal, [id]: false });
+  };
+
+
   const toast = useRef(null);
+
+  const formatCurrency = (value) => {
+    const formattedValue = new Intl.NumberFormat('en-US', {
+      style: 'currency',
+      currency: 'USD' 
+    }).format(value);
+
+    return formattedValue;
+  };
+
+  const priceBodyTemplate = (rowData) => {
+    return formatCurrency(rowData.TotalWithoutTaxes);
+  };
+
+    const priceBodyTemplateU = (Details) => {
+    return formatCurrency(Details.PriceByUnit);
+  };
 
   const navigate = useNavigate();
   const [activeIndex] = useState(0);
@@ -97,7 +120,7 @@ function Autorizador() {
             <Column field="ItemDescription" header="Descrpcion"></Column>
             <Column field="ItemBuyUnitMsr" header="Unidad"></Column>
             <Column field="ItemQuantity" header="Cantidad"></Column>
-            <Column field="PriceByUnit" header="Precio Por Unidad"></Column>
+            <Column field="PriceByUnit" body={priceBodyTemplateU} header="Precio Por Unidad"></Column>
             <Column field="ItemOcrCode" header="Centro de Costo"></Column>
           </DataTable>
         </div>
@@ -290,16 +313,22 @@ function Autorizador() {
 
         <Dialog
         visible={showModal[rowData.Id] || false}
-        onHide={() => {}}
+        onHide={() => hideDialog(rowData.Id)}
         header="Motivo de Rechazo"
         modal
         footer={
-          <div>
+          <div class="row">
             <Button
               label="Aceptar"
               icon="pi pi-check"
               onClick={handleReject}
+                 className="p-button-primary forty-percent"
             />
+            <Button
+            label="Cancelar"
+            onClick={() => hideDialog(rowData.Id)}
+            className="p-button-secondary forty-percent"
+          />
           </div>
         }
         closable={false}
@@ -433,7 +462,7 @@ function Autorizador() {
             <Column field="DocDueDate" header="Fecha de orden"></Column>
             <Column field="OcrCode" header="Centro Costo"></Column>
             <Column field="CompanyName" header="Empresa"></Column>
-            <Column field="TotalWithoutTaxes" header="Importe"></Column>
+            <Column field="TotalWithoutTaxes" body={priceBodyTemplate} header="Importe antes de IVA"></Column>
             <Column field="Comments" header="Comentarios"></Column>
             <Column header="Estatus" body={statusTemplate}></Column>
             <Column
