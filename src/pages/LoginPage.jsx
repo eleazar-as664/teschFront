@@ -11,7 +11,7 @@ import routes from "../utils/routes";
 export const LoginPage = () => {
   const navigate = useNavigate();
   const [error, setError] = useState(null);
-
+  const [loginCargando, setLoginCargando] = useState(false);
   const { name, password, onInputChange } = useForm({
     name: "",
     password: "",
@@ -28,22 +28,26 @@ export const LoginPage = () => {
       }
     }
   }, [user, navigate]);
-  const onLoginPrueba = async (e) => {
+  const onLoginentrada = async (e) => {
     e.preventDefault();
     try {
+      setLoginCargando(true);
       const response = await axios.post(`${routes.BASE_URL_SERVER}/SignIn`, {
         UserName: name,
         Password: password,
         SecretKey: "O6XcIjRgEOvvRyO0QFHzf5jllsuzCiLEZj9YftaOwg",
       });
-      console.log(response.data.data);
       const user = response.data.data;
       localStorage.setItem("user", JSON.stringify(user));
       const firstProfilePath = user.Profiles[0]?.Path;
       navigate(firstProfilePath);
     } catch (error) {
       console.log(error);
-      let {response: {data: {detailMessage, message}}} = error;
+      let {
+        response: {
+          data: { detailMessage, message },
+        },
+      } = error;
       setError(detailMessage);
       toast.current.show({
         severity: "warn",
@@ -51,6 +55,8 @@ export const LoginPage = () => {
         detail: detailMessage,
         life: 3000,
       });
+    } finally {
+      setLoginCargando(false);
     }
   };
 
@@ -58,7 +64,7 @@ export const LoginPage = () => {
     <div className="general">
       <Toast ref={toast} />
 
-      <form onSubmit={onLoginPrueba}>
+      <form onSubmit={onLoginentrada}>
         <div className="login-container">
           <h2>Hormadi</h2>
           <div className="p-inputgroup">
@@ -89,7 +95,15 @@ export const LoginPage = () => {
               autoComplete="off"
             />
           </div>
-          <Button type="submit" label="Iniciar sesión" />
+          {/* <Button type="submit" label="Iniciar sesión" /> */}
+          {loginCargando ? (
+            <Button
+              icon="pi pi-spinner pi-spin"
+            />
+          ) : (
+            <Button type="submit" label="Iniciar sesión" />
+          )}
+
           {error && <div className="error-message">{error}</div>}
         </div>
       </form>

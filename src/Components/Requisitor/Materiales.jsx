@@ -159,8 +159,7 @@ function MaterialDialog({ visible, material, onClose, onSave }) {
               name="Quantity"
               value={updatedMaterial.Quantity || ""}
               onChange={handleCantidadChange}
-              min={0}
-              max={10000}
+              min={0}              
               className={validationErrors.Quantity ? "p-invalid" : ""}
               style={{ display: "contents" }}
               autoComplete="off"

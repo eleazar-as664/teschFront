@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import { DataTable } from "primereact/datatable";
 import { FilterMatchMode } from "primereact/api";
-import { ProgressSpinner } from 'primereact/progressspinner';
+import { ProgressBar } from 'primereact/progressbar';
 
 import { Column } from "primereact/column";
 import { Card } from "primereact/card";
@@ -30,7 +30,7 @@ function Proveedor() {
   const [purchaseOrderData, setPurchaseOrderData] = useState([]);
   const [statuses] = useState(["Abierto", "Cerrado", "Pendiente", "Cancelado"]);
   const [PurchaseOrderId, setPurchaseOrderId] = useState([]);
-
+  const [loadingSpinner, setLoadingSpinner] = useState(true);
   const [globalFilterValue, setGlobalFilterValue] = useState("");
   const [visibleArchivosProveedor, setVisibleArchivosProveedor] =
     useState(false);
@@ -69,6 +69,7 @@ function Proveedor() {
       console.log(updatedData);
       setPurchaseOrderData(updatedData);
       // setpurchaseOrderData(response.data.data.purchaseRequestsHeaders);
+   
     } catch (error) {
       let {
         response: {
@@ -82,6 +83,9 @@ function Proveedor() {
         detail: detailMessage,
         life: 3000,
       });
+    }
+    finally {
+      setLoadingSpinner(false);
     }
   };
 
@@ -424,6 +428,11 @@ function Proveedor() {
             </div>
           </div>
         </Dialog>
+        {loadingSpinner ? (
+            <div className="spinner-container">
+               <ProgressBar mode="indeterminate" style={{ height: '6px' }}></ProgressBar>
+            </div>
+        ) : (
         <DataTable
           value={purchaseOrderData}
           selectionMode="single"
@@ -526,6 +535,7 @@ function Proveedor() {
             bodyStyle={{ textAlign: "center" }}
           ></Column> */}
         </DataTable>
+          )}
       </Card>
     </Layout>
   );
