@@ -46,6 +46,7 @@ function NuevaCompra() {
   });
 
   const [centroCostos, setCentroCostos] = useState([]);
+  const [loandingPendiente, setLoandingPendiente] = useState(false);
   const [companies, setCompanies] = useState([]);
   const [materialeslData, setMaterialesData] = useState([]);
   const [selectedItems, setSelectedItems] = useState([]);
@@ -173,10 +174,11 @@ function NuevaCompra() {
     }
   };
 
-  const handleSubmit = async (event) => {
-    event.preventDefault();
-
+  const handleSubmit = async () => {
+    // event.preventDefault();
+ 
     if (validateForm()) {
+      setLoandingPendiente(true);
       try {
         console.clear();
 
@@ -185,6 +187,9 @@ function NuevaCompra() {
         handleSuccessResponse(response);
       } catch (error) {
         handleErrorResponse(error);
+      }
+      finally{
+      setLoandingPendiente(false);
       }
     } else {
       toast.current.show({
@@ -350,7 +355,7 @@ function NuevaCompra() {
       </Card>
       <Card className="cardOrdenCompra">
       <Toast ref={toast} />
-        <form onSubmit={handleSubmit}>
+        {/* <form onSubmit={handleSubmit}> */}
           <div className="p-field-group">
             <div className="row">
                 <DropdownInput
@@ -421,12 +426,20 @@ function NuevaCompra() {
               </div>
               <div className="p-field button-conteiner">
                 <div className="botonEnviar">
+                {loandingPendiente ? (
                   <Button
-                    label="Guardar"
-                    type="submit"
-                    icon="pi pi-check"
-                    className="p-button-primary"
+                    icon="pi pi-spin pi-spinner"
+                    className="p-button-secondary"
                   />
+                ) : (
+                  <Button
+                        label="Guardar"
+                        onClick={handleSubmit}
+                        icon="pi pi-check"
+                        className="p-button-primary"
+                      />
+                )}
+                  
                 </div>
                 <div className="botonCancelar">
                   <Button
@@ -439,7 +452,7 @@ function NuevaCompra() {
               </div>
             </div>
           </div>
-        </form>
+        {/* </form> */}
         {selectedMaterial && (
           <MaterialDialog
             visible={dialogVisible}
