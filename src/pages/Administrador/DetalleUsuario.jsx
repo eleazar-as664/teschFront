@@ -45,7 +45,7 @@ function DetalleUsuario() {
     try {
       const usuarioID = employeesEditar.UserId;
       // const apiUrlCompanies = `${routes.BASE_URL_SERVER}/GetUserDataToUpdate/${usuarioID}`;
-      const apiUrlClientesInfo = `https://purchase.grupohormadi.com:446/api/v1/GetUserDataToUpdate/${usuarioID}`;
+      const apiUrlClientesInfo = `${routes.BASE_URL_SERVER}/GetUserDataToUpdate/${usuarioID}`;
 
       const config = {
         headers: {
