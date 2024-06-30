@@ -75,6 +75,7 @@ function Requisitor() {
     const purchaseRequestId = rowDataToEnviarSap.PurchaseRequestId;
 
     setEnviandoASAP(true);
+    console.log("Enviando a SAP:", rowDataToEnviarSap);
 
     try {
       const data = {
@@ -90,6 +91,19 @@ function Requisitor() {
       };
       const response = await axios.post(apiUrl, data, config);
       console.log("Response:", response);
+      
+      setpurchaseRequesData((currentData) => {
+        const index = currentData.findIndex(item => item.PurchaseRequestId === purchaseRequestId);
+        if (index !== -1) {
+          // Crear una copia de los datos
+          const newData = [...currentData];
+          // Marcar como pendiente
+          newData[index] = { ...newData[index], Sent: true };
+          console.log("Actualizado:", newData); // Agregar log para depuración
+          return newData;
+        }
+        return currentData;
+      });
       toast.current.show({
         severity: "success",
         summary: "Notificación",
@@ -98,7 +112,7 @@ function Requisitor() {
       });
       fetchData();
     } catch (error) {
-      console.error("Error al enviar la solicitud a SAP:", error);
+      // console.error("Error al enviar la solicitud a SAP:", error);
       toast.current.show({
         severity: "error",
         summary: "Error",
@@ -463,6 +477,7 @@ function Requisitor() {
               )
             }
           ></Column>
+        
         </DataTable>
 )}
       </Card>

@@ -216,9 +216,9 @@ function NuevoUsuario() {
     setFormDataAutorizador({ ...formDataAutorizador, CompanyId: null });
     setFormData({ ...formData, ProfileId: Profile });
   };
-  const handleSubmit = async (event) => {
-    event.preventDefault();
-
+  const handleSubmit = async () => {
+  console.clear()
+   console.log(formData);
     if (validateForm()) {
       try {
         //   console.clear();
@@ -318,8 +318,18 @@ function NuevoUsuario() {
     }
 
     console.log(formData.BusinessPartnerId);
-    if (formData.ProfileId.Id == 4 &&  !formData.BusinessPartnerId) {
+    if (formData.ProfileId?.Id == 4 &&  !formData.BusinessPartnerId) {
       errors.BusinessPartnerId = "Seleccione un Socio de Negocios.";
+      formIsValid = false;
+    }
+    if (formData.ProfileId?.Id == 4 || formData.ProfileId?.Id == 3 || formData.ProfileId?.Id == 2 && selectedCompanies.length === 0) {
+      toast.current.show({
+        severity: "warn",
+        summary: "información requerida",
+        detail: "Seleccione una compañia.",
+        life: 3000,
+      });
+      errors.companies = "Seleccione una compañia.";      
       formIsValid = false;
     }
     if (formData.ProfileId?.Id === 2 && !formData.EmployeeId) {
@@ -421,6 +431,7 @@ function NuevoUsuario() {
     });
   };
   const handleDelete = (rowData) => {
+
     const updatedItems = selectedCompanies.filter((item) => item !== rowData);
     setSelectedCompanies(updatedItems);
 
@@ -447,7 +458,7 @@ function NuevoUsuario() {
           >
             <div>¡Se ha agregado el usuario exitosamente.!</div>
           </Dialog>
-          <form onSubmit={handleSubmit}>
+          {/* <form > */}
             <div className="p-field-group">
               <div className="row">
                 <div className="p-field">
@@ -700,6 +711,7 @@ function NuevoUsuario() {
                       type="submit"
                       icon="pi pi-check"
                       className="p-button-primary"
+                      onClick={handleSubmit}
                     />
                   </div>
                   <div className="botonCancelar">
@@ -713,7 +725,7 @@ function NuevoUsuario() {
                 </div>
               </div>
             </div>
-          </form>
+          {/* </form> */}
         </Card>
       </div>
     </Layout>
