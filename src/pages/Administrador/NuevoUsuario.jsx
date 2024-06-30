@@ -77,6 +77,13 @@ function NuevoUsuario() {
       setLoading(false);
     } catch (error) {
       setLoading(true);
+      let {response: {data: {message,detailMessage}}} = error;
+        toast.current.show({
+          severity: "warn",
+          summary: message,
+          detail: detailMessage,
+          life: 3000,
+        });
       console.error("Error fetching business partners:", error);
       setBusinessPartners([]);
       console.log(loading)
@@ -322,7 +329,11 @@ function NuevoUsuario() {
       errors.BusinessPartnerId = "Seleccione un Socio de Negocios.";
       formIsValid = false;
     }
-    if (formData.ProfileId?.Id == 4 || formData.ProfileId?.Id == 3 || formData.ProfileId?.Id == 2 && selectedCompanies.length === 0) {
+    console.log(formData);
+    console.log(selectedCompanies);
+    if (formData.ProfileId?.Id == 4 || formData.ProfileId?.Id == 3 || formData.ProfileId?.Id == 2 ) {
+      if (selectedCompanies.length === 0) {
+
       toast.current.show({
         severity: "warn",
         summary: "información requerida",
@@ -331,6 +342,7 @@ function NuevoUsuario() {
       });
       errors.companies = "Seleccione una compañia.";      
       formIsValid = false;
+    }
     }
     if (formData.ProfileId?.Id === 2 && !formData.EmployeeId) {
       errors.EmployeeId = "Seleccione un empleado.";
@@ -371,11 +383,16 @@ function NuevoUsuario() {
   const handleCompanyChange = (e) => {
     console.log(e.value);
     const selectedCompany = companies.find((company) => company.Id === e.value);
+    console.log(selectedCompany);
     if (
       selectedCompany &&
       !selectedCompanies.some((company) => company.Id === selectedCompany.Id)
     ) {
       setSelectedCompanies([...selectedCompanies, selectedCompany]);
+    }
+    else
+    {
+      console.log("Elemento ya existe");
     }
     setFormDataAutorizador({ ...formDataAutorizador, CompanyId: e.value });
   };
