@@ -587,7 +587,7 @@ function EditarUsuarios() {
           >
             <div>¡Se ha actualizado el usuario exitosamente.!</div>
           </Dialog>
-          <form onSubmit={handleSubmit}>
+          {/* <form onSubmit={handleSubmit}> */}
             <div className="p-field-group">
               <div className="row">
                 <div className="p-field">
@@ -813,6 +813,7 @@ function EditarUsuarios() {
                       type="submit"
                       icon="pi pi-check"
                       className="p-button-primary"
+                      onClick={handleSubmit}
                     />
                   </div>
                   <div className="botonEnviar">
@@ -826,7 +827,7 @@ function EditarUsuarios() {
                 </div>
               </div>
             </div>
-          </form>
+          {/* </form> */}
         </Card>
       </div>
     </Layout>
