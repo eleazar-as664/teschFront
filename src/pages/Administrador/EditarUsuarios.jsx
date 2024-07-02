@@ -502,7 +502,7 @@ function EditarUsuarios() {
     try {
       console.clear();
 
-      const UserId = ""; // employeesEditar.UserId;
+      const UserId = employeesEditar.UserId;
       const data = {
         UserId: UserId,
       };

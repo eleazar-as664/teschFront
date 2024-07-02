@@ -461,6 +461,13 @@ function EditarRequisicion() {
                 </div>
                 <div className="p-col-field">
                   <div className="p-field">
+                      <span className="field-name">No.: </span>
+                      <span className="field-name">
+                        {infoUsuarioCreadorSolicitud.Id}{" "}
+                      </span>
+                  </div>
+
+                  <div className="p-field">
                     <span className="field-name">
                       {infoUsuarioCreadorSolicitud.FirstName +
                         " " +

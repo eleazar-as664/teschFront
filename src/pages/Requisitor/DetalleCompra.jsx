@@ -249,6 +249,12 @@ function DetalleCompra() {
                 <Avatar label={primeraLetra} className="mr-2" shape="circle" />
               </div>
               <div className="p-col-field">
+              <div className="p-field">
+                  <span className="field-name">No.: </span>
+                  <span className="field-name">
+                    {infoUsuarioCreadorSolicitud.Id}{" "}
+                  </span>
+                </div>
                 <div className="p-field">
                   <span className="field-name">
                     {infoUsuarioCreadorSolicitud.FirstName +
@@ -264,14 +270,21 @@ function DetalleCompra() {
                 </div>
 
                 <div className="p-field">
+                <span className="field-name">Fecha de Solicitud: </span>
                   {infoUsuarioCreadorSolicitud.CreateDate}
                 </div>
               </div>
 
               <div className="p-col-field">
                 <div className="p-field">
+                  <span className="field-name">No. SAP: </span>
+                  <span className="field-name">
+                    {infoUsuarioCreadorSolicitud.DocNum}{" "}
+                  </span>
+                </div>
+                <div className="p-field">
                   <span className="field-name">Fecha de entrega: </span>
-                  {infoUsuarioCreadorSolicitud.DocDate}
+                  {infoUsuarioCreadorSolicitud.DocDueDate}
                 </div>
 
                 <div className="p-field">
