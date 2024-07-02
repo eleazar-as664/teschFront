@@ -126,8 +126,8 @@ function Administrador() {
     try {
       console.clear();
 
-      // const apiUrl = `${routes.BASE_URL_SERVER}/GetUsers`;
-      const apiUrl = `https://purchase.grupohormadi.com:446/api/v1/GetUsers`;
+      const apiUrl = `${routes.BASE_URL_SERVER}/GetUsers`;
+      // const apiUrl = `https://purchase.grupohormadi.com:446/api/v1/GetUsers`;
 
       const config = {
         headers: {

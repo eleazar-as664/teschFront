@@ -197,6 +197,7 @@ function EditarUsuarios() {
         BusinessPartnerId: BusinessPartner,
         Email: datosCliente.Email,
         EmployeeId: nombreCompleto,
+        EmployeeIdReal: datosCliente.Employee.Id
       }));
       setSelectedCompanies(companiasCliente);
     } catch (error) {
@@ -316,6 +317,7 @@ function EditarUsuarios() {
       Email: formData.Email,
       ProfileId: formData.ProfileId.Id,
       UserId: employeesEditar.UserId,
+      EmployeeId:0,
     };
     if (requestData.ProfileId === 4) {
       const newIdArray = selectedCompanies.map((item) => item.Id);
@@ -325,7 +327,7 @@ function EditarUsuarios() {
       //   requestData.EmployeeId = formData.EmployeeId.Id;
     } else if (requestData.ProfileId === 2) {
       requestData.BusinessPartnerId = 0;
-      requestData.EmployeeId = formData.EmployeeId.Id;
+      requestData.EmployeeId = formData.EmployeeIdReal;
       const newIdArray = selectedCompanies.map((item) => item.Id);
       requestData.CompanyId = newIdArray;
     } else if (requestData.ProfileId === 3) {
@@ -500,7 +502,7 @@ function EditarUsuarios() {
     try {
       console.clear();
 
-      const UserId = ""; // employeesEditar.UserId;
+      const UserId = employeesEditar.UserId;
       const data = {
         UserId: UserId,
       };
@@ -583,7 +585,7 @@ function EditarUsuarios() {
             modal
             footer={<Button label="Cerrar" onClick={handleEnviarNavigate} />}
           >
-            <div>¡Se ha agregado el usuario exitosamente.!</div>
+            <div>¡Se ha actualizado el usuario exitosamente.!</div>
           </Dialog>
           <form onSubmit={handleSubmit}>
             <div className="p-field-group">
