@@ -271,7 +271,7 @@ function DetalleCompra() {
               <div className="p-col-field">
                 <div className="p-field">
                   <span className="field-name">Fecha de entrega: </span>
-                  {infoUsuarioCreadorSolicitud.DocDate}
+                  {infoUsuarioCreadorSolicitud.DocDueDate}
                 </div>
 
                 <div className="p-field">
