@@ -197,7 +197,9 @@ function EditarRequisicion() {
         ...prevState,
         companies: response.data.data[0],
       }));
-      const apiUrlGetItemsByCompany = `${routes.BASE_URL_SERVER}/GetItemsByCompany/${response.data.data[0].Id}`;
+
+      let purchaseRequestCompanyId = infoUsuarioCreadorSolicitud.CompanyId
+      const apiUrlGetItemsByCompany = `${routes.BASE_URL_SERVER}/GetItemsByCompany/${purchaseRequestCompanyId}`;
       const resp = await axios.get(apiUrlGetItemsByCompany, config);
 
       setMaterialesData(resp.data.data);
