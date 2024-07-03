@@ -7,7 +7,7 @@ import { FilterMatchMode } from "primereact/api";
 import { Column } from "primereact/column";
 import { Card } from "primereact/card";
 import { ProgressBar } from 'primereact/progressbar';
-
+import { Paginator } from "primereact/paginator";
 import { Button } from "primereact/button";
 import { useNavigate } from "react-router-dom";
 import { Dialog } from "primereact/dialog";
@@ -26,6 +26,7 @@ function Requisitor() {
   const [loadingSpinner, setLoadingSpinner] = useState(true);
 
   const [selectedItem, setSelectedItem] = useState(null);
+  const [totalRecords, setTotalRecords] = useState(0);
   const [enviandoASAP, setEnviandoASAP] = useState(false);
   const [purchaseRequesData, setpurchaseRequesData] = useState([]);
   const [visible, setVisible] = useState(false);
@@ -34,6 +35,8 @@ function Requisitor() {
   const [rowDataToEnviarSap, setRowDataToEnviarSap] = useState(null);
   const [globalFilterValue, setGlobalFilterValue] = useState("");
   const [statuses] = useState(["Abierto", "Cerrado", "Pendiente", "Cancelado"]);
+  const NUMERO_REGISTROS_POR_PAGINA = 5;
+  const [numeroPagina, setNumeroPagina] = useState(1);
 
   const [filters, setFilters] = useState({
     global: { value: null, matchMode: FilterMatchMode.CONTAINS },
@@ -158,26 +161,33 @@ function Requisitor() {
     setVisible(false); // Esto cierra el Dialog
   };
 
-  const fetchData = async () => {
+  const fetchData = async (numeroPagina=1) => {
     try {
-      console.clear();
       console.log(user.UserId);
       const IdUsuario = user.UserId;
-      const apiUrl = `${routes.BASE_URL_SERVER}/GetPurchaseRequestsHeadersByUser/${IdUsuario}`;
+      const apiUrl = `${routes.BASE_URL_SERVER}/GetPurchaseRequestsByUserPagination/${IdUsuario}/${NUMERO_REGISTROS_POR_PAGINA}/${numeroPagina}`;
       const config = {
         headers: {
           "x-access-token": token,
         },
       };
       const response = await axios.get(apiUrl, config);
-      console.log(response.data.data.purchaseRequestsHeaders);
+      console.log(response.data.data);
       setpurchaseRequesData(response.data.data.purchaseRequestsHeaders);
+      setTotalRecords(response.data.data.totalPurchaseRequests);
+      console.log("Total de registros:", totalRecords);
     } catch (error) {
       console.error("Error al obtener datos de la API:", error);
     }
     finally {
       setLoadingSpinner(false);
     }
+  };
+
+  const handlePageChange = (e) => {
+    let nuevaPagina = e.page + 1;
+    setNumeroPagina(nuevaPagina);
+    fetchData(nuevaPagina);
   };
   useEffect(() => {
     localStorage.removeItem("datosRequisitor");
@@ -393,8 +403,6 @@ function Requisitor() {
           ]}
           emptyMessage="No hay solicitudes de compra registradas"
           header={header}
-          paginator
-          rows={5}
         >
           <Column
             sortable
@@ -480,6 +488,7 @@ function Requisitor() {
         
         </DataTable>
 )}
+        <Paginator first={numeroPagina}  rows={NUMERO_REGISTROS_POR_PAGINA} totalRecords={totalRecords} onPageChange={handlePageChange}  />
       </Card>
     </Layout>
   );
