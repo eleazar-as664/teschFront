@@ -175,6 +175,12 @@ function Requisitor() {
       console.log(response.data.data);
       setpurchaseRequesData(response.data.data.purchaseRequestsHeaders);
       setTotalRecords(response.data.data.totalPurchaseRequests);
+      const numeroPaginaDinamico = generarNumeroPagina(NUMERO_REGISTROS_POR_PAGINA, response.data.data.totalPurchaseRequests);      
+      const numeroPaginasTotales = numeroPaginaDinamico[numeroPagina];
+      
+      setNumeroPagina(numeroPaginasTotales)
+
+      
       console.log("Total de registros:", totalRecords);
     } catch (error) {
       console.error("Error al obtener datos de la API:", error);
@@ -184,8 +190,23 @@ function Requisitor() {
     }
   };
 
+ const generarNumeroPagina= (incremento,totalRegistros) => {
+
+    const array = {};
+    let valorActual = 0;
+
+    for (let i = 1; valorActual < totalRegistros; i++) {
+        array[i] = valorActual;
+        valorActual += incremento;
+    }
+
+    return array;
+};
+
   const handlePageChange = (e) => {
+    
     let nuevaPagina = e.page + 1;
+
     setNumeroPagina(nuevaPagina);
     fetchData(nuevaPagina);
   };
