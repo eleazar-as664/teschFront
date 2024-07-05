@@ -116,7 +116,7 @@ function MaterialDialog({ visible, material, onClose, onSave }) {
     <Dialog
       visible={visible}
       onHide={onClose}
-      header="Modificar Material"
+      header="Modificar Material y editar"
       modal
       footer={
         <div class="row">
@@ -159,12 +159,13 @@ function MaterialDialog({ visible, material, onClose, onSave }) {
               name="Quantity"
               value={updatedMaterial.Quantity || ""}
               onChange={handleCantidadChange}
-              min={0}           
               mode="decimal"
-              minFractionDigits={2}   
+              minFractionDigits={2}  
+              min={0}              
               className={validationErrors.Quantity ? "p-invalid" : ""}
               style={{ display: "contents" }}
               autoComplete="off"
+            
               autoFocus
             />
             {validationErrors.Quantity && (

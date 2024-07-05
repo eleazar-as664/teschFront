@@ -147,15 +147,17 @@ function Requisitor() {
           detail: "Solicitud de compra cancelada con éxito",
           life: 3000,
         });
+        window.location.reload();
+
+    
         // Realizar cualquier acción adicional después de cancelar la solicitud, como actualizar la lista de solicitudes de compra
       })
       .catch((error) => {
         console.error("Error al cancelar la solicitud de compra:", error);
         // Manejar el error, como mostrar un mensaje al usuario
       });
-
-    fetchData();
-
+      fetchData();
+    
    
     setRowDataToCancel(null);
     setVisible(false); // Esto cierra el Dialog

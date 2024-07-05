@@ -468,7 +468,7 @@ function Autorizador() {
               stripedRows
               tableStyle={{ minWidth: "50rem" }}
               paginator
-              rows={5}
+              rows={30}
             >
               <Column expander style={{ width: "3em" }} />
               <Column field="DocNum" header="Orden" sortable></Column>

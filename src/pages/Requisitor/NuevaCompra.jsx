@@ -5,6 +5,7 @@ import DatesInput from "../../Components/Requisitor/DatesInput";
 import TextTareaInput from "../../Components/Requisitor/TextTareaInput";
 import DropdownInput from "../../Components/Requisitor/DropdownInput";
 import MaterialDialog from "../../Components/Requisitor/Materiales";
+import MaterialDialogEditar from "../../Components/Requisitor/MaterialesEditar";
 import { Layout } from "../../Components/Layout/Layout";
 import routes from "../../utils/routes";
 
@@ -74,7 +75,8 @@ function NuevaCompra() {
   const user = JSON.parse(localStorage.getItem("user"));
   const tokenSap = JSON.parse(localStorage.getItem("user")).TokenSAP;
   const toast = useRef(null);
-  const handleAlmacenChange12 = (material) => {
+  const handleMaterialChange = (material) => {
+    setMaterialToEdit(null);
     setSelectedMaterial(material);
     setDialogVisible(true); // Mostrar el MaterialDialog al seleccionar un material
   };
@@ -419,7 +421,7 @@ function NuevaCompra() {
                   onSelect={(e) => {
                     setSelectedMaterial(e.value);
                     setSearchValue("");
-                    handleAlmacenChange12(e.value);
+                    handleMaterialChange(e.value);
                   }}
                   placeholder="Buscar material..."
                 />
@@ -462,7 +464,7 @@ function NuevaCompra() {
           />
         )}
         {materialToEdit && (
-          <MaterialDialog
+          <MaterialDialogEditar
             visible={dialogVisible}
             material={materialToEdit}
             onClose={handleDialogClose}

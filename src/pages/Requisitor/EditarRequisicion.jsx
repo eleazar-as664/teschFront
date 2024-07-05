@@ -103,7 +103,8 @@ function EditarRequisicion() {
       console.error("Error al obtener datos de la API:", error);
     }
   };
-  const handleAlmacenChange12 = (material) => {
+  const handleMaterialChange = (material) => {
+    setMaterialToEdit(null);// Limpiar el material a editar
     setSelectedMaterial(material);
     setDialogVisible(true); // Mostrar el MaterialDialog al seleccionar un material
   };
@@ -545,7 +546,7 @@ function EditarRequisicion() {
                   onSelect={(e) => {
                     setSelectedMaterial(e.value);
                     setSearchValue("");
-                    handleAlmacenChange12(e.value);
+                    handleMaterialChange(e.value);
                   }}
                   placeholder="Buscar material..."
                 />
