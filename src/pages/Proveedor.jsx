@@ -494,7 +494,7 @@ function Proveedor() {
                   onClick={() => redirectToDetalle(rowData)} // Agrega la función para redireccionar a la página de detalle
                   label={
                     <i
-                      className="pi pi-file-pdf"
+                      className="pi pi-file-pdf ff"
                       style={{ fontSize: "24px", color: "#f73164" }}
                     />
                   }

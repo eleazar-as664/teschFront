@@ -213,7 +213,7 @@ function OrdenesNoAprobadas() {
             emptyMessage="No hay resultados"
             header={header}
             paginator
-            rows={5}
+            rows={30}
           >
             <Column
               field="DocNum"

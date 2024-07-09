@@ -16,12 +16,35 @@ import { InputIcon } from "primereact/inputicon";
 import { TabMenu } from "primereact/tabmenu";
 import { RadioButton } from "primereact/radiobutton";
 import { Toast } from "primereact/toast";
+import generatePDF from "../Components/PDFDocumento";
 
 import { Tag } from "primereact/tag";
 import routes from "../utils/routes";
 
 // import "../Proveedor.css";
 import axios from "axios";
+const token = JSON.parse(localStorage.getItem("user")).Token;
+
+const redirectToPDF = async (rowData) => {
+      console.clear();
+          // console.log(event);
+      const PurchaseOrderId = rowData.Id;
+      const apiUrl = `${routes.BASE_URL_SERVER}/GetPurchaseOrder/${PurchaseOrderId}`;
+      const config = {
+        headers: {
+          "x-access-token": token,
+        },
+      };
+      const response = await axios.get(apiUrl, config);
+      console.log(response.data.data);
+      const datosPDf = response.data.data.purchaseOrderHeader;
+      const detail = response.data.data.Detail;
+      datosPDf.details = detail;
+      console.clear();
+      console.log(datosPDf);
+      generatePDF(datosPDf);// Generar el PDF con los datos del rowData
+    };
+
 function Autorizador() {
   const hideDialog = (id) => {
     setShowModal({ ...showModal, [id]: false });
@@ -39,7 +62,7 @@ function Autorizador() {
   };
 
   const priceBodyTemplate = (rowData) => {
-    return formatCurrency(rowData.TotalWithoutTaxes);
+    return formatCurrency(rowData.Total);
   };
 
   const priceBodyTemplateU = (Details) => {
@@ -470,31 +493,57 @@ function Autorizador() {
               paginator
               rows={30}
             >
-              <Column expander style={{ width: "3em" }} />
-              <Column field="DocNum" header="Orden" sortable></Column>
+              <Column expander style={{ width: "2%" }} />
+              <Column field="DocNum" header="Orden" sortable style={{ width: "8%" }}></Column>
               <Column
                 field="BusinessPartnerCardName"
                 header="Proveedor"
                 sortable
+                style={{ width: "15%" }}
               ></Column>
               <Column
                 field="DocDueDate"
                 header="Fecha de orden"
                 sortable
+                style={{ width: "8%" }}
               ></Column>
-              <Column field="OcrCode" header="Centro Costo" sortable></Column>
-              <Column field="CompanyName" header="Empresa" sortable></Column>
+              <Column field="OcrCode" header="Centro Costo" sortable style={{ width: "8%" }}></Column>
+              <Column field="CompanyName" header="Empresa" sortable style={{ width: "15%" }}></Column>
               <Column
                 field="TotalWithoutTaxes"
                 body={priceBodyTemplate}
-                header="Importe antes de IVA"
+                header="Importe despues de IVA"
                 sortable
+                style={{ width: "12%" }}
               ></Column>
-              <Column field="Comments" header="Comentarios"></Column>
-              <Column header="Estatus" body={statusTemplate}></Column>
+              <Column field="Comments" header="Comentarios" style={{ width: "12%" }}></Column>
+              <Column
+                  header="PDF"
+                  style={{ width: "3%" }}
+                  body={(rowData) => (
+                    <div
+                      onClick={(e) => e.stopPropagation()}
+                      style={{ display: "flex" }}
+                    >
+                      <Button
+                        onClick={() => redirectToPDF(rowData)} // Agrega la función para redireccionar a la página de detalle
+                        label={
+                          <i
+                            className="pi pi-file-pdf ff"
+                            style={{ fontSize: "24px", color: "#f73164" }}
+                          />
+                        }
+                        text
+                      />
+                    </div>
+                  )}
+                ></Column>
+
+              <Column header="Estatus" body={statusTemplate} style={{ width: "7%" }}></Column>
               <Column
                 header="Autorizacion"
                 body={approvalStatusTemplate}
+                style={{ width: "10%" }}
               ></Column>
             </DataTable>
           )}
