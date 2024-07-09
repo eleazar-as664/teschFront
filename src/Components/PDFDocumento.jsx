@@ -4,6 +4,19 @@ import 'jspdf-autotable';
 const generatePDF = (data) => {
   const doc = new jsPDF();
 
+  const formatCurrency = (value) => {
+    const formattedValue = new Intl.NumberFormat("en-US", {
+      minimumFractionDigits: 2,
+      useGrouping: true
+    }).format(value);
+
+    return formattedValue;
+  };
+
+  const numberTemplate = (data) => {
+    return formatCurrency(data);
+  };
+
 
   const dataREP = [
         {          
@@ -105,11 +118,11 @@ const generatePDF = (data) => {
       const detailsTableData = detailsData.map(item => [
         item.ItemCode || '',
         item.Description || '',
-        item.OcrCode2 || '',
+        item.OcrCode || '',
         item.Quantity || '',
         item.BuyUnitMsr || '',
-        item.PriceByUnit +' MXP' || '',
-        item.PriceByUnit * item.Quantity +' MXP'
+        numberTemplate(item.PriceByUnit) +' MXP' || '',
+        numberTemplate(item.PriceByUnit * item.Quantity) +' MXP'
       ]);
     
     
@@ -120,7 +133,7 @@ const generatePDF = (data) => {
         body: detailsTableData,
         theme: "grid",
         styles: {
-          fontSize: 8,
+          fontSize: 6,
           valign: 'middle',
           halign: 'center'
         },
@@ -133,11 +146,11 @@ const generatePDF = (data) => {
         theme: "grid",
         columnStyles: { 0: { fontSize:'8', font:'helvetica', fontStyle: 'bold', fillColor: [255,255,255], cellWidth: 35, lineWidth : 0},
                         1: { fontSize:'8', font:'helvetica', fillColor: [255,255,255], cellWidth: 77, lineWidth : 0},
-                        2: { fontSize:'8', font:'helvetica', fontStyle: 'bold',fillColor: [255,255,255], cellWidth: 35},
-                        3: { fontSize:'8', font:'helvetica', fillColor: [255,255,255], cellWidth: 35},                        
+                        2: { fontSize:'8', font:'helvetica', fontStyle: 'bold',fillColor: [255,255,255], cellWidth: 35, halign: 'right'},
+                        3: { fontSize:'8', font:'helvetica', fillColor: [255,255,255], cellWidth: 35, halign: 'right'},                        
                       },
         body: [
-            ['Forma de pago:', data.U_FormaPago33, 'Subtotal',data.Subtotal +' MXP'],
+            ['Forma de pago:', data.U_FormaPago33, 'Subtotal',numberTemplate(data.Subtotal) +' MXP'],
             ['Uso CFDI:', data.U_UsoCFDI, 'Ret. IVA:','0.0 MXP'],
             ['Metodo de pago:', data.U_MetodoPago33, 'Ret. ISR:','0.0 MXP']
         ],
@@ -147,12 +160,12 @@ const generatePDF = (data) => {
       startY: doc.lastAutoTable.finalY,
       theme: "grid",
       columnStyles: { 0: { fontSize:'8', font:'helvetica', fontStyle: 'bold', fillColor: [255,255,255], cellWidth: 112, lineWidth : 0},
-                      1: { fontSize:'8', font:'helvetica', fontStyle: 'bold',fillColor: [255,255,255], cellWidth: 35},
-                      2: { fontSize:'8', font:'helvetica', fillColor: [255,255,255], cellWidth: 35},                        
+                      1: { fontSize:'8', font:'helvetica', fontStyle: 'bold',fillColor: [255,255,255], cellWidth: 35, halign: 'right'},
+                      2: { fontSize:'8', font:'helvetica', fillColor: [255,255,255], cellWidth: 35, halign: 'right'},                        
                     },
       body: [
-          ['Referencia de documento:', 'Impuesto:',data.IVA +' MXP'] ,
-          [ data.NumAtCard, 'Total documento:',data.Total +' MXP'],
+          ['Referencia de documento:', 'Impuesto:',numberTemplate(data.IVA) +' MXP'] ,
+          [ data.NumAtCard, 'Total documento:', numberTemplate(data.Total) +' MXP'],
       ],
   });  
 
@@ -164,6 +177,17 @@ const generatePDF = (data) => {
     doc.setFontSize(8); // Tamaño de fuente para el título de la sección
     doc.setFont('helvetica', 'normal');
     doc.text(data.DireccionEnvio, 16, startY + 10); // Título de la sección
+
+    startY = doc.lastAutoTable.finalY + 20;
+    doc.setFontSize(8); // Tamaño de fuente para el título de la sección
+    doc.setFont('helvetica', 'bold'); // Texto en negrita
+    doc.text('Comentarios:', 16, startY + 5); // Título de la sección
+
+    doc.setFontSize(8); // Tamaño de fuente para el título de la sección
+    doc.setFont('helvetica', 'normal');
+    doc.text(data.Comments, 16, startY + 10); // Título de la sección
+
+
 
     const addFooters = doc => {
       const pageCount = doc.internal.getNumberOfPages()
