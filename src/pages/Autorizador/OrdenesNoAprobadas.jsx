@@ -240,6 +240,18 @@ function OrdenesNoAprobadas() {
               sortable 
             ></Column>
             <Column
+              field="UserAuthorizer"
+              header="Autorizador"
+              style={{ width: "20%" }}
+              sortable 
+            ></Column>
+            <Column
+              field="AuthorizationDate"
+              header="Fecha Autorización"
+              style={{ width: "20%" }}
+              sortable 
+            ></Column>
+            <Column
               field="ApprovalStatus"
               header="Estatus"
               style={{ width: "20%" }}
