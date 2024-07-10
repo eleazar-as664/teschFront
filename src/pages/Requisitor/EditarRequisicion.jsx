@@ -676,7 +676,7 @@ function EditarRequisicion() {
           <Card title="Adjuntos" className="adjuntosaa">
             <div className="p-field-group">
               <div className="row align-right">
-                {files.length < 2 && (
+                {files.length < 10 && (
                   <FileUpload
                     mode="basic"
                     name="demo[]"

@@ -515,7 +515,7 @@ function NuevaCompra() {
       <Card title="Adjuntos" className="adjuntosaa">
         <div className="p-field-group">
           <div className="row align-right">
-            {archivosSeleccionados.length < 2 && (
+            {archivosSeleccionados.length < 10 && (
               <FileUpload
                 mode="basic"
                 name="demo[]"
