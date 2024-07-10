@@ -23,27 +23,6 @@ import routes from "../utils/routes";
 
 // import "../Proveedor.css";
 import axios from "axios";
-const token = JSON.parse(localStorage.getItem("user")).Token;
-
-const redirectToPDF = async (rowData) => {
-      console.clear();
-          // console.log(event);
-      const PurchaseOrderId = rowData.Id;
-      const apiUrl = `${routes.BASE_URL_SERVER}/GetPurchaseOrder/${PurchaseOrderId}`;
-      const config = {
-        headers: {
-          "x-access-token": token,
-        },
-      };
-      const response = await axios.get(apiUrl, config);
-      console.log(response.data.data);
-      const datosPDf = response.data.data.purchaseOrderHeader;
-      const detail = response.data.data.Detail;
-      datosPDf.details = detail;
-      console.clear();
-      console.log(datosPDf);
-      generatePDF(datosPDf);// Generar el PDF con los datos del rowData
-    };
 
 function Autorizador() {
   const hideDialog = (id) => {
@@ -101,6 +80,38 @@ function Autorizador() {
   const [products, setProducts] = useState([]);
   const [enviandoASAP, setEnviandoASAP] = useState(false);
   const [error, setError] = useState(false);
+
+  const redirectToPDF = async (rowData) => {
+
+    try {
+      console.clear();
+          // console.log(event);
+      const PurchaseOrderId = rowData.Id;
+      const apiUrl = `${routes.BASE_URL_SERVER}/GetPurchaseOrder/${PurchaseOrderId}`;
+      const config = {
+        headers: {
+          "x-access-token": token,
+        },
+      };
+      const response = await axios.get(apiUrl, config);
+      console.log(response.data.data);
+      const datosPDf = response.data.data.purchaseOrderHeader;
+      const detail = response.data.data.Detail;
+      datosPDf.details = detail;
+      console.clear();
+      console.log(datosPDf);
+      generatePDF(datosPDf);// Generar el PDF con los datos del rowData
+    } catch (error) {
+      console.error(
+        "Error al obtener datos de la API:",
+        error.response.data.message
+      );
+    } finally {
+      setLoadingSpinner(false);
+    }
+  };
+
+
   const fetchDataGetPurchaseOrdersPendingApproval = async () => {
     try {
       console.clear();
