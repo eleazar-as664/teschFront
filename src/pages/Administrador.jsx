@@ -291,7 +291,7 @@ function Administrador() {
         >
           {rowDataToCancel && (
             <div>
-              <p>¿Estás seguro que deseas descativar el usuario?</p>
+              <p>¿Estás seguro que deseas desactivar el usuario?</p>
               <p> {rowDataToCancel.UserName}</p>
               <div class="row">
                 <Button
