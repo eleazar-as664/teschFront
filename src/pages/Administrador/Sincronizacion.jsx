@@ -88,7 +88,6 @@ function Sincronizacion() {
 
   const fetchDataCompanies = async () => {
     try {
-      console.clear();
       const apiUrlCompanies = `${routes.BASE_URL_SERVER}/GetCompanies`;
 
       const config = {
@@ -129,7 +128,7 @@ function Sincronizacion() {
     } catch (error) {
       console.error("Error al enviar la solicitud a SAP:", error);
       toast.current.show({
-        severity: "Error",
+        severity: "error",
         summary: "Error",
         detail: "Error al sincronizar compañias",
         life: 3000,
@@ -195,8 +194,8 @@ function Sincronizacion() {
     setEnviandoASAP(true);
     try {
       const data = {
-        Inventoriable: inventoriable,
-        Expense: valorEdit,
+        Inventoriable: value1nventariable,
+        Expense: value2,
         Id: companySettingsId,
       };
 
@@ -220,10 +219,11 @@ function Sincronizacion() {
       // fetchData();
     } catch (error) {
       console.error("Error al actualizar datos de SAP:", error);
+      let { data:{error:{detailMessage}} } = error.response;
       toast.current.show({
         severity: "error",
-        summary: "Error",
-        detail: "Error al actualizar compañias",
+        summary: "Error en la actualización.",
+        detail: detailMessage,
         life: 3000,
       });
     } finally {
@@ -233,6 +233,27 @@ function Sincronizacion() {
 
     }
   };
+
+  const handleInventoriable = (e) => {
+    console.log("CAAMBIANDO VALORES DE INVRNTRIBALE:",e.value);
+    if (e.value > 0) {
+      setValue1(e.value);
+    } else {
+      setValue1(0);
+    }
+  };
+
+
+  const handleGasto= (e) => {
+    console.log("CAAMBIANDO VALORES DE FATOS:",e.value);
+    if (e.value > 0) {
+      setValue2(e.value);
+    }
+    else{
+      setValue2(0);
+    }
+  };
+
   const handleCreateCompanySettings = async () => {
     setIsButtonDisabled(true);
     try {
@@ -261,11 +282,13 @@ function Sincronizacion() {
 
       // fetchData();
     } catch (error) {
-      console.error("Error al enviar la solicitud a SAP:", error);
+      console.error("Error al crear gastos en compañias:", error);
+
+      let { data:{error:{detailMessage}} } = error.response;
       toast.current.show({
-        severity: "Error",
-        summary: "Error",
-        detail: "Error al configurar empresa.",
+        severity: "error",
+        summary: "Error en asignacion de limite de gastos.",
+        detail: detailMessage,
         life: 3000,
       });
     } finally {
@@ -367,14 +390,14 @@ function Sincronizacion() {
                   <InputNumber
                     id="value1"
                     value={inventoriable}
-                    onValueChange={(e) => setValue1(e.value)}
+                    onChange={handleInventoriable}
                   />
                 )}
                 {getCompanySettings.length <= 0 && (
                   <InputNumber
                     id="value1"
                     value={value1nventariable}
-                    onValueChange={(e) => setValue1(e.value)}
+                    onValueChange={handleInventoriable}
                   />
                 )}
               </div>
@@ -384,14 +407,14 @@ function Sincronizacion() {
                   <InputNumber
                     id="value1"
                     value={valorEdit}
-                    onValueChange={(e) => setValue1(e.value)}
+                    onChange={handleGasto}
                   />
                 )}
                 {getCompanySettings.length <= 0 && (
                   <InputNumber
                     id="value2"
                     value={value2}
-                    onValueChange={(e) => setValue2(e.value)}
+                    onValueChange={handleGasto}
                   />
                 )}
               </div>
