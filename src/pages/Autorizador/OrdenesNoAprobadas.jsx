@@ -44,6 +44,7 @@ function OrdenesNoAprobadas() {
 
   const user = JSON.parse(localStorage.getItem("user"));
   const token = JSON.parse(localStorage.getItem("user")).Token;
+  const[DocNumToSearch, setDocNumToSearch] = useState("");
 
   const fetchDataPurchaseOrderHeadersPendingApproval = async () => {
     try {
@@ -140,14 +141,47 @@ function OrdenesNoAprobadas() {
     );
   };
 
+  const fetchDataToSearchPurchaseOrderByDocNum = async (docNumToSearch) => {  
+    try {
+      const IdUsuario = user.UserId;
+      const urlFetch = `${routes.BASE_URL_SERVER}/SearchPurchaseOrdersByDocNum/${IdUsuario}/${docNumToSearch}`;
+      const config = {
+        headers: {
+          "x-access-token": token,
+        },
+      };
+      console.log(urlFetch);
+      const responseFetch = await axios.get(urlFetch, config);
+      console.log("RESPUESTA OBTENIDA:",responseFetch.data.data);
+      let dataFetched = responseFetch.data.data;
+      // setpurchaseOrderData(dataFetched.data.data);
+      const updatedData = dataFetched.purchaseOrdersMapped.map((item) => ({
+        ...item,
+        concatenatedInfo: `${item.BusinessName} - ${item.DocDate}`,
+      }));
+      setPurchaseOrderData(updatedData);
+    } catch (error) {
+      console.error("Error al obtener datos de la API:", error);
+      // let { response: { data: { detailMessage, message } } } = error;
+    }
+  }
+
   const onGlobalFilterChange = (e) => {
-    const value = e.target.value;
-    let _filters = { ...filters };
 
-    _filters["global"].value = value;
+    setDocNumToSearch(e.target.value);
+    console.log("DocNumToSearch", e.target.value);
+    if(e.target.value === ""){
+      fetchDataPurchaseOrderHeadersPendingApproval();
+    }else{
+      fetchDataToSearchPurchaseOrderByDocNum(e.target.value);
+    }
+    // const value = e.target.value;
+    // let _filters = { ...filters };
 
-    setFilters(_filters);
-    setGlobalFilterValue(value);
+    // _filters["global"].value = value;
+
+    // setFilters(_filters);
+    // setGlobalFilterValue(value);
   };
   const renderHeader = () => {
     return (
@@ -156,7 +190,7 @@ function OrdenesNoAprobadas() {
           <InputIcon className="pi pi-search" />
           <InputText
             className="search-input"
-            value={globalFilterValue}
+            value={DocNumToSearch}
             onChange={onGlobalFilterChange}
             placeholder="Buscar ..."
           />
