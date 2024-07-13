@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { DataTable } from "primereact/datatable";
 import { FilterMatchMode } from "primereact/api";
 
@@ -14,6 +14,8 @@ import { InputText } from "primereact/inputtext";
 import { IconField } from "primereact/iconfield";
 import { InputIcon } from "primereact/inputicon";
 import { TabMenu } from "primereact/tabmenu";
+import { Paginator } from "primereact/paginator";
+
 
 import { Toast } from "primereact/toast";
 
@@ -24,6 +26,7 @@ import routes from "../../utils/routes";
 import "../../Components/Styles/Global.css";
 import axios from "axios";
 function OrdenesNoAprobadas() {
+  const toast = useRef(null);
   const navigate = useNavigate();
   const [activeIndex] = useState(1);
 
@@ -44,13 +47,38 @@ function OrdenesNoAprobadas() {
 
   const user = JSON.parse(localStorage.getItem("user"));
   const token = JSON.parse(localStorage.getItem("user")).Token;
+  const NUMERO_REGISTROS_POR_PAGINA = 30;
+  const [numeroPagina, setNumeroPagina] = useState(1);
+  const [totalRecords, setTotalRecords] = useState(0);
 
-  const fetchDataPurchaseOrderHeadersPendingApproval = async () => {
+
+
+
+const generarNumeroPagina= (incremento,totalRegistros) => {
+
+  const array = {};
+  let valorActual = 0;
+
+  for (let i = 1; valorActual < totalRegistros; i++) {
+      array[i] = valorActual;
+      valorActual += incremento;
+  }
+
+  return array;
+};
+
+const handlePageChange = (e) => {
+  let nuevaPagina = e.page + 1;
+  setNumeroPagina(nuevaPagina);
+  fetchDataPurchaseOrderHeadersPendingApproval(nuevaPagina);
+};
+
+  const fetchDataPurchaseOrderHeadersPendingApproval = async (numeroPagina=1) => {
     try {
       console.clear();
       console.log("Cargando datos de la API...");
       const IdUsuario = user.UserId;
-      const apiUrl = `${routes.BASE_URL_SERVER}/GetAllPurchaseOrders/${IdUsuario}`;
+      const apiUrl = `${routes.BASE_URL_SERVER}/GetAllPurchaseOrdersPagination/${IdUsuario}/${NUMERO_REGISTROS_POR_PAGINA}/${numeroPagina}`;
       const config = {
         headers: {
           "x-access-token": token,
@@ -58,17 +86,29 @@ function OrdenesNoAprobadas() {
       };
       console.log(apiUrl);
       const response = await axios.get(apiUrl, config);
-      console.log(response.data.data);
+      console.log("Respuesta de la API:", response);
+      setTotalRecords(response.data.data.totalPurchaseOrders);
       // setpurchaseOrderData(response.data.data);
-      const updatedData = response.data.data.map((item) => ({
+      const updatedData = response.data.data.purchaseOrdersMapped.map((item) => ({
         ...item,
         concatenatedInfo: `${item.BusinessName} - ${item.DocDate}`,
       }));
       console.log(updatedData);
-
+      console.log("Total de registros:", totalRecords);
       setPurchaseOrderData(updatedData);
+      const numeroPaginaDinamico = generarNumeroPagina(NUMERO_REGISTROS_POR_PAGINA, response.data.data.totalPurchaseOrders);      
+      const numeroPaginasTotales = numeroPaginaDinamico[numeroPagina];
+      setNumeroPagina(numeroPaginasTotales)
+
       // setpurchaseOrderData(response.data.data.purchaseRequestsHeaders);
     } catch (error) {
+      let { response: { data: { detailMessage, message } } } = error;
+      toast.current.show({
+        severity: "error",
+        summary: message,
+        detail: detailMessage,
+        life: 8000,
+      });
       console.error(
         "Error al obtener datos de la API:",
         error.response.data.message
@@ -191,6 +231,7 @@ function OrdenesNoAprobadas() {
         </div>
       </Card>
       <Card title="" className="cardProveedor">
+        <Toast ref={toast} />
         <TabMenu model={items} activeIndex={activeIndex} />
         <div className="p-grid p-fluid">
           <DataTable
@@ -212,8 +253,6 @@ function OrdenesNoAprobadas() {
             ]}
             emptyMessage="No hay resultados"
             header={header}
-            paginator
-            rows={30}
           >
             <Column
               field="DocNum"
@@ -308,6 +347,7 @@ function OrdenesNoAprobadas() {
               bodyStyle={{ textAlign: "center" }}
             ></Column>
           </DataTable>
+          <Paginator first={numeroPagina}  rows={NUMERO_REGISTROS_POR_PAGINA} totalRecords={totalRecords} onPageChange={handlePageChange}  />
         </div>
       </Card>
     </Layout>
