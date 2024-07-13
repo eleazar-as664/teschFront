@@ -6,7 +6,7 @@ const generatePDF = (data) => {
 
   const formatCurrency = (value) => {
     const formattedValue = new Intl.NumberFormat("en-US", {
-      minimumFractionDigits: 2,
+      minimumFractionDigits: 4,
       useGrouping: true
     }).format(value);
 
@@ -16,7 +16,6 @@ const generatePDF = (data) => {
   const numberTemplate = (data) => {
     return formatCurrency(data);
   };
-
 
   const dataREP = [
         {          
@@ -73,6 +72,14 @@ const generatePDF = (data) => {
       return doc.lastAutoTable.finalY + 15;  
     }
     addTableToPDF(dataREP, "", doc, 5);
+
+    if (data.LogoPath != '' )
+      {
+          const imgProps= doc.getImageProperties('data:image/png;base64,'+ data.LogoPath);
+          const pdfWidth = 50;
+          const pdfHeight = (imgProps.height * pdfWidth) / imgProps.width;
+          doc.addImage('data:image/png;base64,'+ data.LogoPath, 'PNG', 30, 5, pdfWidth, pdfHeight);
+      }
 
    doc.autoTable({
           startY: doc.lastAutoTable.finalY + 5,
@@ -151,8 +158,8 @@ const generatePDF = (data) => {
                       },
         body: [
             ['Forma de pago:', data.U_FormaPago33, 'Subtotal',numberTemplate(data.Subtotal) +' MXP'],
-            ['Uso CFDI:', data.U_UsoCFDI, 'Ret. IVA:','0.0 MXP'],
-            ['Metodo de pago:', data.U_MetodoPago33, 'Ret. ISR:','0.0 MXP']
+            ['Uso CFDI:', data.U_UsoCFDI, 'Ret. IVA:', numberTemplate(data.Subtotal * (data.RetencionIVA/100) ) +' MXP'],
+            ['Metodo de pago:', data.U_MetodoPago33, 'Ret. ISR:', numberTemplate(data.Subtotal * (data.RetencionSobreRenta/100) ) + ' MXP']
         ],
     });      
 
@@ -165,7 +172,7 @@ const generatePDF = (data) => {
                     },
       body: [
           ['Referencia de documento:', 'Impuesto:',numberTemplate(data.IVA) +' MXP'] ,
-          [ data.NumAtCard, 'Total documento:', numberTemplate(data.Total) +' MXP'],
+          [ data.NumAtCard, 'Total documento:', numberTemplate(data.Subtotal + data.IVA - (data.Subtotal * ( (data.RetencionIVA+data.RetencionSobreRenta)/100 ) ) ) +' MXP'],
       ],
   });  
 
@@ -203,16 +210,6 @@ const generatePDF = (data) => {
     }
 
     addFooters(doc)
-
-  //  doc.addImage('data:image/png;base64,'+ data.LogoPath, 'PNG', 32, 1);
-
-  if (data.LogoPath != '' )
-    {
-        const imgProps= doc.getImageProperties('data:image/png;base64,'+ data.LogoPath);
-        const pdfWidth = 50;
-        const pdfHeight = (imgProps.height * pdfWidth) / imgProps.width;
-        doc.addImage('data:image/png;base64,'+ data.LogoPath, 'PNG', 30, 5, pdfWidth, pdfHeight);
-    }
   // Guardar el PDF
   doc.save('orden_de_compra.pdf');
 };
