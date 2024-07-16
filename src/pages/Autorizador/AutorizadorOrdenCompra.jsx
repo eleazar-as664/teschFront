@@ -13,6 +13,7 @@ import { Divider } from "primereact/divider";
 import { Avatar } from 'primereact/avatar';
 import routes from "../../utils/routes";
 import axios from "axios";
+
 function  AutorizadorOrdenCompra() {
   const [files, setFiles] = useState([]);
 
@@ -31,6 +32,10 @@ function  AutorizadorOrdenCompra() {
   const [notasAgregar, setNotasAgregar] = useState("");
   const[autorizando, setAutorizando] = useState(false);
   const[cancelando, setCancelando] = useState(false);
+
+  const handleBack = () => {
+    window.history.back();
+  };
   // Agregar event listener al cambio de archivos
   const getDatosFiles = async () => {
     try {
@@ -150,8 +155,11 @@ function  AutorizadorOrdenCompra() {
     <Layout>
     <div class="body-ordenCompra">
       <Card className="card-header">
-        <div class="row"> 
-            <div className="p-card-title">Detalle Autorizar</div>
+        <div class="row" > 
+        <div className="p-card-title">Detalle Autorizar</div>
+              <Button label="Regresar" link onClick={handleBack}
+              style= {{width: "70px" }}
+              />
         </div>
       </Card>
         <Toast ref={toast} />

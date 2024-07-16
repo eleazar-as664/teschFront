@@ -169,7 +169,6 @@ function NuevaCompra() {
           </DataTable>
         </Card>
 
-        {filesProceedor.length >= 3 ? (
           <Card title="Adjuntos" className="adjuntos">
             <div className="p-field-group">
               <div className="row align-right"></div>
@@ -194,65 +193,6 @@ function NuevaCompra() {
               </div>
             </div>
           </Card>
-        ) : (
-          <Card title="Adjuntos" className="adjuntos">
-            <div className="p-field-group">
-              <div className="row align-right">
-                {archivosSeleccionados.length < 3 ? (
-                  <FileUpload
-                    mode="basic"
-                    name="demo[]"
-                    multiple
-                    accept="image/*,.pdf,.xml"
-                    maxFileSize={1000000}
-                    onSelect={handleFileSelect}
-                    auto
-                    chooseLabel="Agregar"
-                    className="upload-field-detail"
-                  />
-                ) : (
-                  <Button
-                    onClick={enviarArchivosSAP}
-                    className="pi pi-file-pdf"
-                    rounded
-                    label="Enviar"
-                  />
-                )}
-              </div>
-              <div className="row">
-                <div className="p-col-field">
-                  <DataTable value={archivosSeleccionados}>
-                    <Column field="name" header="Nombre" />
-                    <Column
-                      header="Acción"
-                      body={(rowData) => (
-                        <a
-                          href={rowData.objectURL}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                        >
-                          Ver
-                        </a>
-                      )}
-                    />
-                    <Column
-                      header=""
-                      body={(rowData) => (
-                        <Button
-                          onClick={() => eliminarFiles(rowData)}
-                          icon="pi pi-times"
-                          rounded
-                          severity="danger"
-                          aria-label="Cancel"
-                        />
-                      )}
-                    ></Column>
-                  </DataTable>
-                </div>
-              </div>
-            </div>
-          </Card>
-        )}
       </div>
     </Layout>
   );
