@@ -163,12 +163,18 @@ function Sincronizacion() {
       console.log(
         "::::::::::::::::::::::::::responseGetCompanySettings::::::::::::::::::::::::::::"
       );
-
+      setGetCompanySettings([]);
       console.log(data);
+      console.log(`VALOR INVENTARIBLE: ${data.Inventoriable}`);
+      console.log(`VALOR GASTO: ${data.Expense}`);
+      setValue1(data.Inventoriable);
+      setValue2(data.Expense);
+      console.log(`Valor de Inventariable: ${value1nventariable}`);
+      console.log(`Valor de Gastos: ${value2}`);
       setValorEdit(data.Expense);
       setInventoriable(data.Inventoriable);
       setCompanySettingsId(data.CompanySettingsId);
-      setGetCompanySettings((prevSettings) => [...prevSettings, data]);
+      setGetCompanySettings([data]);
       console.log("::::::::::::::::::::::::::::::::::::::::::::::::::::::");
       console.log(getCompanySettings);
       //   setPurchaseOrderData(updatedData);c
@@ -179,6 +185,7 @@ function Sincronizacion() {
   };
   const redirectToEditar = (datos) => {
     console.clear();
+    console.log("Consultando datos de la empresa:", datos);
     const rowData = datos;
     setVisibleConfiguracionEmpresa(true);
     console.log(getCompanySettings.length);
@@ -187,7 +194,6 @@ function Sincronizacion() {
     setValue1();
     fetchDataGetCompanySettings(rowData);
 
-    console.log(rowData);
   };
 
   const handleUpdateCompanySettings = async () => {
