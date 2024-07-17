@@ -4,6 +4,7 @@ import { FilterMatchMode } from "primereact/api";
 
 import { Column } from "primereact/column";
 import { Card } from "primereact/card";
+import { FilterService } from "primereact/api";
 import { FileUpload } from "primereact/fileupload";
 import { Dialog } from "primereact/dialog";
 import { Button } from "primereact/button";
@@ -50,6 +51,10 @@ function OrdenesNoAprobadas() {
   const NUMERO_REGISTROS_POR_PAGINA = 30;
   const [numeroPagina, setNumeroPagina] = useState(1);
   const [totalRecords, setTotalRecords] = useState(0);
+  const [companiesFilter, setCompaniesFilter] = useState([]);
+  const [statusFilter, setStatusFilter] = useState([]);
+  const [urlGlobalSearch, setUrlGlobalSearch] = useState("");
+  const [globalSearchValue, setGlobalSearchValue] = useState("");
 
 
 
@@ -70,8 +75,44 @@ const generarNumeroPagina= (incremento,totalRegistros) => {
 const handlePageChange = (e) => {
   let nuevaPagina = e.page + 1;
   setNumeroPagina(nuevaPagina);
-  fetchDataPurchaseOrderHeadersPendingApproval(nuevaPagina);
+  if(globalSearchValue.length === 0){
+    fetchDataPurchaseOrderHeadersPendingApproval(nuevaPagina);
+  }else
+  {
+    fetchSearchData(globalSearchValue,nuevaPagina);
+  }
 };
+
+const fetchDataFilters = async () => {
+  try{
+    const IdUsuario = user.UserId;
+      const apiUrl = `${routes.BASE_URL_SERVER}/GetPurchaseOrdersFilters/${IdUsuario}`;
+      const config = {
+        headers: {
+          "x-access-token": token,
+        },
+      };
+      console.log(apiUrl);
+      const response = await axios.get(apiUrl, config);
+      let { data: { data: { purchaseFilters } } } = response;
+      console.log("Companies filter:", companiesFilter);
+      console.log("Status filter:", statusFilter);
+      setCompaniesFilter(purchaseFilters.companiesFilter);
+      setStatusFilter(purchaseFilters.statusFilter);
+  } catch (error) {
+    let { response: { data: { detailMessage, message } } } = error;
+    toast.current.show({
+      severity: "error",
+      summary: message,
+      detail: detailMessage,
+      life: 8000,
+    });
+    console.error(
+      "Error al obtener datos de la API:",
+      error.response.data.message
+    );
+  }
+}
 
   const fetchDataPurchaseOrderHeadersPendingApproval = async (numeroPagina=1) => {
     try {
@@ -120,6 +161,7 @@ const handlePageChange = (e) => {
 
   useEffect(() => {
     localStorage.removeItem("purchaseOrderData");
+    fetchDataFilters();
     fetchDataPurchaseOrderHeadersPendingApproval();
   }, []);
 
@@ -180,13 +222,64 @@ const handlePageChange = (e) => {
     );
   };
 
+  const fetchSearchData = async (dataToSearch,numeroPagina=1) => {
+    try{
+      console.clear();
+      console.log("BUSCANDO DATOS datos de la API...");
+      const IdUsuario = user.UserId;
+        const apiUrl = `${routes.BASE_URL_SERVER}/SearchPurchaseOrders?UserId=${IdUsuario}&SearchData=${dataToSearch}&MainSearch=true&Limit=${NUMERO_REGISTROS_POR_PAGINA}&Offset=${numeroPagina}`;
+        const config = {
+          headers: {
+            "x-access-token": token,
+          },
+        };
+        console.log(apiUrl);
+        const response = await axios.get(apiUrl, config);
+        let { data: { data: { purchaseOrdersMapped,totalPurchaseOrders } } } = response;
+        console.log("ORDENES ENCONTRADAS:", purchaseOrdersMapped);
+        console.log("TOTAL ORDENES ENCONTRADAS:", totalPurchaseOrders);
+        console.log("NUMERO DE PAGINA: ", numeroPagina);
+        setPurchaseOrderData(purchaseOrdersMapped);
+        setTotalRecords(totalPurchaseOrders);
+        const numeroPaginaDinamico = generarNumeroPagina(NUMERO_REGISTROS_POR_PAGINA, totalPurchaseOrders);      
+        const numeroPaginasTotales = numeroPaginaDinamico[numeroPagina];
+      setNumeroPagina(numeroPaginasTotales)
+    } catch (error) {
+      console.log("Error al buscar datos:", error);
+      let { response: { data: { detailMessage, message,code } } } = error;
+      if(code === 404){
+        setPurchaseOrderData([]);
+      }
+      toast.current.show({
+        severity: "error",
+        summary: message,
+        detail: detailMessage,
+        life: 8000,
+      });
+      console.error(
+        "Error al obtener datos de la API:",
+        error.response.data.message
+      );
+    }
+  }
+
   const onGlobalFilterChange = (e) => {
+    console.log("Valor del filtro global:", e.target.value);
     const value = e.target.value;
-    let _filters = { ...filters };
+    setGlobalSearchValue(value);
+    if(value.length === 0){
+      fetchDataPurchaseOrderHeadersPendingApproval();
+    }
+    else
+    {
+      fetchSearchData(value);
+    }
 
-    _filters["global"].value = value;
+    // let _filters = { ...filters };
 
-    setFilters(_filters);
+    // _filters["global"].value = value;
+
+    // setFilters(_filters);
     setGlobalFilterValue(value);
   };
   const renderHeader = () => {
@@ -204,6 +297,11 @@ const handlePageChange = (e) => {
       </div>
     );
   };
+
+  FilterService.register('custom_activity', (value, filters) => {
+    console.log("Valor del filtro:", value);
+    console.log("Filtros:", filters);
+  });
 
   const header = renderHeader();
 
@@ -257,6 +355,8 @@ const handlePageChange = (e) => {
             <Column
               field="DocNum"
               header="Orden"
+              filter
+              filterPlaceholder="Buscar por orden"
               sortable 
               style={{ width: "10%" }}
             ></Column>
