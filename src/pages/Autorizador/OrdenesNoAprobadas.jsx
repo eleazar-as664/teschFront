@@ -298,10 +298,11 @@ const fetchDataFilters = async () => {
     );
   };
 
-  FilterService.register('custom_activity', (value, filters) => {
-    console.log("Valor del filtro:", value);
-    console.log("Filtros:", filters);
-  });
+  const DocNumBodyTemplate = () => {
+    return (
+      <InputText  />
+    )
+  };
 
   const header = renderHeader();
 
@@ -321,6 +322,10 @@ const fetchDataFilters = async () => {
       },
     },
   ];
+
+  const justifyTemplate = () => {
+    return <p>Hola</p>;
+  }
   return (
     <Layout>
       <Card className="card-header">
@@ -355,9 +360,9 @@ const fetchDataFilters = async () => {
             <Column
               field="DocNum"
               header="Orden"
-              filter
-              filterPlaceholder="Buscar por orden"
               sortable 
+              filter
+              filterElement={DocNumBodyTemplate} 
               style={{ width: "10%" }}
             ></Column>
             <Column
