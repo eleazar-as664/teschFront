@@ -16,6 +16,8 @@ import { IconField } from "primereact/iconfield";
 import { InputIcon } from "primereact/inputicon";
 import { TabMenu } from "primereact/tabmenu";
 import { Paginator } from "primereact/paginator";
+import { InputNumber } from "primereact/inputnumber";
+import { MultiSelect } from "primereact/multiselect";
 
 
 import { Toast } from "primereact/toast";
@@ -55,6 +57,9 @@ function OrdenesNoAprobadas() {
   const [statusFilter, setStatusFilter] = useState([]);
   const [urlGlobalSearch, setUrlGlobalSearch] = useState("");
   const [globalSearchValue, setGlobalSearchValue] = useState("");
+  const [docNumFilterValue, setDocNumFilterValue] = useState("");
+  const [companiesFilterSelected, setCompaniesFilterSelected] = useState(null);
+  const [statusFilterSelected, setstatusFilterSelected] = useState(null);
 
 
 
@@ -298,9 +303,67 @@ const fetchDataFilters = async () => {
     );
   };
 
+
+  const handleCompanyFilterChange = (e) => {
+    setCompaniesFilterSelected(e.value);
+    console.log("Valor del filtro de compañia:", companiesFilterSelected);
+  }
+  
+  const rowFilterCompany = (option) => {
+    return (
+      <div className="flex align-items-center gap-2">
+          <span>{option.CompanyName}</span>
+      </div>
+    );
+  }
+  const CompanyFilter = () => {
+    return (
+        <MultiSelect
+            value={companiesFilterSelected}
+            options={companiesFilter}
+            itemTemplate={rowFilterCompany}
+            onChange={(e) => setCompaniesFilterSelected(e.value)} 
+            optionLabel="CompanyName"
+            placeholder="Buscar por compañia"
+            className="p-column-filter"
+            maxSelectedLabels={1}
+            style={{ minWidth: '14rem' }}
+        />
+    );
+};
+
+const rowFilterStatus = (option) => {
+  return (
+    <div className="flex align-items-center gap-2">
+        <span>{option.Status}</span>
+    </div>
+  );
+}
+const StatusFilter = () => {
+  return (
+      <MultiSelect
+          value={companiesFilterSelected}
+          options={statusFilter}
+          itemTemplate={rowFilterStatus}
+          onChange={(e) => setstatusFilterSelected(e.value)} 
+          optionLabel="Status"
+          placeholder="Buscar por Estatus"
+          className="p-column-filter"
+          maxSelectedLabels={1}
+          style={{ minWidth: '14rem' }}
+      />
+  );
+};
+
+  const handleDocNumInputChange = (e) => {
+    setDocNumFilterValue(e.value);
+    console.log("Valor del filtro DocNum:", docNumFilterValue);
+  }
+
+
   const DocNumBodyTemplate = () => {
     return (
-      <InputText  />
+      <InputNumber placeholder="Buscar Por numero de documento"  onChange={handleDocNumInputChange} />
     )
   };
 
@@ -323,9 +386,6 @@ const fetchDataFilters = async () => {
     },
   ];
 
-  const justifyTemplate = () => {
-    return <p>Hola</p>;
-  }
   return (
     <Layout>
       <Card className="card-header">
@@ -369,6 +429,8 @@ const fetchDataFilters = async () => {
               field="CompanyName"
               header="Empresa"
               style={{ width: "20%" }}
+              filter
+              filterElement={CompanyFilter}
               sortable 
             ></Column>
             <Column
@@ -400,6 +462,8 @@ const fetchDataFilters = async () => {
               header="Estatus"
               style={{ width: "20%" }}
               sortable 
+              filter
+              filterElement={StatusFilter}
               body={(rowData) => {
                 switch (rowData.ApprovalStatus) {
                   case "Para Autorizar":
