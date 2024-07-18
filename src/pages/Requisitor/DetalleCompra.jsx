@@ -354,7 +354,7 @@ function DetalleCompra() {
                     name="demo[]"
                     multiple
                     accept="image/*,.pdf"
-                    maxFileSize={1000000}
+                    maxFileSize={20000000}
                     onSelect={handleFileSelect}
                     auto
                     chooseLabel="Agregar"
