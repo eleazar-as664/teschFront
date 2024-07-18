@@ -344,24 +344,9 @@ function DetalleCompra() {
               </div>
             </div>
           </Card>
-{/* 
+
           <Card title="Adjuntos" className="adjuntosaa">
             <div className="p-field-group">
-              <div className="row align-right">
-                {files.length < 10 && (
-                  <FileUpload
-                    mode="basic"
-                    name="demo[]"
-                    multiple
-                    accept="image/*,.pdf"
-                    maxFileSize={20000000}
-                    onSelect={handleFileSelect}
-                    auto
-                    chooseLabel="Agregar"
-                    className="upload-field-detail"
-                  />
-                )}
-              </div>
               <div className="row">
                 <div className="p-col-field">
                   <DataTable value={files}>
@@ -396,7 +381,8 @@ function DetalleCompra() {
                 </div>
               </div>
             </div>
-          </Card> */}
+          </Card>
+
         </div>
       </div>
     </Layout>
