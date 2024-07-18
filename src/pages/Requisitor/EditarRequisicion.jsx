@@ -681,7 +681,7 @@ function EditarRequisicion() {
                     mode="basic"
                     name="demo[]"
                     multiple
-                    accept="image/*,.pdf"
+                    accept="*"
                     maxFileSize={1000000}
                     onSelect={handleFileSelect}
                     auto
