@@ -681,8 +681,8 @@ function EditarRequisicion() {
                     mode="basic"
                     name="demo[]"
                     multiple
-                    accept="image/*,.pdf"
-                    maxFileSize={11000000}
+                    accept="*"
+                    maxFileSize={1000000}
                     onSelect={handleFileSelect}
                     auto
                     chooseLabel="Agregar"

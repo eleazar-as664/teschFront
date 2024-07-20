@@ -512,28 +512,24 @@ function Proveedor() {
                 onClick={(e) => e.stopPropagation()}
                 style={{ display: "flex" }}
               >
-                {!rowData.Files ||
-                  (rowData.Files.length === 0 && ( // Verificar si Files está vacío
-                    <Button
-                      onClick={() =>
-                        activarArchivosModal(rowData.PurchaseOrderId)
-                      }
-                      // className="pi pi-file-import"
-                      // style={{ fontSize: "24px" }}
-                      aria-label="Cancel"
-                      
-                      icon="pi pi-file-import"
-                      rounded
-                      severity="info"
-                    />
+                {!rowData.Files || 
+                  (rowData.Files.length === 0 && 
+                    ( rowData.StatusSAP === "Abierto" && (// Verificar si Files está vacío
+                        <Button
+                          onClick={() =>
+                            activarArchivosModal(rowData.PurchaseOrderId)
+                          }
+                          aria-label="Cancel"
+                          
+                          icon="pi pi-file-import"
+                          rounded
+                          severity="info"
+                        />
+                      )
                   ))}
               </div>
             )}
           />
-          {/* <Column
-            headerStyle={{ width: "5%", minWidth: "5rem" }}
-            bodyStyle={{ textAlign: "center" }}
-          ></Column> */}
         </DataTable>
           )}
       </Card>
