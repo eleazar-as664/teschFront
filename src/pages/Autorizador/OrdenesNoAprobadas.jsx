@@ -56,11 +56,15 @@ function OrdenesNoAprobadas() {
   const [totalRecords, setTotalRecords] = useState(0);
   const [companiesFilter, setCompaniesFilter] = useState([]);
   const [statusFilter, setStatusFilter] = useState([]);
+  const [requestersFilter, setRequestersFilter] = useState([]);
+  const [authorizersFilter, setAuthorizersFilter] = useState([]);
   const [urlGlobalSearch, setUrlGlobalSearch] = useState("");
   const [globalSearchValue, setGlobalSearchValue] = useState("");
   const [docNumFilterValue, setDocNumFilterValue] = useState("");
   const [companiesFilterSelected, setCompaniesFilterSelected] = useState(null);
   const [statusFilterSelected, setstatusFilterSelected] = useState(null);
+  const [requesterFilterSelected, setRequesterFilterSelected] = useState(null);
+  const [authorizerFilterSelected, setAuthorizerFilterSelected] = useState(null);
 
 
 
@@ -101,8 +105,12 @@ const fetchDataFilters = async () => {
       console.log(apiUrl);
       const response = await axios.get(apiUrl, config);
       let { data: { data: { purchaseFilters } } } = response;
-      console.log("Companies filter:", companiesFilter);
-      console.log("Status filter:", statusFilter);
+      console.log("Companies filter:", purchaseFilters.companiesFilter);
+      console.log("Status filter:", purchaseFilters.statusFilter);
+      console.log("Autorizador filter:", purchaseFilters.authorizersFilter);
+      console.log("Solicitante filter:", purchaseFilters.requestersFilter);
+      setRequestersFilter(purchaseFilters.requestersFilter);
+      setAuthorizersFilter(purchaseFilters.authorizersFilter);
       setCompaniesFilter(purchaseFilters.companiesFilter);
       setStatusFilter(purchaseFilters.statusFilter);
   } catch (error) {
@@ -122,7 +130,6 @@ const fetchDataFilters = async () => {
 
   const fetchDataPurchaseOrderHeadersPendingApproval = async (numeroPagina=1) => {
     try {
-      console.clear();
       console.log("Cargando datos de la API...");
       const IdUsuario = user.UserId;
       const apiUrl = `${routes.BASE_URL_SERVER}/GetAllPurchaseOrdersPagination/${IdUsuario}/${NUMERO_REGISTROS_POR_PAGINA}/${numeroPagina}`;
@@ -230,7 +237,6 @@ const fetchDataFilters = async () => {
 
   const fetchSearchData = async (dataToSearch,numeroPagina=1) => {
     try{
-      console.clear();
       console.log("BUSCANDO DATOS datos de la API...");
       const IdUsuario = user.UserId;
         const apiUrl = `${routes.BASE_URL_SERVER}/SearchPurchaseOrders?UserId=${IdUsuario}&SearchData=${dataToSearch}&MainSearch=true&Limit=${NUMERO_REGISTROS_POR_PAGINA}&Offset=${numeroPagina}`;
@@ -270,9 +276,15 @@ const fetchDataFilters = async () => {
   }
 
   const onGlobalFilterChange = (e) => {
-    console.log("Valor del filtro global:", e.target.value);
+    // console.log("Valor del filtro global:", e.target.value);
     const value = e.target.value;
     setGlobalSearchValue(value);
+    console.log(`EXISTE UNA UNA BUSQUEDA GENERAL: ${globalSearchValue.length > 0 ? true : false} : ${globalSearchValue}`);
+    console.log(`EXISTE UNA BUSQUEDA POR NUMERO DE DOCUMENTO: ${docNumFilterValue > 0 ? true : false} : ${docNumFilterValue}`);
+    console.log(`EXISTE UNA BUSQUEDA POR COMPAÑIA: ${companiesFilterSelected ? true : false} : ${companiesFilterSelected}`);
+    console.log(`EXISTE UNA BUSQUEDA POR ESTATUS: ${statusFilterSelected ? true : false} : ${statusFilterSelected}`);
+    console.log(`EXISTE UNA BUSQUEDA POR SOLICITANTE: ${requesterFilterSelected ? true : false} : ${requesterFilterSelected}`);
+    console.log(`EXISTE UNA BUSQUEDA POR AUTORIZADOR: ${authorizerFilterSelected ? true : false} : ${authorizerFilterSelected}`);
     if(value.length === 0){
       fetchDataPurchaseOrderHeadersPendingApproval();
     }
@@ -295,7 +307,7 @@ const fetchDataFilters = async () => {
           <InputIcon className="pi pi-search" />
           <InputText
             className="search-input"
-            value={DocNumToSearch}
+            value={globalSearchValue}
             onChange={onGlobalFilterChange}
             placeholder="Buscar ..."
           />
@@ -305,33 +317,83 @@ const fetchDataFilters = async () => {
   };
 
 
-  const handleCompanyFilterChange = (e) => {
-    setCompaniesFilterSelected(e.value);
-    console.log("Valor del filtro de compañia:", companiesFilterSelected);
-  }
+const handleCompanyFilterChange = (e) => {
+  setCompaniesFilterSelected(e.value);
+  console.log(`EXISTE UNA UNA BUSQUEDA GENERAL: ${globalSearchValue.length > 0 ? true : false} : ${globalSearchValue}`);
+  console.log(`EXISTE UNA BUSQUEDA POR NUMERO DE DOCUMENTO: ${docNumFilterValue > 0 ? true : false} : ${docNumFilterValue}`);
+  console.log(`EXISTE UNA BUSQUEDA POR COMPAÑIA: ${companiesFilterSelected ? true : false} : ${companiesFilterSelected}`);
+  console.log(`EXISTE UNA BUSQUEDA POR ESTATUS: ${statusFilterSelected ? true : false} : ${statusFilterSelected}`);
+  console.log(`EXISTE UNA BUSQUEDA POR SOLICITANTE: ${requesterFilterSelected ? true : false} : ${requesterFilterSelected}`);
+  console.log(`EXISTE UNA BUSQUEDA POR AUTORIZADOR: ${authorizerFilterSelected ? true : false} : ${authorizerFilterSelected}`);
+}
   
-  const rowFilterCompany = (option) => {
-    return (
-      <div className="flex align-items-center gap-2">
-          <span>{option.CompanyName}</span>
-      </div>
-    );
-  }
-  const CompanyFilter = () => {
-    return (
-        <MultiSelect
-            value={companiesFilterSelected}
-            options={companiesFilter}
-            itemTemplate={rowFilterCompany}
-            onChange={(e) => setCompaniesFilterSelected(e.value)} 
-            optionLabel="CompanyName"
-            placeholder="Buscar por compañia"
-            className="p-column-filter"
-            maxSelectedLabels={1}
-            style={{ minWidth: '14rem' }}
-        />
-    );
+const rowFilterCompany = (option) => {
+  return (
+    <div className="flex align-items-center gap-2">
+        <span>{option.CompanyName}</span>
+    </div>
+  );
+}
+const CompanyFilter = () => {
+  return (
+      <MultiSelect
+          value={companiesFilterSelected}
+          options={companiesFilter}
+          itemTemplate={rowFilterCompany}
+          onChange={handleCompanyFilterChange} 
+          optionLabel="CompanyName"
+          placeholder="Buscar por compañia"
+          className="p-column-filter"
+          maxSelectedLabels={1}
+          style={{ minWidth: '14rem' }}
+      />
+  );
 };
+
+const handleRequesterFilterChange = (e) => {
+  setRequesterFilterSelected(e.value);
+  console.log(`EXISTE UNA UNA BUSQUEDA GENERAL: ${globalSearchValue.length > 0 ? true : false} : ${globalSearchValue}`);
+  console.log(`EXISTE UNA BUSQUEDA POR NUMERO DE DOCUMENTO: ${docNumFilterValue > 0 ? true : false} : ${docNumFilterValue}`);
+  console.log(`EXISTE UNA BUSQUEDA POR COMPAÑIA: ${companiesFilterSelected ? true : false} : ${companiesFilterSelected}`);
+  console.log(`EXISTE UNA BUSQUEDA POR ESTATUS: ${statusFilterSelected ? true : false} : ${statusFilterSelected}`);
+  console.log(`EXISTE UNA BUSQUEDA POR SOLICITANTE: ${requesterFilterSelected ? true : false} : ${requesterFilterSelected}`);
+  console.log(`EXISTE UNA BUSQUEDA POR AUTORIZADOR: ${authorizerFilterSelected ? true : false} : ${authorizerFilterSelected}`);
+}
+
+const rowFilterRequester = (option) => {
+  return (
+    <div className="flex align-items-center gap-2">
+        <span>{option.Requester}</span>
+    </div>
+  );
+}
+
+const RequesterFilter = () => {
+  return (
+      <MultiSelect
+          value={requesterFilterSelected}
+          options={requestersFilter}
+          itemTemplate={rowFilterRequester}
+          onChange={handleRequesterFilterChange} 
+          optionLabel="Requester"
+          placeholder="Buscar por Solicitante"
+          className="p-column-filter"
+          maxSelectedLabels={1}
+          style={{ minWidth: '14rem' }}
+      />
+  );
+};
+
+
+const handleStatusFilterChange = (e) => {
+  setstatusFilterSelected(e.value);
+  console.log(`EXISTE UNA UNA BUSQUEDA GENERAL: ${globalSearchValue.length > 0 ? true : false} : ${globalSearchValue}`);
+  console.log(`EXISTE UNA BUSQUEDA POR NUMERO DE DOCUMENTO: ${docNumFilterValue > 0 ? true : false} : ${docNumFilterValue}`);
+  console.log(`EXISTE UNA BUSQUEDA POR COMPAÑIA: ${companiesFilterSelected ? true : false} : ${companiesFilterSelected}`);
+  console.log(`EXISTE UNA BUSQUEDA POR ESTATUS: ${statusFilterSelected ? true : false} : ${statusFilterSelected}`);
+  console.log(`EXISTE UNA BUSQUEDA POR SOLICITANTE: ${requesterFilterSelected ? true : false} : ${requesterFilterSelected}`);
+  console.log(`EXISTE UNA BUSQUEDA POR AUTORIZADOR: ${authorizerFilterSelected ? true : false} : ${authorizerFilterSelected}`);
+}
 
 const rowFilterStatus = (option) => {
   return (
@@ -343,10 +405,10 @@ const rowFilterStatus = (option) => {
 const StatusFilter = () => {
   return (
       <MultiSelect
-          value={companiesFilterSelected}
+          value={statusFilterSelected}
           options={statusFilter}
           itemTemplate={rowFilterStatus}
-          onChange={(e) => setstatusFilterSelected(e.value)} 
+          onChange={handleStatusFilterChange} 
           optionLabel="Status"
           placeholder="Buscar por Estatus"
           className="p-column-filter"
@@ -356,9 +418,49 @@ const StatusFilter = () => {
   );
 };
 
+
+const handleAuthorizerFilterChange = (e) => {
+  setAuthorizerFilterSelected(e.value);
+  console.log(`EXISTE UNA UNA BUSQUEDA GENERAL: ${globalSearchValue.length > 0 ? true : false} : ${globalSearchValue}`);
+  console.log(`EXISTE UNA BUSQUEDA POR NUMERO DE DOCUMENTO: ${docNumFilterValue > 0 ? true : false} : ${docNumFilterValue}`);
+  console.log(`EXISTE UNA BUSQUEDA POR COMPAÑIA: ${companiesFilterSelected ? true : false} : ${companiesFilterSelected}`);
+  console.log(`EXISTE UNA BUSQUEDA POR ESTATUS: ${statusFilterSelected ? true : false} : ${statusFilterSelected}`);
+  console.log(`EXISTE UNA BUSQUEDA POR SOLICITANTE: ${requesterFilterSelected ? true : false} : ${requesterFilterSelected}`);
+  console.log(`EXISTE UNA BUSQUEDA POR AUTORIZADOR: ${authorizerFilterSelected ? true : false} : ${authorizerFilterSelected}`);
+}
+
+const rowFilterAuthorizer = (option) => {
+  return (
+    <div className="flex align-items-center gap-2">
+        <span>{option.Authorizer}</span>
+    </div>
+  );
+}
+
+const AuthorizerFilter = () => {
+  return (
+      <MultiSelect
+          value={authorizerFilterSelected}
+          options={authorizersFilter}
+          itemTemplate={rowFilterAuthorizer}
+          onChange={handleAuthorizerFilterChange} 
+          optionLabel="Authorizer"
+          placeholder="Buscar por Autorizador"
+          className="p-column-filter"
+          maxSelectedLabels={1}
+          style={{ minWidth: '14rem' }}
+      />
+  );
+};
+
   const handleDocNumInputChange = (e) => {
     setDocNumFilterValue(e.value);
-    console.log("Valor del filtro DocNum:", docNumFilterValue);
+    console.log(`EXISTE UNA UNA BUSQUEDA GENERAL: ${globalSearchValue.length > 0 ? true : false} : ${globalSearchValue}`);
+    console.log(`EXISTE UNA BUSQUEDA POR NUMERO DE DOCUMENTO: ${docNumFilterValue > 0 ? true : false} : ${docNumFilterValue}`);
+    console.log(`EXISTE UNA BUSQUEDA POR COMPAÑIA: ${companiesFilterSelected ? true : false} : ${companiesFilterSelected}`);
+    console.log(`EXISTE UNA BUSQUEDA POR ESTATUS: ${statusFilterSelected ? true : false} : ${statusFilterSelected}`);
+    console.log(`EXISTE UNA BUSQUEDA POR SOLICITANTE: ${requesterFilterSelected ? true : false} : ${requesterFilterSelected}`);
+    console.log(`EXISTE UNA BUSQUEDA POR AUTORIZADOR: ${authorizerFilterSelected ? true : false} : ${authorizerFilterSelected}`);
   }
 
 
@@ -443,12 +545,16 @@ const StatusFilter = () => {
             <Column
               field="Requester"
               header="Solicitó"
+              filter
+              filterElement={RequesterFilter}
               style={{ width: "20%" }}
               sortable 
             ></Column>
             <Column
               field="UserAuthorizer"
               header="Autorizador"
+              filter
+              filterElement={AuthorizerFilter}
               style={{ width: "20%" }}
               sortable 
             ></Column>
