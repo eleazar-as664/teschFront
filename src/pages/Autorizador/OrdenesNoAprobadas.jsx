@@ -234,8 +234,8 @@ function OrdenesNoAprobadas() {
               sortable 
             ></Column>
             <Column
-              field="Buyer"
-              header="Comprador"
+              field="Requester"
+              header="Solicitante"
               style={{ width: "20%" }}
               sortable 
             ></Column>
