@@ -66,6 +66,14 @@ function OrdenesNoAprobadas() {
   const [requesterFilterSelected, setRequesterFilterSelected] = useState(null);
   const [authorizerFilterSelected, setAuthorizerFilterSelected] = useState(null);
 
+  const[companiesId, setCompaniesId] = useState([]);
+  const[requestersId, setRequestersId] = useState([]);
+  const[authorizersId, setAuthorizersId] = useState([]);
+  const[statusId, setStatusId] = useState([]);
+
+
+
+
 
 
 
@@ -235,11 +243,42 @@ const fetchDataFilters = async () => {
     );
   };
 
-  const fetchSearchData = async (dataToSearch,numeroPagina=1) => {
+  const fetchSearchData = async (dataToSearch,numeroPagina=1,docNum=0,companies=[],requesters=[],authorizers=[],status=[]) => {
     try{
       console.log("BUSCANDO DATOS datos de la API...");
+      let urlFilters = "";
+
+      if(dataToSearch.length === 0){
+        urlFilters += `&SearchData=${dataToSearch}&MainSearch=true`;
+      }
+      else
+      {
+        urlFilters += `&MainSearch=false`;
+      }
+      
+      if(docNum == "" || docNum == 0){
+        urlFilters += `&DocNum=${docNum}`;
+      }
+      if(companies.length > 0){
+        urlFilters += `&Companies=${companies.join(",")}`;
+      }
+
+      if(requesters.length > 0){
+        urlFilters += `&Requesters=${requesters.join(",")}`;
+      }
+
+      if(authorizers.length > 0){
+        urlFilters += `&Authorizers=${authorizers.join(",")}`;
+      }
+
+      if(status.length > 0){
+        urlFilters += `&Status=${status.join(",")}`;
+      }
+
+
+      
       const IdUsuario = user.UserId;
-        const apiUrl = `${routes.BASE_URL_SERVER}/SearchPurchaseOrders?UserId=${IdUsuario}&SearchData=${dataToSearch}&MainSearch=true&Limit=${NUMERO_REGISTROS_POR_PAGINA}&Offset=${numeroPagina}`;
+        const apiUrl = `${routes.BASE_URL_SERVER}/SearchPurchaseOrders?UserId=${IdUsuario}${urlFilters}&Limit=${NUMERO_REGISTROS_POR_PAGINA}&Offset=${numeroPagina}`;
         const config = {
           headers: {
             "x-access-token": token,
@@ -319,6 +358,10 @@ const fetchDataFilters = async () => {
 
 const handleCompanyFilterChange = (e) => {
   setCompaniesFilterSelected(e.value);
+ 
+  
+
+
   console.log(`EXISTE UNA UNA BUSQUEDA GENERAL: ${globalSearchValue.length > 0 ? true : false} : ${globalSearchValue}`);
   console.log(`EXISTE UNA BUSQUEDA POR NUMERO DE DOCUMENTO: ${docNumFilterValue > 0 ? true : false} : ${docNumFilterValue}`);
   console.log(`EXISTE UNA BUSQUEDA POR COMPAÑIA: ${companiesFilterSelected ? true : false} : ${companiesFilterSelected}`);
@@ -351,7 +394,21 @@ const CompanyFilter = () => {
 };
 
 const handleRequesterFilterChange = (e) => {
+
+  console.log("Solicitante seleccionado:", e.value);
   setRequesterFilterSelected(e.value);
+  if(e.value.length > 0){
+    const requestersId = e.value.map(item => item.RequesterId);
+    setRequestersId(requestersId);
+  }
+  else
+  {
+    setRequestersId([]);
+  }
+  
+  fetchSearchData(globalSearchValue,numeroPagina=1,docNumFilterValue,companiesId,requestersId,authorizersId,statusId);
+  
+  
   console.log(`EXISTE UNA UNA BUSQUEDA GENERAL: ${globalSearchValue.length > 0 ? true : false} : ${globalSearchValue}`);
   console.log(`EXISTE UNA BUSQUEDA POR NUMERO DE DOCUMENTO: ${docNumFilterValue > 0 ? true : false} : ${docNumFilterValue}`);
   console.log(`EXISTE UNA BUSQUEDA POR COMPAÑIA: ${companiesFilterSelected ? true : false} : ${companiesFilterSelected}`);
@@ -387,6 +444,19 @@ const RequesterFilter = () => {
 
 const handleStatusFilterChange = (e) => {
   setstatusFilterSelected(e.value);
+
+  if(e.value.length > 0){
+    const status = e.value.map(item => item.StatusId);
+    setStatusId(status);
+  }
+  else
+  {
+    setStatusId([]);
+  }
+  fetchSearchData(globalSearchValue,numeroPagina=1,docNumFilterValue,companiesId,requestersId,authorizersId,statusId);
+  
+
+
   console.log(`EXISTE UNA UNA BUSQUEDA GENERAL: ${globalSearchValue.length > 0 ? true : false} : ${globalSearchValue}`);
   console.log(`EXISTE UNA BUSQUEDA POR NUMERO DE DOCUMENTO: ${docNumFilterValue > 0 ? true : false} : ${docNumFilterValue}`);
   console.log(`EXISTE UNA BUSQUEDA POR COMPAÑIA: ${companiesFilterSelected ? true : false} : ${companiesFilterSelected}`);
@@ -421,6 +491,16 @@ const StatusFilter = () => {
 
 const handleAuthorizerFilterChange = (e) => {
   setAuthorizerFilterSelected(e.value);
+
+  if(e.value.length > 0){
+    const authorizersId = e.value.map(item => item.AuthorizerId);
+    setAuthorizersId(authorizersId);
+  }
+  else
+  {
+    setAuthorizersId([]);
+  }
+  fetchSearchData(globalSearchValue,numeroPagina=1,docNumFilterValue,companiesId,requestersId,authorizersId,statusId);
   console.log(`EXISTE UNA UNA BUSQUEDA GENERAL: ${globalSearchValue.length > 0 ? true : false} : ${globalSearchValue}`);
   console.log(`EXISTE UNA BUSQUEDA POR NUMERO DE DOCUMENTO: ${docNumFilterValue > 0 ? true : false} : ${docNumFilterValue}`);
   console.log(`EXISTE UNA BUSQUEDA POR COMPAÑIA: ${companiesFilterSelected ? true : false} : ${companiesFilterSelected}`);
@@ -455,6 +535,7 @@ const AuthorizerFilter = () => {
 
   const handleDocNumInputChange = (e) => {
     setDocNumFilterValue(e.value);
+    fetchSearchData(globalSearchValue,numeroPagina=1,docNumFilterValue,companiesId,requestersId,authorizersId,statusId);
     console.log(`EXISTE UNA UNA BUSQUEDA GENERAL: ${globalSearchValue.length > 0 ? true : false} : ${globalSearchValue}`);
     console.log(`EXISTE UNA BUSQUEDA POR NUMERO DE DOCUMENTO: ${docNumFilterValue > 0 ? true : false} : ${docNumFilterValue}`);
     console.log(`EXISTE UNA BUSQUEDA POR COMPAÑIA: ${companiesFilterSelected ? true : false} : ${companiesFilterSelected}`);
