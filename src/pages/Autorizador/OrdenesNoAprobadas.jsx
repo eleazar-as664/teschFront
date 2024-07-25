@@ -94,18 +94,18 @@ const generarNumeroPagina= (incremento,totalRegistros) => {
       array[i] = valorActual;
       valorActual += incremento;
   }
-
+  // console.log("NUMERO DE PAGINAS:", array);
   return array;
 };
 
-const handlePageChange = (e) => {
+const handlePageChange = async (e) => {
   let nuevaPagina = e.page + 1;
   setNumeroPagina(nuevaPagina);
-  if(globalSearchValue.length === 0){
+  if(urlGlobalSearch.length === 0){
     fetchDataPurchaseOrderHeadersPendingApproval(nuevaPagina);
   }else
   {
-    fetchSearchData(globalSearchValue,nuevaPagina);
+    await fetchSearchData(globalSearchValue,nuevaPagina,docNumFilterValue,companiesId,requestersId,authorizersId,statusId);
   }
 };
 
@@ -155,6 +155,7 @@ const fetchDataFilters = async () => {
         },
       };
       console.log(apiUrl);
+      setUrlGlobalSearch(apiUrl);
       const response = await axios.get(apiUrl, config);
       console.log("Respuesta de la API:", response);
       setTotalRecords(response.data.data.totalPurchaseOrders);
@@ -195,7 +196,6 @@ const fetchDataFilters = async () => {
   }, []);
 
   const handleRowClick = (event) => {
-    console.clear();
     console.log("Clic en la fila", event.data);
     const rowData = event.data;
     localStorage.setItem("purchaseOrderData", JSON.stringify(rowData));
@@ -251,9 +251,8 @@ const fetchDataFilters = async () => {
     );
   };
 
-  const fetchSearchData = async (globalSearchValue,numeroPagina,docNum=0,companies=[],requesters=[],authorizers=[],status=[]) => {
+  const fetchSearchData = async (globalSearchValue,numeroPagina=1,docNum=0,companies=[],requesters=[],authorizers=[],status=[]) => {
     try{
-      console.clear();
       console.log("BUSCANDO DATOS datos de la API POR MEDIO DE FILTROS...");
       console.log(`DATA TO SEARCH: ${globalSearchValue}`);
       console.log(`NUMERO DE DOCUMENTO: ${docNum}`);
@@ -264,7 +263,8 @@ const fetchDataFilters = async () => {
 
       let urlFilters = "";
 
-      if(globalSearchValue.length === 0){
+      
+      if(globalSearchValue.length !== 0){
         urlFilters += `&SearchData=${globalSearchValue}&MainSearch=true`;
       }
       else
@@ -272,7 +272,7 @@ const fetchDataFilters = async () => {
         urlFilters += `&MainSearch=false`;
       }
       
-      if(docNum == "" || docNum == 0){
+      if(docNum != "" || docNum != 0){
         urlFilters += `&DocNum=${docNum}`;
       }
       if(companies.length > 0){
@@ -303,13 +303,21 @@ const fetchDataFilters = async () => {
         console.log(apiUrl);
         let response = await axios.get(apiUrl, config);
         let { data: { data: { purchaseOrdersMapped,totalPurchaseOrders } } } = response;
+        console.log("TOTAL DE ORDENES ENCONTRADAS:", totalPurchaseOrders);  
         // console.log("ORDENES ENCONTRADAS:", purchaseOrdersMapped);
         // console.log("TOTAL ORDENES ENCONTRADAS:", totalPurchaseOrders);
         // console.log("NUMERO DE PAGINA: ", numeroPagina);
+
+
+        if(numeroPagina === 0){
+          numeroPagina = 1;
+        }
+        console.log("NUMERO DE PAGINA: ", numeroPagina);
         setPurchaseOrderData(purchaseOrdersMapped);
         setTotalRecords(totalPurchaseOrders);
         let numeroPaginaDinamico = generarNumeroPagina(NUMERO_REGISTROS_POR_PAGINA, totalPurchaseOrders);      
         let numeroPaginasTotales = numeroPaginaDinamico[numeroPagina];
+        console.log("NUMERO DE PAGINASTOTALES:", numeroPaginasTotales);
         setNumeroPagina(numeroPaginasTotales)
     } catch (error) {
       // console.log("Error al buscar datos:", error);
@@ -388,10 +396,10 @@ const fetchDataFilters = async () => {
 
 
 const handleCompanyFilterChange = async (e) => {
-  console.log(`COMPANIA SELECCIONADA: ${e.value.length}`);
+  // console.log(`COMPANIA SELECCIONADA: ${e.value.length}`);
   if(e.value.length > 0)
   {
-    console.log(`ASIGNANDO COMPANIAS: ${Array.isArray(companiesId)}`);
+    // console.log(`ASIGNANDO COMPANIAS: ${Array.isArray(companiesId)}`);
     companiesId = e.value.map(item => item.CompanyId);
   }
   else
@@ -400,8 +408,8 @@ const handleCompanyFilterChange = async (e) => {
     companiesId = [];
   }
   
-  console.log(`COMPANIAS ASIGNADAS: ${companiesId}`);
-  console.log(`REQUESTERS SELECCIONADOS: ${requestersId}`);
+  // console.log(`COMPANIAS ASIGNADAS: ${companiesId}`);
+  // console.log(`REQUESTERS SELECCIONADOS: ${requestersId}`);
   await fetchSearchData(globalSearchValue,numeroPagina,docNumFilterValue,companiesId,requestersId,authorizersId,statusId);
   setCompaniesFilterSelected(e.value);
 
@@ -432,16 +440,16 @@ const CompanyFilter = () => {
 
 const handleRequesterFilterChange = (e) => {
 
-  console.log("Solicitante seleccionado:", e.value);
+  // console.log("Solicitante seleccionado:", e.value);
   setRequesterFilterSelected(e.value);
   if(e.value.length > 0){
-    console.log("Solicitante seleccionado:", e.value);
+    // console.log("Solicitante seleccionado:", e.value);
     requestersId = e.value.map(item => item.RequesterId);
     // setRequestersId(requestersId);
   }
   else
   {
-    console.log("Limpiando solicitantes");
+    // console.log("Limpiando solicitantes");
     requestersId = [];
   }
   
