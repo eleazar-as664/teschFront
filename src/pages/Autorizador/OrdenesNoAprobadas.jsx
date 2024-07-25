@@ -28,6 +28,13 @@ import routes from "../../utils/routes";
 
 import "../../Components/Styles/Global.css";
 import axios from "axios";
+let companiesId = [];
+let requestersId = [];
+let authorizersId = [];
+let statusId = [];
+let docNumFilterValue = 0;
+let globalSearchValue = "";
+
 function OrdenesNoAprobadas() {
   const toast = useRef(null);
   const navigate = useNavigate();
@@ -59,17 +66,18 @@ function OrdenesNoAprobadas() {
   const [requestersFilter, setRequestersFilter] = useState([]);
   const [authorizersFilter, setAuthorizersFilter] = useState([]);
   const [urlGlobalSearch, setUrlGlobalSearch] = useState("");
-  const [globalSearchValue, setGlobalSearchValue] = useState("");
-  const [docNumFilterValue, setDocNumFilterValue] = useState("");
+  // const [globalSearchValue, setGlobalSearchValue] = useState("");
+  // const [docNumFilterValue, setDocNumFilterValue] = useState("");
   const [companiesFilterSelected, setCompaniesFilterSelected] = useState(null);
   const [statusFilterSelected, setstatusFilterSelected] = useState(null);
   const [requesterFilterSelected, setRequesterFilterSelected] = useState(null);
   const [authorizerFilterSelected, setAuthorizerFilterSelected] = useState(null);
 
-  const[companiesId, setCompaniesId] = useState([]);
-  const[requestersId, setRequestersId] = useState([]);
-  const[authorizersId, setAuthorizersId] = useState([]);
-  const[statusId, setStatusId] = useState([]);
+
+  // const[companiesId, setCompaniesId] = useState([]);
+  // const[requestersId, setRequestersId] = useState([]);
+  // const[authorizersId, setAuthorizersId] = useState([]);
+  // const[statusId, setStatusId] = useState([]);
 
 
 
@@ -243,13 +251,21 @@ const fetchDataFilters = async () => {
     );
   };
 
-  const fetchSearchData = async (dataToSearch,numeroPagina=1,docNum=0,companies=[],requesters=[],authorizers=[],status=[]) => {
+  const fetchSearchData = async (globalSearchValue,numeroPagina,docNum=0,companies=[],requesters=[],authorizers=[],status=[]) => {
     try{
-      console.log("BUSCANDO DATOS datos de la API...");
+      console.clear();
+      console.log("BUSCANDO DATOS datos de la API POR MEDIO DE FILTROS...");
+      console.log(`DATA TO SEARCH: ${globalSearchValue}`);
+      console.log(`NUMERO DE DOCUMENTO: ${docNum}`);
+      console.log(`COMPANIES: ${companies}`);
+      console.log(`REQUESTERS: ${requesters}`);
+      console.log(`AUTHORIZERS: ${authorizers}`);
+      console.log(`STATUS: ${status}`);
+
       let urlFilters = "";
 
-      if(dataToSearch.length === 0){
-        urlFilters += `&SearchData=${dataToSearch}&MainSearch=true`;
+      if(globalSearchValue.length === 0){
+        urlFilters += `&SearchData=${globalSearchValue}&MainSearch=true`;
       }
       else
       {
@@ -277,26 +293,26 @@ const fetchDataFilters = async () => {
 
 
       
-      const IdUsuario = user.UserId;
-        const apiUrl = `${routes.BASE_URL_SERVER}/SearchPurchaseOrders?UserId=${IdUsuario}${urlFilters}&Limit=${NUMERO_REGISTROS_POR_PAGINA}&Offset=${numeroPagina}`;
-        const config = {
+        let IdUsuario = user.UserId;
+        let apiUrl = `${routes.BASE_URL_SERVER}/SearchPurchaseOrders?UserId=${IdUsuario}${urlFilters}&Limit=${NUMERO_REGISTROS_POR_PAGINA}&Offset=${numeroPagina}`;
+        let config = {
           headers: {
             "x-access-token": token,
           },
         };
         console.log(apiUrl);
-        const response = await axios.get(apiUrl, config);
+        let response = await axios.get(apiUrl, config);
         let { data: { data: { purchaseOrdersMapped,totalPurchaseOrders } } } = response;
-        console.log("ORDENES ENCONTRADAS:", purchaseOrdersMapped);
-        console.log("TOTAL ORDENES ENCONTRADAS:", totalPurchaseOrders);
-        console.log("NUMERO DE PAGINA: ", numeroPagina);
+        // console.log("ORDENES ENCONTRADAS:", purchaseOrdersMapped);
+        // console.log("TOTAL ORDENES ENCONTRADAS:", totalPurchaseOrders);
+        // console.log("NUMERO DE PAGINA: ", numeroPagina);
         setPurchaseOrderData(purchaseOrdersMapped);
         setTotalRecords(totalPurchaseOrders);
-        const numeroPaginaDinamico = generarNumeroPagina(NUMERO_REGISTROS_POR_PAGINA, totalPurchaseOrders);      
-        const numeroPaginasTotales = numeroPaginaDinamico[numeroPagina];
-      setNumeroPagina(numeroPaginasTotales)
+        let numeroPaginaDinamico = generarNumeroPagina(NUMERO_REGISTROS_POR_PAGINA, totalPurchaseOrders);      
+        let numeroPaginasTotales = numeroPaginaDinamico[numeroPagina];
+        setNumeroPagina(numeroPaginasTotales)
     } catch (error) {
-      console.log("Error al buscar datos:", error);
+      // console.log("Error al buscar datos:", error);
       let { response: { data: { detailMessage, message,code } } } = error;
       if(code === 404){
         setPurchaseOrderData([]);
@@ -316,20 +332,35 @@ const fetchDataFilters = async () => {
 
   const onGlobalFilterChange = (e) => {
     // console.log("Valor del filtro global:", e.target.value);
+    if(globalSearchValue.length === 0){
+      companiesId = [];
+      requestersId = [];
+      authorizersId = [];
+      statusId = [];
+      docNumFilterValue = 0;
+      setCompaniesFilterSelected(null);
+      setRequesterFilterSelected(null);
+      setAuthorizerFilterSelected(null);
+      setstatusFilterSelected(null);
+    }
     const value = e.target.value;
-    setGlobalSearchValue(value);
-    console.log(`EXISTE UNA UNA BUSQUEDA GENERAL: ${globalSearchValue.length > 0 ? true : false} : ${globalSearchValue}`);
-    console.log(`EXISTE UNA BUSQUEDA POR NUMERO DE DOCUMENTO: ${docNumFilterValue > 0 ? true : false} : ${docNumFilterValue}`);
-    console.log(`EXISTE UNA BUSQUEDA POR COMPAÑIA: ${companiesFilterSelected ? true : false} : ${companiesFilterSelected}`);
-    console.log(`EXISTE UNA BUSQUEDA POR ESTATUS: ${statusFilterSelected ? true : false} : ${statusFilterSelected}`);
-    console.log(`EXISTE UNA BUSQUEDA POR SOLICITANTE: ${requesterFilterSelected ? true : false} : ${requesterFilterSelected}`);
-    console.log(`EXISTE UNA BUSQUEDA POR AUTORIZADOR: ${authorizerFilterSelected ? true : false} : ${authorizerFilterSelected}`);
+    globalSearchValue = value;
+    // setGlobalSearchValue(value);
     if(value.length === 0){
+      companiesId = [];
+      requestersId = [];
+      authorizersId = [];
+      statusId = [];
+      docNumFilterValue = 0;
+      setCompaniesFilterSelected(null);
+      setRequesterFilterSelected(null);
+      setAuthorizerFilterSelected(null);
+      setstatusFilterSelected(null);
       fetchDataPurchaseOrderHeadersPendingApproval();
     }
     else
     {
-      fetchSearchData(value);
+      fetchSearchData(value,numeroPagina,docNumFilterValue,companiesId,requestersId,authorizersId,statusId);
     }
 
     // let _filters = { ...filters };
@@ -356,18 +387,24 @@ const fetchDataFilters = async () => {
   };
 
 
-const handleCompanyFilterChange = (e) => {
-  setCompaniesFilterSelected(e.value);
- 
+const handleCompanyFilterChange = async (e) => {
+  console.log(`COMPANIA SELECCIONADA: ${e.value.length}`);
+  if(e.value.length > 0)
+  {
+    console.log(`ASIGNANDO COMPANIAS: ${Array.isArray(companiesId)}`);
+    companiesId = e.value.map(item => item.CompanyId);
+  }
+  else
+  {
+    console.log("Limpiando compañias");
+    companiesId = [];
+  }
   
+  console.log(`COMPANIAS ASIGNADAS: ${companiesId}`);
+  console.log(`REQUESTERS SELECCIONADOS: ${requestersId}`);
+  await fetchSearchData(globalSearchValue,numeroPagina,docNumFilterValue,companiesId,requestersId,authorizersId,statusId);
+  setCompaniesFilterSelected(e.value);
 
-
-  console.log(`EXISTE UNA UNA BUSQUEDA GENERAL: ${globalSearchValue.length > 0 ? true : false} : ${globalSearchValue}`);
-  console.log(`EXISTE UNA BUSQUEDA POR NUMERO DE DOCUMENTO: ${docNumFilterValue > 0 ? true : false} : ${docNumFilterValue}`);
-  console.log(`EXISTE UNA BUSQUEDA POR COMPAÑIA: ${companiesFilterSelected ? true : false} : ${companiesFilterSelected}`);
-  console.log(`EXISTE UNA BUSQUEDA POR ESTATUS: ${statusFilterSelected ? true : false} : ${statusFilterSelected}`);
-  console.log(`EXISTE UNA BUSQUEDA POR SOLICITANTE: ${requesterFilterSelected ? true : false} : ${requesterFilterSelected}`);
-  console.log(`EXISTE UNA BUSQUEDA POR AUTORIZADOR: ${authorizerFilterSelected ? true : false} : ${authorizerFilterSelected}`);
 }
   
 const rowFilterCompany = (option) => {
@@ -398,23 +435,18 @@ const handleRequesterFilterChange = (e) => {
   console.log("Solicitante seleccionado:", e.value);
   setRequesterFilterSelected(e.value);
   if(e.value.length > 0){
-    const requestersId = e.value.map(item => item.RequesterId);
-    setRequestersId(requestersId);
+    console.log("Solicitante seleccionado:", e.value);
+    requestersId = e.value.map(item => item.RequesterId);
+    // setRequestersId(requestersId);
   }
   else
   {
-    setRequestersId([]);
+    console.log("Limpiando solicitantes");
+    requestersId = [];
   }
   
-  fetchSearchData(globalSearchValue,numeroPagina=1,docNumFilterValue,companiesId,requestersId,authorizersId,statusId);
+  fetchSearchData(globalSearchValue,numeroPagina,docNumFilterValue,companiesId,requestersId,authorizersId,statusId);
   
-  
-  console.log(`EXISTE UNA UNA BUSQUEDA GENERAL: ${globalSearchValue.length > 0 ? true : false} : ${globalSearchValue}`);
-  console.log(`EXISTE UNA BUSQUEDA POR NUMERO DE DOCUMENTO: ${docNumFilterValue > 0 ? true : false} : ${docNumFilterValue}`);
-  console.log(`EXISTE UNA BUSQUEDA POR COMPAÑIA: ${companiesFilterSelected ? true : false} : ${companiesFilterSelected}`);
-  console.log(`EXISTE UNA BUSQUEDA POR ESTATUS: ${statusFilterSelected ? true : false} : ${statusFilterSelected}`);
-  console.log(`EXISTE UNA BUSQUEDA POR SOLICITANTE: ${requesterFilterSelected ? true : false} : ${requesterFilterSelected}`);
-  console.log(`EXISTE UNA BUSQUEDA POR AUTORIZADOR: ${authorizerFilterSelected ? true : false} : ${authorizerFilterSelected}`);
 }
 
 const rowFilterRequester = (option) => {
@@ -446,23 +478,14 @@ const handleStatusFilterChange = (e) => {
   setstatusFilterSelected(e.value);
 
   if(e.value.length > 0){
-    const status = e.value.map(item => item.StatusId);
-    setStatusId(status);
+    statusId = e.value.map(item => item.StatusId);
   }
   else
   {
-    setStatusId([]);
+    statusId = [];
   }
-  fetchSearchData(globalSearchValue,numeroPagina=1,docNumFilterValue,companiesId,requestersId,authorizersId,statusId);
+  fetchSearchData(globalSearchValue,numeroPagina,docNumFilterValue,companiesId,requestersId,authorizersId,statusId);
   
-
-
-  console.log(`EXISTE UNA UNA BUSQUEDA GENERAL: ${globalSearchValue.length > 0 ? true : false} : ${globalSearchValue}`);
-  console.log(`EXISTE UNA BUSQUEDA POR NUMERO DE DOCUMENTO: ${docNumFilterValue > 0 ? true : false} : ${docNumFilterValue}`);
-  console.log(`EXISTE UNA BUSQUEDA POR COMPAÑIA: ${companiesFilterSelected ? true : false} : ${companiesFilterSelected}`);
-  console.log(`EXISTE UNA BUSQUEDA POR ESTATUS: ${statusFilterSelected ? true : false} : ${statusFilterSelected}`);
-  console.log(`EXISTE UNA BUSQUEDA POR SOLICITANTE: ${requesterFilterSelected ? true : false} : ${requesterFilterSelected}`);
-  console.log(`EXISTE UNA BUSQUEDA POR AUTORIZADOR: ${authorizerFilterSelected ? true : false} : ${authorizerFilterSelected}`);
 }
 
 const rowFilterStatus = (option) => {
@@ -493,20 +516,13 @@ const handleAuthorizerFilterChange = (e) => {
   setAuthorizerFilterSelected(e.value);
 
   if(e.value.length > 0){
-    const authorizersId = e.value.map(item => item.AuthorizerId);
-    setAuthorizersId(authorizersId);
+    authorizersId = e.value.map(item => item.AuthorizerId);
   }
   else
   {
-    setAuthorizersId([]);
+    authorizersId = [];
   }
-  fetchSearchData(globalSearchValue,numeroPagina=1,docNumFilterValue,companiesId,requestersId,authorizersId,statusId);
-  console.log(`EXISTE UNA UNA BUSQUEDA GENERAL: ${globalSearchValue.length > 0 ? true : false} : ${globalSearchValue}`);
-  console.log(`EXISTE UNA BUSQUEDA POR NUMERO DE DOCUMENTO: ${docNumFilterValue > 0 ? true : false} : ${docNumFilterValue}`);
-  console.log(`EXISTE UNA BUSQUEDA POR COMPAÑIA: ${companiesFilterSelected ? true : false} : ${companiesFilterSelected}`);
-  console.log(`EXISTE UNA BUSQUEDA POR ESTATUS: ${statusFilterSelected ? true : false} : ${statusFilterSelected}`);
-  console.log(`EXISTE UNA BUSQUEDA POR SOLICITANTE: ${requesterFilterSelected ? true : false} : ${requesterFilterSelected}`);
-  console.log(`EXISTE UNA BUSQUEDA POR AUTORIZADOR: ${authorizerFilterSelected ? true : false} : ${authorizerFilterSelected}`);
+  fetchSearchData(globalSearchValue,numeroPagina,docNumFilterValue,companiesId,requestersId,authorizersId,statusId);
 }
 
 const rowFilterAuthorizer = (option) => {
@@ -534,14 +550,12 @@ const AuthorizerFilter = () => {
 };
 
   const handleDocNumInputChange = (e) => {
-    setDocNumFilterValue(e.value);
-    fetchSearchData(globalSearchValue,numeroPagina=1,docNumFilterValue,companiesId,requestersId,authorizersId,statusId);
-    console.log(`EXISTE UNA UNA BUSQUEDA GENERAL: ${globalSearchValue.length > 0 ? true : false} : ${globalSearchValue}`);
-    console.log(`EXISTE UNA BUSQUEDA POR NUMERO DE DOCUMENTO: ${docNumFilterValue > 0 ? true : false} : ${docNumFilterValue}`);
-    console.log(`EXISTE UNA BUSQUEDA POR COMPAÑIA: ${companiesFilterSelected ? true : false} : ${companiesFilterSelected}`);
-    console.log(`EXISTE UNA BUSQUEDA POR ESTATUS: ${statusFilterSelected ? true : false} : ${statusFilterSelected}`);
-    console.log(`EXISTE UNA BUSQUEDA POR SOLICITANTE: ${requesterFilterSelected ? true : false} : ${requesterFilterSelected}`);
-    console.log(`EXISTE UNA BUSQUEDA POR AUTORIZADOR: ${authorizerFilterSelected ? true : false} : ${authorizerFilterSelected}`);
+    // setDocNumFilterValue(e.value);
+    if(e.value === null){
+      e.value = 0;
+    } 
+    docNumFilterValue = e.value;
+    fetchSearchData(globalSearchValue,numeroPagina,docNumFilterValue,companiesId,requestersId,authorizersId,statusId);
   }
 
 
