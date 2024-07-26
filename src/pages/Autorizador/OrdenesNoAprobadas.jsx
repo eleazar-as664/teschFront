@@ -41,6 +41,8 @@ let fechaAutorizacionInicio = "";
 let fechaAutorizacionFin = "";
 let globalSearchValue = "";
 let globalNumeroPagina = 1;
+let orderByGlobal = "";
+let orderDirectionGlobal = "";
 
 function OrdenesNoAprobadas() {
   const toast = useRef(null);
@@ -113,7 +115,7 @@ const handlePageChange = async (e) => {
     fetchDataPurchaseOrderHeadersPendingApproval(globalNumeroPagina);
   }else
   {
-    await fetchSearchData(globalSearchValue,globalNumeroPagina,docNumFilterValue,companiesId,requestersId,authorizersId,statusId,fechaOrdenInicio,fechaOrdenFin);
+    await fetchSearchData(globalSearchValue,globalNumeroPagina,docNumFilterValue,companiesId,requestersId,authorizersId,statusId,fechaOrdenInicio,fechaOrdenFin,fechaAutorizacionInicio,fechaAutorizacionFin,orderByGlobal,orderDirectionGlobal);
   }
 };
 
@@ -260,7 +262,7 @@ const fetchDataFilters = async () => {
     );
   };
 
-  const fetchSearchData = async (globalSearchValue,numeroPagina=1,docNum=0,companies=[],requesters=[],authorizers=[],status=[],fechaOrdenInicioSeleccionado="",fechaOrdenFinSeleccionado="") => {
+  const fetchSearchData = async (globalSearchValue,numeroPagina=1,docNum=0,companies=[],requesters=[],authorizers=[],status=[],fechaOrdenInicioSeleccionado="",fechaOrdenFinSeleccionado="",fechaAutorizacionInicioSeleccionado="",fechaAutorizacionFinSeleccionado="",orderBy="",orderDirection="") => {
     try{
       console.log("BUSCANDO DATOS datos de la API POR MEDIO DE FILTROS...");
       console.log(`DATA TO SEARCH: ${globalSearchValue}`);
@@ -271,6 +273,8 @@ const fetchDataFilters = async () => {
       console.log(`STATUS: ${status}`);
       console.log(`FECHA INICIO: ${fechaOrdenInicioSeleccionado}`);
       console.log(`FECHA FIN: ${fechaOrdenFinSeleccionado}`);
+      console.log(`FECHA AUTORIZACION INICIO: ${fechaAutorizacionInicioSeleccionado}`);
+      console.log(`FECHA AUTORIZACION FIN: ${fechaAutorizacionFinSeleccionado}`);
 
       let urlFilters = "";
 
@@ -311,6 +315,20 @@ const fetchDataFilters = async () => {
       if(fechaOrdenFinSeleccionado != "")
       {
         urlFilters += `&DocDateEnd=${fechaOrdenFinSeleccionado}`;
+      }
+
+      if(fechaAutorizacionInicioSeleccionado != "")
+      {
+        urlFilters += `&AuthorizationDateStart=${fechaAutorizacionInicioSeleccionado}`;
+      }
+
+      if(fechaAutorizacionFinSeleccionado != "")
+      {
+        urlFilters += `&AuthorizationDateEnd=${fechaAutorizacionFinSeleccionado}`;
+      }
+
+      if(orderBy != "" && orderDirection != ""){
+        urlFilters += `&OrderBy=${orderBy}&OrderDirection=${orderDirection}`;
       }
 
 
@@ -374,6 +392,7 @@ const fetchDataFilters = async () => {
       setAuthorizerFilterSelected(null);
       setstatusFilterSelected(null);
       setFechasOrdenes(null);
+      setFechaAutorizacion(null);
       globalNumeroPagina = 1
     }
     const value = e.target.value;
@@ -390,13 +409,14 @@ const fetchDataFilters = async () => {
       setAuthorizerFilterSelected(null);
       setstatusFilterSelected(null);
       setFechasOrdenes(null);
+      setFechaAutorizacion(null);
       fetchDataPurchaseOrderHeadersPendingApproval();
       globalNumeroPagina = 1
     }
     else
     {
       globalNumeroPagina = 1;
-      fetchSearchData(value,globalNumeroPagina,docNumFilterValue,companiesId,requestersId,authorizersId,statusId,fechaOrdenInicio,fechaOrdenFin);
+      fetchSearchData(value,globalNumeroPagina,docNumFilterValue,companiesId,requestersId,authorizersId,statusId,fechaOrdenInicio,fechaOrdenFin,fechaAutorizacionInicio,fechaAutorizacionFin,orderByGlobal,orderDirectionGlobal);
     }
 
     // let _filters = { ...filters };
@@ -439,7 +459,7 @@ const handleCompanyFilterChange = async (e) => {
   // console.log(`COMPANIAS ASIGNADAS: ${companiesId}`);
   // console.log(`REQUESTERS SELECCIONADOS: ${requestersId}`);
   globalNumeroPagina = 1;
-  await fetchSearchData(globalSearchValue,globalNumeroPagina,docNumFilterValue,companiesId,requestersId,authorizersId,statusId,fechaOrdenInicio,fechaOrdenFin);
+  await fetchSearchData(globalSearchValue,globalNumeroPagina,docNumFilterValue,companiesId,requestersId,authorizersId,statusId,fechaOrdenInicio,fechaOrdenFin,fechaAutorizacionInicio,fechaAutorizacionFin,orderByGlobal,orderDirectionGlobal);
   setCompaniesFilterSelected(e.value);
 
 }
@@ -482,7 +502,7 @@ const handleRequesterFilterChange = (e) => {
     requestersId = [];
   }
   globalNumeroPagina = 1;
-  fetchSearchData(globalSearchValue,globalNumeroPagina,docNumFilterValue,companiesId,requestersId,authorizersId,statusId,fechaOrdenInicio,fechaOrdenFin);
+  fetchSearchData(globalSearchValue,globalNumeroPagina,docNumFilterValue,companiesId,requestersId,authorizersId,statusId,fechaOrdenInicio,fechaOrdenFin,fechaAutorizacionInicio,fechaAutorizacionFin,orderByGlobal,orderDirectionGlobal);
   
 }
 
@@ -522,7 +542,7 @@ const handleStatusFilterChange = (e) => {
     statusId = [];
   }
   globalNumeroPagina = 1;
-  fetchSearchData(globalSearchValue,globalNumeroPagina,docNumFilterValue,companiesId,requestersId,authorizersId,statusId,fechaOrdenInicio,fechaOrdenFin);
+  fetchSearchData(globalSearchValue,globalNumeroPagina,docNumFilterValue,companiesId,requestersId,authorizersId,statusId,fechaOrdenInicio,fechaOrdenFin,fechaAutorizacionInicio,fechaAutorizacionFin,orderByGlobal,orderDirectionGlobal);
   
 }
 
@@ -561,7 +581,7 @@ const handleAuthorizerFilterChange = (e) => {
     authorizersId = [];
   }
   globalNumeroPagina = 1;
-  fetchSearchData(globalSearchValue,globalNumeroPagina,docNumFilterValue,companiesId,requestersId,authorizersId,statusId,fechaOrdenInicio,fechaOrdenFin);
+  fetchSearchData(globalSearchValue,globalNumeroPagina,docNumFilterValue,companiesId,requestersId,authorizersId,statusId,fechaOrdenInicio,fechaOrdenFin,fechaAutorizacionInicio,fechaAutorizacionFin,orderByGlobal,orderDirectionGlobal);
 }
 
 const rowFilterAuthorizer = (option) => {
@@ -595,7 +615,7 @@ const AuthorizerFilter = () => {
     } 
     docNumFilterValue = e.value;
     globalNumeroPagina = 1;
-    fetchSearchData(globalSearchValue,globalNumeroPagina,docNumFilterValue,companiesId,requestersId,authorizersId,statusId,fechaOrdenInicio,fechaOrdenFin);
+    fetchSearchData(globalSearchValue,globalNumeroPagina,docNumFilterValue,companiesId,requestersId,authorizersId,statusId,fechaOrdenInicio,fechaOrdenFin,fechaAutorizacionInicio,fechaAutorizacionFin,orderByGlobal,orderDirectionGlobal);
   }
 
 
@@ -634,7 +654,7 @@ const AuthorizerFilter = () => {
       globalNumeroPagina = 1;
       if(fechaOrdenInicio !== "" && fechaOrdenFin !== "")
       {
-        fetchSearchData(globalSearchValue,globalNumeroPagina,docNumFilterValue,companiesId,requestersId,authorizersId,statusId,fechaOrdenInicio,fechaOrdenFin);
+        fetchSearchData(globalSearchValue,globalNumeroPagina,docNumFilterValue,companiesId,requestersId,authorizersId,statusId,fechaOrdenInicio,fechaOrdenFin,fechaAutorizacionInicio,fechaAutorizacionFin,orderByGlobal,orderDirectionGlobal);
       }
       // console.log("fechasOrdenes:", fechasOrdenes[0].getDate());
     }
@@ -646,7 +666,7 @@ const AuthorizerFilter = () => {
     fechaOrdenInicio = "";
     fechaOrdenFin = "";
     globalNumeroPagina = 1;
-    fetchSearchData(globalSearchValue,globalNumeroPagina,docNumFilterValue,companiesId,requestersId,authorizersId,statusId,fechaOrdenInicio,fechaOrdenFin,fechaAutorizacionInicio,fechaAutorizacionFin);
+    fetchSearchData(globalSearchValue,globalNumeroPagina,docNumFilterValue,companiesId,requestersId,authorizersId,statusId,fechaOrdenInicio,fechaOrdenFin,fechaAutorizacionInicio,fechaAutorizacionFin,orderByGlobal,orderDirectionGlobal);
   }
   
   const FechaOrdenFilter = () => {
@@ -658,23 +678,64 @@ const AuthorizerFilter = () => {
     );
   };
 
+  useEffect(() => {
+    if(fechaAutorizacion !== null){
+      for(let i = 0; i < fechaAutorizacion.length; i++)
+      {
+        if(fechaAutorizacion[i] !== null){
+          if(i === 0){
+            fechaAutorizacionInicio = fechaAutorizacion[i].toISOString();
+          }
+          else
+          {
+            fechaAutorizacionFin = fechaAutorizacion[i].toISOString();
+          }
+        }
+      }
+      console.log("Fecha Autorizacion inicio:", fechaAutorizacionInicio);
+      console.log("Fecha Autorizacion fin:", fechaAutorizacionFin);
+      globalNumeroPagina = 1;
+      if(fechaAutorizacionInicio !== "" && fechaAutorizacionFin !== "")
+      {
+        fetchSearchData(globalSearchValue,globalNumeroPagina,docNumFilterValue,companiesId,requestersId,authorizersId,statusId,fechaOrdenInicio,fechaOrdenFin,fechaAutorizacionInicio,fechaAutorizacionFin,orderByGlobal,orderDirectionGlobal);
+      }
+      // console.log("fechasOrdenes:", fechasOrdenes[0].getDate());
+    }
+    console.log("fechasOrdenes actualizadas:", fechaAutorizacion);
+  }, [fechaAutorizacion]);
+
+  const handleChangeFechaAutorizacion = (e) => {
+    console.log("Fechas Ordenes:", e.value);
+    setFechaAutorizacion(e.value);
+  }
+
+
   const handleDeleteFechaAutorizacion = () => {
     setFechaAutorizacion(null);
     fechaAutorizacionInicio = "";
     fechaAutorizacionFin = "";
     globalNumeroPagina = 1;
-    fetchSearchData(globalSearchValue,globalNumeroPagina,docNumFilterValue,companiesId,requestersId,authorizersId,statusId,fechaOrdenInicio,fechaOrdenFin,fechaAutorizacionInicio,fechaAutorizacionFin);
+    fetchSearchData(globalSearchValue,globalNumeroPagina,docNumFilterValue,companiesId,requestersId,authorizersId,statusId,fechaOrdenInicio,fechaOrdenFin,fechaAutorizacionInicio,fechaAutorizacionFin,orderByGlobal,orderDirectionGlobal);
   }
 
   const FechaAutorizacionFilter = () => {
     return (
       <div className="p-inputgroup flex-1" style={{ minWidth: '14rem' }}>
-        <Calendar placeholder="Fecha Inicial - Fecha Final" value={fechasOrdenes} onChange={handleChangeFechaOrden} selectionMode="range" readOnlyInput hideOnRangeSelection />
+        <Calendar placeholder="Fecha Inicial - Fecha Final" value={fechaAutorizacion} onChange={handleChangeFechaAutorizacion} selectionMode="range" readOnlyInput hideOnRangeSelection />
         <Button icon="pi pi-times" className="p-button-danger" onClick={handleDeleteFechaAutorizacion} style={{ maxWidth: '2rem' }}/>
     </div>
     );
   };
 
+  const handleSort = (e) => {
+    console.log("Ordenando por numero de documento:", e);
+    orderByGlobal = e.field;
+    orderDirectionGlobal = e.order === 1 ? "ASC" : "DESC";
+    globalNumeroPagina = 1;
+    console.log("Ordenando por:", orderByGlobal);
+    console.log("Direccion de orden:", orderDirectionGlobal);
+    fetchSearchData(globalSearchValue,globalNumeroPagina,docNumFilterValue,companiesId,requestersId,authorizersId,statusId,fechaOrdenInicio,fechaOrdenFin,fechaAutorizacionInicio,fechaAutorizacionFin,orderByGlobal,orderDirectionGlobal,orderByGlobal,orderDirectionGlobal);
+  }
   const header = renderHeader();
 
   const items = [
@@ -729,6 +790,7 @@ const AuthorizerFilter = () => {
               field="DocNum"
               header="Orden"
               sortable 
+              sortFunction={handleSort}
               filter
               filterElement={DocNumBodyTemplate} 
               style={{ width: "10%" }}
