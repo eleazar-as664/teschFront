@@ -18,6 +18,8 @@ import { TabMenu } from "primereact/tabmenu";
 import { Paginator } from "primereact/paginator";
 import { InputNumber } from "primereact/inputnumber";
 import { MultiSelect } from "primereact/multiselect";
+import { Calendar } from 'primereact/calendar';
+        
 
 
 import { Toast } from "primereact/toast";
@@ -33,6 +35,8 @@ let requestersId = [];
 let authorizersId = [];
 let statusId = [];
 let docNumFilterValue = 0;
+let fechaOrdenInicio = "";
+let fechaOrdenFin = "";
 let globalSearchValue = "";
 
 function OrdenesNoAprobadas() {
@@ -72,7 +76,7 @@ function OrdenesNoAprobadas() {
   const [statusFilterSelected, setstatusFilterSelected] = useState(null);
   const [requesterFilterSelected, setRequesterFilterSelected] = useState(null);
   const [authorizerFilterSelected, setAuthorizerFilterSelected] = useState(null);
-
+  const [fechasOrdenes, setFechasOrdenes] = useState(null);
 
   // const[companiesId, setCompaniesId] = useState([]);
   // const[requestersId, setRequestersId] = useState([]);
@@ -105,7 +109,7 @@ const handlePageChange = async (e) => {
     fetchDataPurchaseOrderHeadersPendingApproval(nuevaPagina);
   }else
   {
-    await fetchSearchData(globalSearchValue,nuevaPagina,docNumFilterValue,companiesId,requestersId,authorizersId,statusId);
+    await fetchSearchData(globalSearchValue,nuevaPagina,docNumFilterValue,companiesId,requestersId,authorizersId,statusId,fechaOrdenInicio,fechaOrdenFin);
   }
 };
 
@@ -251,7 +255,7 @@ const fetchDataFilters = async () => {
     );
   };
 
-  const fetchSearchData = async (globalSearchValue,numeroPagina=1,docNum=0,companies=[],requesters=[],authorizers=[],status=[]) => {
+  const fetchSearchData = async (globalSearchValue,numeroPagina=1,docNum=0,companies=[],requesters=[],authorizers=[],status=[],fechaOrdenInicioSeleccionado="",fechaOrdenFinSeleccionado="") => {
     try{
       console.log("BUSCANDO DATOS datos de la API POR MEDIO DE FILTROS...");
       console.log(`DATA TO SEARCH: ${globalSearchValue}`);
@@ -289,6 +293,17 @@ const fetchDataFilters = async () => {
 
       if(status.length > 0){
         urlFilters += `&Status=${status.join(",")}`;
+      }
+      console.log("FECHA INICIO:", fechaOrdenInicioSeleccionado);
+      console.log("FECHA FIN:", fechaOrdenFinSeleccionado);
+      if(fechaOrdenInicioSeleccionado == "")
+      {
+        urlFilters += `&DocDateStart=${fechaOrdenInicioSeleccionado}`;
+      }
+
+      if(fechaOrdenFinSeleccionado == "")
+      {
+        urlFilters += `&DocDateEnd=${fechaOrdenFinSeleccionado}`;
       }
 
 
@@ -350,6 +365,7 @@ const fetchDataFilters = async () => {
       setRequesterFilterSelected(null);
       setAuthorizerFilterSelected(null);
       setstatusFilterSelected(null);
+      setFechasOrdenes(null);
     }
     const value = e.target.value;
     globalSearchValue = value;
@@ -364,11 +380,12 @@ const fetchDataFilters = async () => {
       setRequesterFilterSelected(null);
       setAuthorizerFilterSelected(null);
       setstatusFilterSelected(null);
+      setFechasOrdenes(null);
       fetchDataPurchaseOrderHeadersPendingApproval();
     }
     else
     {
-      fetchSearchData(value,numeroPagina,docNumFilterValue,companiesId,requestersId,authorizersId,statusId);
+      fetchSearchData(value,numeroPagina,docNumFilterValue,companiesId,requestersId,authorizersId,statusId,fechaOrdenInicio,fechaOrdenFin);
     }
 
     // let _filters = { ...filters };
@@ -410,7 +427,7 @@ const handleCompanyFilterChange = async (e) => {
   
   // console.log(`COMPANIAS ASIGNADAS: ${companiesId}`);
   // console.log(`REQUESTERS SELECCIONADOS: ${requestersId}`);
-  await fetchSearchData(globalSearchValue,numeroPagina,docNumFilterValue,companiesId,requestersId,authorizersId,statusId);
+  await fetchSearchData(globalSearchValue,numeroPagina,docNumFilterValue,companiesId,requestersId,authorizersId,statusId,fechaOrdenInicio,fechaOrdenFin);
   setCompaniesFilterSelected(e.value);
 
 }
@@ -453,7 +470,7 @@ const handleRequesterFilterChange = (e) => {
     requestersId = [];
   }
   
-  fetchSearchData(globalSearchValue,numeroPagina,docNumFilterValue,companiesId,requestersId,authorizersId,statusId);
+  fetchSearchData(globalSearchValue,numeroPagina,docNumFilterValue,companiesId,requestersId,authorizersId,statusId,fechaOrdenInicio,fechaOrdenFin);
   
 }
 
@@ -492,7 +509,7 @@ const handleStatusFilterChange = (e) => {
   {
     statusId = [];
   }
-  fetchSearchData(globalSearchValue,numeroPagina,docNumFilterValue,companiesId,requestersId,authorizersId,statusId);
+  fetchSearchData(globalSearchValue,numeroPagina,docNumFilterValue,companiesId,requestersId,authorizersId,statusId,fechaOrdenInicio,fechaOrdenFin);
   
 }
 
@@ -530,7 +547,7 @@ const handleAuthorizerFilterChange = (e) => {
   {
     authorizersId = [];
   }
-  fetchSearchData(globalSearchValue,numeroPagina,docNumFilterValue,companiesId,requestersId,authorizersId,statusId);
+  fetchSearchData(globalSearchValue,numeroPagina,docNumFilterValue,companiesId,requestersId,authorizersId,statusId,fechaOrdenInicio,fechaOrdenFin);
 }
 
 const rowFilterAuthorizer = (option) => {
@@ -563,7 +580,7 @@ const AuthorizerFilter = () => {
       e.value = 0;
     } 
     docNumFilterValue = e.value;
-    fetchSearchData(globalSearchValue,numeroPagina,docNumFilterValue,companiesId,requestersId,authorizersId,statusId);
+    fetchSearchData(globalSearchValue,numeroPagina,docNumFilterValue,companiesId,requestersId,authorizersId,statusId,fechaOrdenInicio,fechaOrdenFin);
   }
 
 
@@ -572,6 +589,55 @@ const AuthorizerFilter = () => {
       <InputNumber placeholder="Buscar Por numero de documento"  onChange={handleDocNumInputChange} />
     )
   };
+
+  // const handleFechaInicioChange = (e) => {
+  //   console.log("Fecha inicio:", e.value);
+  //   fechaOrdenInicio = e.value;
+  // }
+
+  const handleChangeFechaOrden = (e) => {
+    console.log("Fechas Ordenes:", e.value);
+    setFechasOrdenes(e.value);
+  }
+
+  useEffect(() => {
+    if(fechasOrdenes !== null){
+      for(let i = 0; i < fechasOrdenes.length; i++)
+      {
+        if(fechasOrdenes[i] !== null){
+          if(i === 0){
+            fechaOrdenInicio = fechasOrdenes[i].toISOString();
+          }
+          else
+          {
+            fechaOrdenFin = fechasOrdenes[i].toISOString();
+          }
+        }
+      }
+      console.log("Fecha inicio:", fechaOrdenInicio);
+      console.log("Fecha fin:", fechaOrdenFin);
+    fetchSearchData(globalSearchValue,numeroPagina,docNumFilterValue,companiesId,requestersId,authorizersId,statusId,fechaOrdenInicio,fechaOrdenFin);
+      // console.log("fechasOrdenes:", fechasOrdenes[0].getDate());
+    }
+    console.log("fechasOrdenes actualizadas:", fechasOrdenes);
+  }, [fechasOrdenes]);
+
+  const handleDeleteFechaOrden = () => {
+    setFechasOrdenes(null);
+    // fechaOrdenInicio = "";
+    // fechaOrdenFin = "";
+    fetchSearchData(globalSearchValue,numeroPagina,docNumFilterValue,companiesId,requestersId,authorizersId,statusId,fechaOrdenInicio,fechaOrdenFin);
+  }
+  
+  const FechaOrdenFilter = () => {
+    return (
+      <div className="p-inputgroup flex-1" style={{ minWidth: '14rem' }}>
+        <Calendar placeholder="Fecha Inicial - Fecha Final" value={fechasOrdenes} onChange={handleChangeFechaOrden} selectionMode="range" readOnlyInput hideOnRangeSelection />
+        <Button icon="pi pi-times" className="p-button-danger" onClick={handleDeleteFechaOrden} style={{ maxWidth: '2rem' }}/>
+    </div>
+    );
+  };
+
 
   const header = renderHeader();
 
@@ -643,6 +709,8 @@ const AuthorizerFilter = () => {
               field="DocDate"
               header="Fecha Orden"
               style={{ width: "20%" }}
+              filter
+              filterElement={FechaOrdenFilter}
               sortable 
             ></Column>
             <Column
