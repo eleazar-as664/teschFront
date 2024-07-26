@@ -37,7 +37,10 @@ let statusId = [];
 let docNumFilterValue = 0;
 let fechaOrdenInicio = "";
 let fechaOrdenFin = "";
+let fechaAutorizacionInicio = "";
+let fechaAutorizacionFin = "";
 let globalSearchValue = "";
+let globalNumeroPagina = 1;
 
 function OrdenesNoAprobadas() {
   const toast = useRef(null);
@@ -63,7 +66,7 @@ function OrdenesNoAprobadas() {
   const token = JSON.parse(localStorage.getItem("user")).Token;
   const[DocNumToSearch, setDocNumToSearch] = useState("");
   const NUMERO_REGISTROS_POR_PAGINA = 30;
-  const [numeroPagina, setNumeroPagina] = useState(1);
+  // const [numeroPagina, setNumeroPagina] = useState(1);
   const [totalRecords, setTotalRecords] = useState(0);
   const [companiesFilter, setCompaniesFilter] = useState([]);
   const [statusFilter, setStatusFilter] = useState([]);
@@ -77,6 +80,7 @@ function OrdenesNoAprobadas() {
   const [requesterFilterSelected, setRequesterFilterSelected] = useState(null);
   const [authorizerFilterSelected, setAuthorizerFilterSelected] = useState(null);
   const [fechasOrdenes, setFechasOrdenes] = useState(null);
+  const [fechaAutorizacion, setFechaAutorizacion] = useState(null);
 
   // const[companiesId, setCompaniesId] = useState([]);
   // const[requestersId, setRequestersId] = useState([]);
@@ -103,13 +107,13 @@ const generarNumeroPagina= (incremento,totalRegistros) => {
 };
 
 const handlePageChange = async (e) => {
-  let nuevaPagina = e.page + 1;
-  setNumeroPagina(nuevaPagina);
+  globalNumeroPagina = e.page + 1;
+  // setNumeroPagina(numeroPagina);
   if(urlGlobalSearch.length === 0){
-    fetchDataPurchaseOrderHeadersPendingApproval(nuevaPagina);
+    fetchDataPurchaseOrderHeadersPendingApproval(globalNumeroPagina);
   }else
   {
-    await fetchSearchData(globalSearchValue,nuevaPagina,docNumFilterValue,companiesId,requestersId,authorizersId,statusId,fechaOrdenInicio,fechaOrdenFin);
+    await fetchSearchData(globalSearchValue,globalNumeroPagina,docNumFilterValue,companiesId,requestersId,authorizersId,statusId,fechaOrdenInicio,fechaOrdenFin);
   }
 };
 
@@ -173,7 +177,8 @@ const fetchDataFilters = async () => {
       setPurchaseOrderData(updatedData);
       const numeroPaginaDinamico = generarNumeroPagina(NUMERO_REGISTROS_POR_PAGINA, response.data.data.totalPurchaseOrders);      
       const numeroPaginasTotales = numeroPaginaDinamico[numeroPagina];
-      setNumeroPagina(numeroPaginasTotales)
+      // setNumeroPagina(numeroPaginasTotales)
+      globalNumeroPagina = numeroPaginasTotales;
 
       // setpurchaseOrderData(response.data.data.purchaseRequestsHeaders);
     } catch (error) {
@@ -264,6 +269,8 @@ const fetchDataFilters = async () => {
       console.log(`REQUESTERS: ${requesters}`);
       console.log(`AUTHORIZERS: ${authorizers}`);
       console.log(`STATUS: ${status}`);
+      console.log(`FECHA INICIO: ${fechaOrdenInicioSeleccionado}`);
+      console.log(`FECHA FIN: ${fechaOrdenFinSeleccionado}`);
 
       let urlFilters = "";
 
@@ -296,12 +303,12 @@ const fetchDataFilters = async () => {
       }
       console.log("FECHA INICIO:", fechaOrdenInicioSeleccionado);
       console.log("FECHA FIN:", fechaOrdenFinSeleccionado);
-      if(fechaOrdenInicioSeleccionado == "")
+      if(fechaOrdenInicioSeleccionado != "")
       {
         urlFilters += `&DocDateStart=${fechaOrdenInicioSeleccionado}`;
       }
 
-      if(fechaOrdenFinSeleccionado == "")
+      if(fechaOrdenFinSeleccionado != "")
       {
         urlFilters += `&DocDateEnd=${fechaOrdenFinSeleccionado}`;
       }
@@ -333,7 +340,8 @@ const fetchDataFilters = async () => {
         let numeroPaginaDinamico = generarNumeroPagina(NUMERO_REGISTROS_POR_PAGINA, totalPurchaseOrders);      
         let numeroPaginasTotales = numeroPaginaDinamico[numeroPagina];
         console.log("NUMERO DE PAGINASTOTALES:", numeroPaginasTotales);
-        setNumeroPagina(numeroPaginasTotales)
+        globalNumeroPagina = numeroPaginasTotales;
+        // setNumeroPagina(numeroPaginasTotales)
     } catch (error) {
       // console.log("Error al buscar datos:", error);
       let { response: { data: { detailMessage, message,code } } } = error;
@@ -366,6 +374,7 @@ const fetchDataFilters = async () => {
       setAuthorizerFilterSelected(null);
       setstatusFilterSelected(null);
       setFechasOrdenes(null);
+      globalNumeroPagina = 1
     }
     const value = e.target.value;
     globalSearchValue = value;
@@ -382,10 +391,12 @@ const fetchDataFilters = async () => {
       setstatusFilterSelected(null);
       setFechasOrdenes(null);
       fetchDataPurchaseOrderHeadersPendingApproval();
+      globalNumeroPagina = 1
     }
     else
     {
-      fetchSearchData(value,numeroPagina,docNumFilterValue,companiesId,requestersId,authorizersId,statusId,fechaOrdenInicio,fechaOrdenFin);
+      globalNumeroPagina = 1;
+      fetchSearchData(value,globalNumeroPagina,docNumFilterValue,companiesId,requestersId,authorizersId,statusId,fechaOrdenInicio,fechaOrdenFin);
     }
 
     // let _filters = { ...filters };
@@ -427,7 +438,8 @@ const handleCompanyFilterChange = async (e) => {
   
   // console.log(`COMPANIAS ASIGNADAS: ${companiesId}`);
   // console.log(`REQUESTERS SELECCIONADOS: ${requestersId}`);
-  await fetchSearchData(globalSearchValue,numeroPagina,docNumFilterValue,companiesId,requestersId,authorizersId,statusId,fechaOrdenInicio,fechaOrdenFin);
+  globalNumeroPagina = 1;
+  await fetchSearchData(globalSearchValue,globalNumeroPagina,docNumFilterValue,companiesId,requestersId,authorizersId,statusId,fechaOrdenInicio,fechaOrdenFin);
   setCompaniesFilterSelected(e.value);
 
 }
@@ -469,8 +481,8 @@ const handleRequesterFilterChange = (e) => {
     // console.log("Limpiando solicitantes");
     requestersId = [];
   }
-  
-  fetchSearchData(globalSearchValue,numeroPagina,docNumFilterValue,companiesId,requestersId,authorizersId,statusId,fechaOrdenInicio,fechaOrdenFin);
+  globalNumeroPagina = 1;
+  fetchSearchData(globalSearchValue,globalNumeroPagina,docNumFilterValue,companiesId,requestersId,authorizersId,statusId,fechaOrdenInicio,fechaOrdenFin);
   
 }
 
@@ -509,7 +521,8 @@ const handleStatusFilterChange = (e) => {
   {
     statusId = [];
   }
-  fetchSearchData(globalSearchValue,numeroPagina,docNumFilterValue,companiesId,requestersId,authorizersId,statusId,fechaOrdenInicio,fechaOrdenFin);
+  globalNumeroPagina = 1;
+  fetchSearchData(globalSearchValue,globalNumeroPagina,docNumFilterValue,companiesId,requestersId,authorizersId,statusId,fechaOrdenInicio,fechaOrdenFin);
   
 }
 
@@ -547,7 +560,8 @@ const handleAuthorizerFilterChange = (e) => {
   {
     authorizersId = [];
   }
-  fetchSearchData(globalSearchValue,numeroPagina,docNumFilterValue,companiesId,requestersId,authorizersId,statusId,fechaOrdenInicio,fechaOrdenFin);
+  globalNumeroPagina = 1;
+  fetchSearchData(globalSearchValue,globalNumeroPagina,docNumFilterValue,companiesId,requestersId,authorizersId,statusId,fechaOrdenInicio,fechaOrdenFin);
 }
 
 const rowFilterAuthorizer = (option) => {
@@ -580,7 +594,8 @@ const AuthorizerFilter = () => {
       e.value = 0;
     } 
     docNumFilterValue = e.value;
-    fetchSearchData(globalSearchValue,numeroPagina,docNumFilterValue,companiesId,requestersId,authorizersId,statusId,fechaOrdenInicio,fechaOrdenFin);
+    globalNumeroPagina = 1;
+    fetchSearchData(globalSearchValue,globalNumeroPagina,docNumFilterValue,companiesId,requestersId,authorizersId,statusId,fechaOrdenInicio,fechaOrdenFin);
   }
 
 
@@ -616,7 +631,11 @@ const AuthorizerFilter = () => {
       }
       console.log("Fecha inicio:", fechaOrdenInicio);
       console.log("Fecha fin:", fechaOrdenFin);
-    fetchSearchData(globalSearchValue,numeroPagina,docNumFilterValue,companiesId,requestersId,authorizersId,statusId,fechaOrdenInicio,fechaOrdenFin);
+      globalNumeroPagina = 1;
+      if(fechaOrdenInicio !== "" && fechaOrdenFin !== "")
+      {
+        fetchSearchData(globalSearchValue,globalNumeroPagina,docNumFilterValue,companiesId,requestersId,authorizersId,statusId,fechaOrdenInicio,fechaOrdenFin);
+      }
       // console.log("fechasOrdenes:", fechasOrdenes[0].getDate());
     }
     console.log("fechasOrdenes actualizadas:", fechasOrdenes);
@@ -624,9 +643,10 @@ const AuthorizerFilter = () => {
 
   const handleDeleteFechaOrden = () => {
     setFechasOrdenes(null);
-    // fechaOrdenInicio = "";
-    // fechaOrdenFin = "";
-    fetchSearchData(globalSearchValue,numeroPagina,docNumFilterValue,companiesId,requestersId,authorizersId,statusId,fechaOrdenInicio,fechaOrdenFin);
+    fechaOrdenInicio = "";
+    fechaOrdenFin = "";
+    globalNumeroPagina = 1;
+    fetchSearchData(globalSearchValue,globalNumeroPagina,docNumFilterValue,companiesId,requestersId,authorizersId,statusId,fechaOrdenInicio,fechaOrdenFin,fechaAutorizacionInicio,fechaAutorizacionFin);
   }
   
   const FechaOrdenFilter = () => {
@@ -638,6 +658,22 @@ const AuthorizerFilter = () => {
     );
   };
 
+  const handleDeleteFechaAutorizacion = () => {
+    setFechaAutorizacion(null);
+    fechaAutorizacionInicio = "";
+    fechaAutorizacionFin = "";
+    globalNumeroPagina = 1;
+    fetchSearchData(globalSearchValue,globalNumeroPagina,docNumFilterValue,companiesId,requestersId,authorizersId,statusId,fechaOrdenInicio,fechaOrdenFin,fechaAutorizacionInicio,fechaAutorizacionFin);
+  }
+
+  const FechaAutorizacionFilter = () => {
+    return (
+      <div className="p-inputgroup flex-1" style={{ minWidth: '14rem' }}>
+        <Calendar placeholder="Fecha Inicial - Fecha Final" value={fechasOrdenes} onChange={handleChangeFechaOrden} selectionMode="range" readOnlyInput hideOnRangeSelection />
+        <Button icon="pi pi-times" className="p-button-danger" onClick={handleDeleteFechaAutorizacion} style={{ maxWidth: '2rem' }}/>
+    </div>
+    );
+  };
 
   const header = renderHeader();
 
@@ -733,6 +769,8 @@ const AuthorizerFilter = () => {
               field="AuthorizationDate"
               header="Fecha Autorización"
               style={{ width: "20%" }}
+              filter
+              filterElement={FechaAutorizacionFilter}
               sortable 
             ></Column>
             <Column
@@ -794,7 +832,7 @@ const AuthorizerFilter = () => {
               bodyStyle={{ textAlign: "center" }}
             ></Column>
           </DataTable>
-          <Paginator first={numeroPagina}  rows={NUMERO_REGISTROS_POR_PAGINA} totalRecords={totalRecords} onPageChange={handlePageChange}  />
+          <Paginator first={globalNumeroPagina}  rows={NUMERO_REGISTROS_POR_PAGINA} totalRecords={totalRecords} onPageChange={handlePageChange}  />
         </div>
       </Card>
     </Layout>
