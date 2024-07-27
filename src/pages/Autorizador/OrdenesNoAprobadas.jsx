@@ -41,8 +41,8 @@ let fechaAutorizacionInicio = "";
 let fechaAutorizacionFin = "";
 let globalSearchValue = "";
 let globalNumeroPagina = 1;
-let orderByGlobal = "";
-let orderDirectionGlobal = "";
+// let orderByGlobal = "";
+// let orderDirectionGlobal = "";
 
 function OrdenesNoAprobadas() {
   const toast = useRef(null);
@@ -83,6 +83,10 @@ function OrdenesNoAprobadas() {
   const [authorizerFilterSelected, setAuthorizerFilterSelected] = useState(null);
   const [fechasOrdenes, setFechasOrdenes] = useState(null);
   const [fechaAutorizacion, setFechaAutorizacion] = useState(null);
+//   let orderByGlobal = "";
+// let orderDirectionGlobal = "";
+  const[orderByGlobal, setOrderByGlobal] = useState("");
+  const[orderDirectionGlobal, setOrderDirectionGlobal] = useState("");
 
   // const[companiesId, setCompaniesId] = useState([]);
   // const[requestersId, setRequestersId] = useState([]);
@@ -156,7 +160,7 @@ const fetchDataFilters = async () => {
 
   const fetchDataPurchaseOrderHeadersPendingApproval = async (numeroPagina=1) => {
     try {
-      console.log("Cargando datos de la API...");
+      console.log("Cargando datos de la API... fetchDataPurchaseOrderHeadersPendingApproval");
       const IdUsuario = user.UserId;
       const apiUrl = `${routes.BASE_URL_SERVER}/GetAllPurchaseOrdersPagination/${IdUsuario}/${NUMERO_REGISTROS_POR_PAGINA}/${numeroPagina}`;
       const config = {
@@ -355,7 +359,9 @@ const fetchDataFilters = async () => {
         console.log("NUMERO DE PAGINA: ", numeroPagina);
         setPurchaseOrderData(purchaseOrdersMapped);
         setTotalRecords(totalPurchaseOrders);
+        console.log("ORDENES ENCONTRADAS:", purchaseOrderData);
         let numeroPaginaDinamico = generarNumeroPagina(NUMERO_REGISTROS_POR_PAGINA, totalPurchaseOrders);      
+        console.log("NUMERO DE PAGINA DINAMICO:", numeroPaginaDinamico);
         let numeroPaginasTotales = numeroPaginaDinamico[numeroPagina];
         console.log("NUMERO DE PAGINASTOTALES:", numeroPaginasTotales);
         globalNumeroPagina = numeroPaginasTotales;
@@ -727,14 +733,21 @@ const AuthorizerFilter = () => {
     );
   };
 
+
+  useEffect(() => {
+    console.log(`ORDENANDO Y BUSCANDO DATOS`);
+    fetchSearchData(globalSearchValue,globalNumeroPagina,docNumFilterValue,companiesId,requestersId,authorizersId,statusId,fechaOrdenInicio,fechaOrdenFin,fechaAutorizacionInicio,fechaAutorizacionFin,orderByGlobal,orderDirectionGlobal,orderByGlobal,orderDirectionGlobal);
+    // setPurchaseOrderData(purchaseOrderData);
+  },[orderByGlobal,orderDirectionGlobal]);
+  
   const handleSort = (e) => {
-    console.log("Ordenando por numero de documento:", e);
-    orderByGlobal = e.field;
-    orderDirectionGlobal = e.order === 1 ? "ASC" : "DESC";
-    globalNumeroPagina = 1;
     console.log("Ordenando por:", orderByGlobal);
     console.log("Direccion de orden:", orderDirectionGlobal);
-    fetchSearchData(globalSearchValue,globalNumeroPagina,docNumFilterValue,companiesId,requestersId,authorizersId,statusId,fechaOrdenInicio,fechaOrdenFin,fechaAutorizacionInicio,fechaAutorizacionFin,orderByGlobal,orderDirectionGlobal,orderByGlobal,orderDirectionGlobal);
+    // globalNumeroPagina = 1;
+    setOrderByGlobal(e.field);
+    setOrderDirectionGlobal(e.order === 1 ? "ASC" : "DESC");
+    // orderByGlobal = e.field;
+    // orderDirectionGlobal = e.order === 1 ? "ASC" : "DESC";
   }
   const header = renderHeader();
 
