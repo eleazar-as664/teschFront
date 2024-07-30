@@ -342,7 +342,7 @@ function Proveedor() {
                   name="demo[]"
                   multiple
                   accept="image/*,.pdf,.xml"
-                  maxFileSize={1000000}
+                  maxFileSize={11000000}
                   onSelect={handleFileSelect}
                   auto
                   chooseLabel="Agregar"
