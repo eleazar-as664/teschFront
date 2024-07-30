@@ -733,6 +733,18 @@ const AuthorizerFilter = () => {
     );
   };
 
+  const headerDesign = () => {
+    return (
+      <div className="flex justify-content-between">
+        <div className="flex align-items-center gap-2">
+          <span className="p-float-label">
+            <label htmlFor="docNum">Número de documento</label>
+          </span>
+        </div>
+      </div>
+    );
+  };
+
 
   useEffect(() => {
     console.log(`ORDENANDO Y BUSCANDO DATOS`);
@@ -740,15 +752,16 @@ const AuthorizerFilter = () => {
     // setPurchaseOrderData(purchaseOrderData);
   },[orderByGlobal,orderDirectionGlobal]);
   
-  const handleSort = (e) => {
-    console.log("Ordenando por:", orderByGlobal);
-    console.log("Direccion de orden:", orderDirectionGlobal);
-    // globalNumeroPagina = 1;
-    setOrderByGlobal(e.field);
-    setOrderDirectionGlobal(e.order === 1 ? "ASC" : "DESC");
-    // orderByGlobal = e.field;
-    // orderDirectionGlobal = e.order === 1 ? "ASC" : "DESC";
-  }
+  // const handleSort = async (e) => {
+  //   console.log("Ordenando por:", orderByGlobal);
+  //   console.log("Direccion de orden:", orderDirectionGlobal);
+  //   // // globalNumeroPagina = 1;
+  //   // setOrderByGlobal(e.field);
+  //   // setOrderDirectionGlobal(e.order === 1 ? "ASC" : "DESC");
+  //   await fetchSearchData(globalSearchValue,globalNumeroPagina,docNumFilterValue,companiesId,requestersId,authorizersId,statusId,fechaOrdenInicio,fechaOrdenFin,fechaAutorizacionInicio,fechaAutorizacionFin,e.field,e.order === 1 ? "ASC" : "DESC");
+  //   // orderByGlobal = e.field;
+  //   // orderDirectionGlobal = e.order === 1 ? "ASC" : "DESC";
+  // }
   const header = renderHeader();
 
   const items = [
@@ -803,7 +816,6 @@ const AuthorizerFilter = () => {
               field="DocNum"
               header="Orden"
               sortable 
-              sortFunction={handleSort}
               filter
               filterElement={DocNumBodyTemplate} 
               style={{ width: "10%" }}
