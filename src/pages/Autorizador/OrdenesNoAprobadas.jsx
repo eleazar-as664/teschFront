@@ -205,6 +205,21 @@ const fetchDataFilters = async () => {
 
 
   useEffect(() => {
+    console.clear();
+    console.log("Cargando datos de la API...");
+    companiesId = [];
+    requestersId = [];
+    authorizersId = [];
+    statusId = [];
+    docNumFilterValue = 0;
+    setCompaniesFilterSelected(null);
+    setRequesterFilterSelected(null);
+    setAuthorizerFilterSelected(null);
+    setstatusFilterSelected(null);
+    setFechasOrdenes(null);
+    setFechaAutorizacion(null);
+    globalNumeroPagina = 1
+    globalSearchValue = "";
     localStorage.removeItem("purchaseOrderData");
     fetchDataFilters();
     fetchDataPurchaseOrderHeadersPendingApproval();
