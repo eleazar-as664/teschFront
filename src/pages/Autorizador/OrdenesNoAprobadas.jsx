@@ -488,7 +488,7 @@ const CompanyFilter = () => {
           placeholder="Buscar por compañia"
           className="p-column-filter"
           maxSelectedLabels={1}
-          style={{ minWidth: '14rem' }}
+          // style={{ minWidth: '14rem' }}
       />
   );
 };
@@ -531,7 +531,7 @@ const RequesterFilter = () => {
           placeholder="Buscar por Solicitante"
           className="p-column-filter"
           maxSelectedLabels={1}
-          style={{ minWidth: '14rem' }}
+          // style={{ minWidth: '14rem' }}
       />
   );
 };
@@ -570,7 +570,7 @@ const StatusFilter = () => {
           placeholder="Buscar por Estatus"
           className="p-column-filter"
           maxSelectedLabels={1}
-          style={{ minWidth: '14rem' }}
+          // style={{ minWidth: '14rem' }}
       />
   );
 };
@@ -609,7 +609,7 @@ const AuthorizerFilter = () => {
           placeholder="Buscar por Autorizador"
           className="p-column-filter"
           maxSelectedLabels={1}
-          style={{ minWidth: '14rem' }}
+          // style={{ minWidth: '14rem' }}
       />
   );
 };
@@ -677,7 +677,7 @@ const AuthorizerFilter = () => {
   
   const FechaOrdenFilter = () => {
     return (
-      <div className="p-inputgroup flex-1" style={{ minWidth: '14rem' }}>
+      <div className="p-inputgroup flex-1">
         <Calendar placeholder="Fecha Inicial - Fecha Final" value={fechasOrdenes} onChange={handleChangeFechaOrden} selectionMode="range" readOnlyInput hideOnRangeSelection />
         <Button icon="pi pi-times" className="p-button-danger" onClick={handleDeleteFechaOrden} style={{ maxWidth: '2rem' }}/>
     </div>
@@ -726,7 +726,7 @@ const AuthorizerFilter = () => {
 
   const FechaAutorizacionFilter = () => {
     return (
-      <div className="p-inputgroup flex-1" style={{ minWidth: '14rem' }}>
+      <div className="p-inputgroup flex-1">
         <Calendar placeholder="Fecha Inicial - Fecha Final" value={fechaAutorizacion} onChange={handleChangeFechaAutorizacion} selectionMode="range" readOnlyInput hideOnRangeSelection />
         <Button icon="pi pi-times" className="p-button-danger" onClick={handleDeleteFechaAutorizacion} style={{ maxWidth: '2rem' }}/>
     </div>
@@ -800,7 +800,7 @@ const AuthorizerFilter = () => {
             scrollable
             scrollHeight="400px"
             stripedRows
-            tableStyle={{ minWidth: "50rem" }}
+            // tableStyle={{ minWidth: "50rem" }}
             filters={filters}
             filterDisplay="row"
             globalFilterFields={[
@@ -818,12 +818,12 @@ const AuthorizerFilter = () => {
               sortable 
               filter
               filterElement={DocNumBodyTemplate} 
-              style={{ width: "10%" }}
+              style={{ width: "5%" }}
             ></Column>
             <Column
               field="CompanyName"
               header="Empresa"
-              style={{ width: "20%" }}
+              style={{ width: "10%" }}
               filter
               filterElement={CompanyFilter}
               sortable 
@@ -831,7 +831,7 @@ const AuthorizerFilter = () => {
             <Column
               field="DocDate"
               header="Fecha Orden"
-              style={{ width: "20%" }}
+              style={{ width: "30%" }}
               filter
               filterElement={FechaOrdenFilter}
               sortable 
@@ -841,7 +841,7 @@ const AuthorizerFilter = () => {
               header="Solicitó"
               filter
               filterElement={RequesterFilter}
-              style={{ width: "20%" }}
+              style={{ width: "10%" }}
               sortable 
             ></Column>
             <Column
@@ -849,13 +849,13 @@ const AuthorizerFilter = () => {
               header="Autorizador"
               filter
               filterElement={AuthorizerFilter}
-              style={{ width: "20%" }}
+              style={{ width: "10%" }}
               sortable 
             ></Column>
             <Column
               field="AuthorizationDate"
               header="Fecha Autorización"
-              style={{ width: "20%" }}
+              style={{ width: "30%" }}
               filter
               filterElement={FechaAutorizacionFilter}
               sortable 
@@ -863,7 +863,7 @@ const AuthorizerFilter = () => {
             <Column
               field="ApprovalStatus"
               header="Estatus"
-              style={{ width: "20%" }}
+              style={{ width: "5%" }}
               sortable 
               filter
               filterElement={StatusFilter}
@@ -913,10 +913,6 @@ const AuthorizerFilter = () => {
                     return rowData.ApprovalStatus;
                 }
               }}
-            ></Column>
-            <Column
-              headerStyle={{ width: "5%", minWidth: "5rem" }}
-              bodyStyle={{ textAlign: "center" }}
             ></Column>
           </DataTable>
           <Paginator first={globalNumeroPagina}  rows={NUMERO_REGISTROS_POR_PAGINA} totalRecords={totalRecords} onPageChange={handlePageChange}  />
