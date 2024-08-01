@@ -398,3 +398,25 @@ body {
 .forty-percent{
     width: 40% !important;
 }
+
+.p-column-filter-menu-button {
+    display:none;
+}
+
+.p-column-filter-clear-button{
+    width: 0px;
+}
+
+.p-column-filter .p-fluid .p-inputgroup{
+    margin-bottom: 0px;
+}
+
+.p-column-filter .p-fluid .p-inputgroup .p-inputtext{
+    border-bottom-right-radius: 0px;
+    border-top-right-radius: 0px;
+}
+
+.p-column-filter .p-fluid .p-inputgroup .p-button-danger{
+    border-bottom-left-radius: 0px;
+    border-top-left-radius: 0px; 
+}
