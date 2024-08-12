@@ -211,7 +211,8 @@ const generatePDF = (data) => {
 
     addFooters(doc)
   // Guardar el PDF
-  doc.save('orden_de_compra.pdf');
+  doc.output('dataurlnewwindow', {filename: 'Orden_de_compra.pdf'});
+  // doc.save('orden_de_compra.pdf');
 };
 
 export default generatePDF;
