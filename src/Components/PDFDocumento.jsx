@@ -1,8 +1,16 @@
 import jsPDF from 'jspdf';
 import 'jspdf-autotable';
+import routes from "../utils/Constants";
 
 const generatePDF = (data) => {
   const doc = new jsPDF();
+
+  if (data.details[0].OcrCode === 'AMMTY' ){
+    data.LogoPath = routes.Logo_SanPedro;
+  }
+  else if (data.details[0].OcrCode === 'SUZUKI' ){
+    data.LogoPath = routes.Logo_Suzuki;
+  }
 
   const formatCurrency = (value) => {
     const formattedValue = new Intl.NumberFormat("en-US", {
@@ -48,7 +56,7 @@ const generatePDF = (data) => {
       var body = []
       for (var i = 0; i <data.length; i++) {
       var row = []
-      if (i == 0) {
+      if (i === 0) {
         row.push({
           rowSpan: data.length,
           content: codigo,
@@ -73,7 +81,7 @@ const generatePDF = (data) => {
     }
     addTableToPDF(dataREP, "", doc, 5);
 
-    if (data.LogoPath != '' )
+    if (data.LogoPath !== '' )
       {
           const imgProps= doc.getImageProperties('data:image/png;base64,'+ data.LogoPath);
           const pdfWidth = 50;
