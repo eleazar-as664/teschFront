@@ -13,6 +13,8 @@ import { Divider } from "primereact/divider";
 import { Avatar } from 'primereact/avatar';
 import routes from "../../utils/routes";
 import axios from "axios";
+import { ColumnGroup } from 'primereact/columngroup';
+import { Row } from 'primereact/row';
 
 function  AutorizadorOrdenCompra() {
   const [files, setFiles] = useState([]);
@@ -32,6 +34,17 @@ function  AutorizadorOrdenCompra() {
   const [notasAgregar, setNotasAgregar] = useState("");
   const[autorizando, setAutorizando] = useState(false);
   const[cancelando, setCancelando] = useState(false);
+  const formatCurrency = (value) => {
+    const formattedValue = new Intl.NumberFormat("en-US", {
+      style: "currency",
+      currency: "USD",
+    }).format(value);
+
+    return formattedValue;
+  };
+  const priceBodyTemplate = (rowData) => {
+    return formatCurrency(rowData.PriceByUnit);
+  };
 
   const handleBack = () => {
     window.history.back();
@@ -150,6 +163,25 @@ function  AutorizadorOrdenCompra() {
         console.log(response);
 
     }
+    const footerGroup = (
+      <ColumnGroup>
+          <Row style={{padding: "0px"}}>
+              <Column footer="  " className="order-total" />
+              <Column footer="Sub-Total:" colSpan={3} footerStyle={{ textAlign: 'right' }} className="order-total"/>
+              <Column footer={purchaseOrderHeader.Subtotal} className="order-total" />
+          </Row>
+          <Row style={{padding: "0px"}}>
+              <Column footer="  " className="order-total" />            
+              <Column footer="IVA:" colSpan={3} footerStyle={{ textAlign: 'right' }} className="order-total"/>
+              <Column footer={purchaseOrderHeader.IVA} className="order-total"/>
+          </Row>
+          <Row style={{padding: "0px"}}>
+              <Column footer="  " className="order-total" />
+              <Column footer="Total:" colSpan={3} footerStyle={{ textAlign: 'right' }} className="order-total"/>
+              <Column footer={purchaseOrderHeader.Total} className="order-total" />
+          </Row>
+      </ColumnGroup>
+  );
 
   return (
     <Layout>
@@ -169,21 +201,24 @@ function  AutorizadorOrdenCompra() {
             <div className="p-col">
             <Avatar label={primeraLetra} className="mr-2" shape="circle" />
             </div>
-              <div className="p-col-field">
+              <div className="p-col-field" style={{width:"50%"}}>
                 <div className="p-field">
-                  <span className="field-name">{purchaseOrderHeader.Requester}</span>  
+                  <span className="field-name">Solicitó: </span>
+                    {purchaseOrderHeader.Requester}  
                 </div>
 
                 <div className="p-field">
-                  <span className="field-name">{purchaseOrderHeader.CompanyName}</span>  
+                  <span className="field-name">Empresa: </span>
+                  {purchaseOrderHeader.CompanyName}  
                 </div>
 
                 <div className="p-field">
+                <span className="field-name">Fecha de la orden: </span>
                   {purchaseOrderHeader.DocDate}
                 </div>
               </div>
 
-              <div className="p-col-field">
+              <div className="p-col-field" style={{width:"50%"}}>
                 <div className="p-field">
                   <span className="field-name">Fecha de entrega: </span>  
                   {purchaseOrderHeader.DocDueDate}
@@ -255,12 +290,13 @@ function  AutorizadorOrdenCompra() {
             scrollable
             scrollHeight="200px"
             tableStyle={{ minWidth: "50rem" }}
+            footerColumnGroup={footerGroup}
           >
             <Column field="ItemCode" header="Código" />
             <Column field="Description" header="Descripción" />
             <Column field="BuyUnitMsr" header="Unidad" />
             <Column field="Quantity" header="Cantidad" />
-            <Column field="PriceByUnit" header="Precio Por Unidad" />
+            <Column field="PriceByUnit" header="Precio Por Unidad" body={priceBodyTemplate}/>
           </DataTable>
         </Card>
 

@@ -256,17 +256,15 @@ function DetalleCompra() {
                   </span>
                 </div>
                 <div className="p-field">
-                  <span className="field-name">
+                  <span className="field-name">Nombre de Requisitor: </span>
                     {infoUsuarioCreadorSolicitud.FirstName +
                       " " +
-                      infoUsuarioCreadorSolicitud.LastName}{" "}
-                  </span>
+                      infoUsuarioCreadorSolicitud.LastName}{" "}                  
                 </div>
 
                 <div className="p-field">
-                  <span className="field-name">
+                  <span className="field-name">Empresa: </span>
                     {infoUsuarioCreadorSolicitud.BusinessName}{" "}
-                  </span>
                 </div>
 
                 <div className="p-field">
@@ -276,7 +274,7 @@ function DetalleCompra() {
               </div>
 
               <div className="p-col-field">
-                <div className="p-field">
+                <div className="p-field" style={{color:"#1919db"}}>
                   <span className="field-name">No. SAP: </span>
                   <span className="field-name">
                     {infoUsuarioCreadorSolicitud.DocNum}{" "}

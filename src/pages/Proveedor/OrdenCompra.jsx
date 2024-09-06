@@ -19,7 +19,8 @@ function NuevaCompra() {
   const [purchaseOrderDataDetail, setPurchaseOrderDataDetail] = useState([]);
   const [purchaseOrderDataHeader, setPurchaseOrderDataHeader] = useState([]);
   const [archivosSeleccionados, setArchivosSeleccionados] = useState([]);
-  const [filesProceedor, setFilesProceedor] = useState([]);
+  const [filesProveedor, setFilesProveedor] = useState([]);
+  const [loading, setLoading] = useState(false);
 
   const ordenData = JSON.parse(localStorage.getItem("purchaseOrderData"));
   const token = JSON.parse(localStorage.getItem("user")).Token;
@@ -40,7 +41,7 @@ function NuevaCompra() {
       };
       const response = await axios.get(apiUrl, config);
 
-      setFilesProceedor(response.data.data.Files);
+      setFilesProveedor(response.data.data.Files);
 
       setPurchaseOrderDataDetail(response.data.data.Detail);
       console.log(response.data.data);
@@ -68,6 +69,31 @@ function NuevaCompra() {
     );
     setArchivosSeleccionados(updatedItems);
   };
+
+  const eliminarArchivosSAP = async () => {
+    setLoading(true);
+
+    try {
+      console.clear();
+      const PurchaseOrderId = ordenData.PurchaseOrderId;
+      const apiUrl = `${routes.BASE_URL_SERVER}/DeletePurchaseOrderFiles/${PurchaseOrderId}`;
+      const config = {
+        headers: {
+          "x-access-token": token,
+        },
+     };
+      const response = await axios.get(apiUrl, config);
+      window.location.reload(true);
+
+    } catch (error) {
+      setLoading(false);
+      console.error("Error al obtener datos de la API:", error);
+    } finally {
+      setLoading(false);
+    }
+
+
+  }
 
   const enviarArchivosSAP = async () => {
     const formData = new FormData();
@@ -171,10 +197,21 @@ function NuevaCompra() {
 
           <Card title="Adjuntos" className="adjuntos">
             <div className="p-field-group">
-              <div className="row align-right"></div>
+            <div className="row align-right">
+              {filesProveedor.length > 2 && (
+                   <Button
+                    outlined
+                    onClick={() => eliminarArchivosSAP()}
+                    label="Eliminar archivos"
+                    severity="danger"
+                    loading={loading}
+                    style={{ width: "auto" }}
+                  />
+                )}
+              </div>
               <div className="row">
                 <div className="p-col-field">
-                  <DataTable value={filesProceedor}>
+                 <DataTable value={filesProveedor}>
                     <Column field="FileName" header="Nombre" />
                     <Column
                       header="Acción"

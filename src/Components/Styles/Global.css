@@ -246,7 +246,7 @@ body {
 }
 
 .field-name {
-    font-weight: 500;
+    font-weight: 600;
 }
 
 .p-col .p-avatar {
@@ -419,4 +419,8 @@ body {
 .p-column-filter .p-fluid .p-inputgroup .p-button-danger{
     border-bottom-left-radius: 0px;
     border-top-left-radius: 0px; 
+}
+
+.order-total{
+    padding-block: 3px;
 }

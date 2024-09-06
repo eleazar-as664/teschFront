@@ -432,12 +432,17 @@ function Requisitor() {
             field="PurchaseRequestId"
             header="No."
             style={{ width: "5%" }}
-            
           />
+          <Column
+            sortable
+            field="DocNum"
+            header="No.SAP"
+            style={{ width: "5%", color:"#1919db" }}
+          />          
           <Column
             field="Company"
             header="Empresa"
-            style={{ width: "25%" }}
+            style={{ width: "20%" }}
             sortable 
           />
           <Column
@@ -469,7 +474,7 @@ function Requisitor() {
             header="Estatus"
             showFilterMenu={false}
             filterMenuStyle={{ width: "14rem" }}
-            style={{ width: "15%", padding: "8px" }}
+            style={{ width: "12%", padding: "8px" }}
             body={statusBodyTemplate}
             filter
             sortable 
@@ -482,7 +487,7 @@ function Requisitor() {
             header="Referencia"
           />
           <Column
-            style={{ width: "10%" }}
+            style={{ width: "15%", padding: "2px"  }}
             sortable 
             body={(rowData) =>
               rowData.Sent ? (
