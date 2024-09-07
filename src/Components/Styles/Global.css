@@ -424,3 +424,12 @@ body {
 .order-total{
     padding-block: 3px;
 }
+
+.p-badge{    
+    position: absolute;
+    margin-left: 30px; 
+    min-width: 1.25rem;
+    height: 1.25rem;
+    line-height: 1.25rem;
+    background: #689f38;
+}

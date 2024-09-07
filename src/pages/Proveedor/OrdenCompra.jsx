@@ -198,7 +198,7 @@ function NuevaCompra() {
           <Card title="Adjuntos" className="adjuntos">
             <div className="p-field-group">
             <div className="row align-right">
-              {filesProveedor.length > 2 && (
+              {purchaseOrderDataHeader.IsAnualPurchaseOrder === false && filesProveedor.length > 2 && (
                    <Button
                     outlined
                     onClick={() => eliminarArchivosSAP()}

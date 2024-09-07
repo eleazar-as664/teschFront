@@ -3,6 +3,7 @@ import { DataTable } from "primereact/datatable";
 import { FilterMatchMode } from "primereact/api";
 import { ProgressBar } from 'primereact/progressbar';
 
+import { Badge } from 'primereact/badge';
 import { Column } from "primereact/column";
 import { Card } from "primereact/card";
 import { FileUpload } from "primereact/fileupload";
@@ -512,21 +513,26 @@ function Proveedor() {
                 onClick={(e) => e.stopPropagation()}
                 style={{ display: "flex" }}
               >
-                {!rowData.Files || 
-                  (rowData.Files.length === 0 && 
-                    ( rowData.StatusSAP === "Abierto" && (// Verificar si Files está vacío
-                        <Button
-                          onClick={() =>
-                            activarArchivosModal(rowData.PurchaseOrderId)
-                          }
-                          aria-label="Cancel"
-                          
-                          icon="pi pi-file-import"
-                          rounded
-                          severity="info"
-                        />
+                {(!rowData.Files || 
+                  rowData.Files.length === 0 || rowData.IsAnualPurchaseOrder === true) && 
+                      (rowData.StatusSAP === "Abierto" && (   
+                          <Button
+                            onClick={() =>
+                              activarArchivosModal(rowData.PurchaseOrderId)
+                            }
+                            aria-label="Cancel"                          
+                            icon="pi pi-file-import"
+                            rounded
+                            severity="info"                        
+                          />
+                        )
                       )
-                  ))}
+                }
+                {rowData.IsAnualPurchaseOrder === true && (   
+                          <Badge value="+" />
+                        )
+                }
+
               </div>
             )}
           />
