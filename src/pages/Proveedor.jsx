@@ -513,8 +513,7 @@ function Proveedor() {
                 onClick={(e) => e.stopPropagation()}
                 style={{ display: "flex" }}
               >
-                {(!rowData.Files || 
-                  rowData.Files.length === 0 || rowData.IsAnualPurchaseOrder === true) && 
+                {(rowData.Files.length < 2 || rowData.IsAnualPurchaseOrder === true) && 
                       (rowData.StatusSAP === "Abierto" && (   
                           <Button
                             onClick={() =>
