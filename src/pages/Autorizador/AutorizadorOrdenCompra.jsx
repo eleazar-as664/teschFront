@@ -42,10 +42,16 @@ function  AutorizadorOrdenCompra() {
 
     return formattedValue;
   };
+  const totalAmount = (rowData) => {
+    return formatCurrency(rowData.PriceByUnit * rowData.Quantity);
+  };
+
   const priceBodyTemplate = (rowData) => {
     return formatCurrency(rowData.PriceByUnit);
   };
-
+  const totalTemplate = (quantity) => {
+    return formatCurrency(quantity);
+  };
   const handleBack = () => {
     window.history.back();
   };
@@ -165,20 +171,23 @@ function  AutorizadorOrdenCompra() {
     }
     const footerGroup = (
       <ColumnGroup>
-          <Row style={{padding: "0px"}}>
-              <Column footer="  " className="order-total" />
-              <Column footer="Sub-Total:" colSpan={3} footerStyle={{ textAlign: 'right' }} className="order-total"/>
-              <Column footer={purchaseOrderHeader.Subtotal} className="order-total" />
+          <Row>
+              <Column footer="  " />
+              <Column footer="  " />
+              <Column footer="Sub-Total:" colSpan={3} />
+              <Column footer={totalTemplate(purchaseOrderHeader.Subtotal)} />
           </Row>
-          <Row style={{padding: "0px"}}>
-              <Column footer="  " className="order-total" />            
-              <Column footer="IVA:" colSpan={3} footerStyle={{ textAlign: 'right' }} className="order-total"/>
-              <Column footer={purchaseOrderHeader.IVA} className="order-total"/>
+          <Row className="order-total">
+              <Column footer="  " />  
+              <Column footer="  " />          
+              <Column footer="IVA:" colSpan={3} />
+              <Column footer={totalTemplate(purchaseOrderHeader.IVA)} />
           </Row>
-          <Row style={{padding: "0px"}}>
-              <Column footer="  " className="order-total" />
-              <Column footer="Total:" colSpan={3} footerStyle={{ textAlign: 'right' }} className="order-total"/>
-              <Column footer={purchaseOrderHeader.Total} className="order-total" />
+          <Row className="order-total">
+              <Column footer="  " />
+              <Column footer="  " />
+              <Column footer="Total:" colSpan={3} />
+              <Column footer={totalTemplate(purchaseOrderHeader.Total)} />
           </Row>
       </ColumnGroup>
   );
@@ -188,7 +197,7 @@ function  AutorizadorOrdenCompra() {
     <div class="body-ordenCompra">
       <Card className="card-header">
         <div class="row" > 
-        <div className="p-card-title">Detalle Autorizar</div>
+        <div className="p-card-title">Detalle de Orden</div>
               <Button label="Regresar" link onClick={handleBack}
               style= {{width: "70px" }}
               />
@@ -203,7 +212,7 @@ function  AutorizadorOrdenCompra() {
             </div>
               <div className="p-col-field" style={{width:"50%"}}>
                 <div className="p-field">
-                  <span className="field-name">Solicitó: </span>
+                  <span className="field-name">Comprador: </span>
                     {purchaseOrderHeader.Requester}  
                 </div>
 
@@ -216,9 +225,7 @@ function  AutorizadorOrdenCompra() {
                 <span className="field-name">Fecha de la orden: </span>
                   {purchaseOrderHeader.DocDate}
                 </div>
-              </div>
 
-              <div className="p-col-field" style={{width:"50%"}}>
                 <div className="p-field">
                   <span className="field-name">Fecha de entrega: </span>  
                   {purchaseOrderHeader.DocDueDate}
@@ -226,11 +233,36 @@ function  AutorizadorOrdenCompra() {
 
                 <div className="p-field">
                    <span className="field-name">Referencia: </span>
-                   
+                   {purchaseOrderHeader.NumAtCard}
                 </div>
                 <div className="p-field">
                    <span className="field-name">Comentarios: </span>
                    {purchaseOrderHeader.Comments}
+                </div>
+              </div>
+
+              <div className="p-col-field" style={{width:"50%"}}>
+                <div className="p-field">
+                  <span className="field-name">No. Orden: </span>  
+                  {purchaseOrderHeader.DocNum}
+                </div>
+                <div className="p-field">
+                  <span className="field-name">Estatus: </span>  
+                  {purchaseOrderHeader.StatusSAP}
+                </div>                
+
+                <div className="p-field">
+                  <span className="field-name">Autorizó: </span>  
+                  {purchaseOrderHeader.UserApprover}
+                </div>
+
+                <div className="p-field">
+                   <span className="field-name">Fecha autorización: </span>
+                   {purchaseOrderHeader.AuthorizationDate}
+                </div>
+                <div className="p-field">
+                   <span className="field-name">Proveedor: </span>
+                   {purchaseOrderHeader.CardName}
                 </div>
 
               </div>
@@ -291,12 +323,14 @@ function  AutorizadorOrdenCompra() {
             scrollHeight="200px"
             tableStyle={{ minWidth: "50rem" }}
             footerColumnGroup={footerGroup}
+            className="orderAuthorizer"
           >
             <Column field="ItemCode" header="Código" />
             <Column field="Description" header="Descripción" />
             <Column field="BuyUnitMsr" header="Unidad" />
             <Column field="Quantity" header="Cantidad" />
-            <Column field="PriceByUnit" header="Precio Por Unidad" body={priceBodyTemplate}/>
+            <Column field="PriceByUnit" header="Precio unitario" body={priceBodyTemplate}/>
+            <Column header="Importe" body={totalAmount}/>            
           </DataTable>
         </Card>
 

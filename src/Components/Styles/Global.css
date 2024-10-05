@@ -421,8 +421,9 @@ body {
     border-top-left-radius: 0px; 
 }
 
-.order-total{
+.orderAuthorizer .p-datatable-tfoot tr td{
     padding-block: 3px;
+    text-align: right;
 }
 
 .p-badge{    
