@@ -5,16 +5,15 @@ import { useNavigate } from "react-router-dom";
 import { Button } from "primereact/button";
 import { DataTable } from "primereact/datatable";
 import { Column } from "primereact/column";
-import { InputText } from "primereact/inputtext";
-import { FileUpload } from "primereact/fileupload";
 import { Layout } from "../../Components/Layout/Layout";
 import { Toast } from "primereact/toast";
-import { Divider } from "primereact/divider";
 import { Avatar } from 'primereact/avatar';
 import routes from "../../utils/routes";
+import { ProgressBar } from "primereact/progressbar";
 import axios from "axios";
 import { ColumnGroup } from 'primereact/columngroup';
 import { Row } from 'primereact/row';
+import generatePDF from "../../Components/PDFDocumento";
 
 function  AutorizadorOrdenCompra() {
   const [files, setFiles] = useState([]);
@@ -34,6 +33,38 @@ function  AutorizadorOrdenCompra() {
   const [notasAgregar, setNotasAgregar] = useState("");
   const[autorizando, setAutorizando] = useState(false);
   const[cancelando, setCancelando] = useState(false);
+  const [loadingSpinner, setLoadingSpinner] = useState(false);
+
+  const redirectToPDF = async (orderId) => {
+    setLoadingSpinner(true);
+    try {
+      console.clear();
+      const PurchaseOrderId = orderId;
+      const apiUrl = `${routes.BASE_URL_SERVER}/GetPurchaseOrder/${PurchaseOrderId}`;
+      const config = {
+        headers: {
+          "x-access-token": token,
+        },
+      };
+      const response = await axios.get(apiUrl, config);
+      console.log(response.data.data);
+      const datosPDf = response.data.data.purchaseOrderHeader;
+      const detail = response.data.data.Detail;
+      datosPDf.details = detail;
+      console.clear();
+      console.log(datosPDf);
+      generatePDF(datosPDf);// Generar el PDF con los datos del rowData
+    } catch (error) {
+      console.error(
+        "Error al obtener datos de la API:",
+        error.response.data.message
+      );
+    } finally {
+      setLoadingSpinner(false);
+    }
+  };
+
+
   const formatCurrency = (value) => {
     const formattedValue = new Intl.NumberFormat("en-US", {
       style: "currency",
@@ -210,7 +241,7 @@ function  AutorizadorOrdenCompra() {
             <div className="p-col">
             <Avatar label={primeraLetra} className="mr-2" shape="circle" />
             </div>
-              <div className="p-col-field" style={{width:"50%"}}>
+             <div className="p-col-field" style={{width:"50%"}}>
                 <div className="p-field">
                   <span className="field-name">Comprador: </span>
                     {purchaseOrderHeader.Requester}  
@@ -242,9 +273,31 @@ function  AutorizadorOrdenCompra() {
               </div>
 
               <div className="p-col-field" style={{width:"50%"}}>
-                <div className="p-field">
-                  <span className="field-name">No. Orden: </span>  
-                  {purchaseOrderHeader.DocNum}
+                <div className="p-field" style={{display:"flex", justifyContent:"space-between"}}>
+                  <div>
+                      <span className="field-name">No. Orden: </span>  
+                      {purchaseOrderHeader.DocNum}
+                  </div>
+                  <div>
+                      { loadingSpinner ? (
+                              <Button
+                              icon="pi pi-spin pi-spinner"
+                              style={{ padding: "5px", width: "50px", marginRight:"20px"}}
+                            />
+                         ) : (
+                          <Button
+                                onClick={() => redirectToPDF(purchaseOrderHeader.PurchaseOrderId)} // Agrega la función para redireccionar a la página de detalle
+                                label={
+                                  <i
+                                    className="pi pi-file-pdf ff"
+                                    style={{ fontSize: "24px", color: "#f73164" }}
+                                  />
+                                }
+                                text
+                                style={{ padding: "0px", width: "50px", marginRight:"20px"}}
+                              />
+                          )}
+                  </div>
                 </div>
                 <div className="p-field">
                   <span className="field-name">Estatus: </span>  
@@ -329,8 +382,8 @@ function  AutorizadorOrdenCompra() {
             <Column field="Description" header="Descripción" />
             <Column field="BuyUnitMsr" header="Unidad" />
             <Column field="Quantity" header="Cantidad" />
-            <Column field="PriceByUnit" header="Precio unitario" body={priceBodyTemplate}/>
-            <Column header="Importe" body={totalAmount}/>            
+            <Column field="PriceByUnit" header="Precio unitario" body={priceBodyTemplate} headerClassName="headerTotals" style={{ textAlign: "right" }}/>
+            <Column header="Importe" body={totalAmount} headerClassName="headerTotals" style={{ textAlign: "right" }}/>            
           </DataTable>
         </Card>
 

@@ -17,6 +17,7 @@ import { TabMenu } from "primereact/tabmenu";
 import { RadioButton } from "primereact/radiobutton";
 import { Toast } from "primereact/toast";
 import generatePDF from "../Components/PDFDocumento";
+import { Carousel } from 'primereact/carousel';
 
 import { Tag } from "primereact/tag";
 import routes from "../utils/routes";
@@ -140,26 +141,48 @@ function Autorizador() {
     }
   };
 
+  const attachTemplate = (attachments) => {
+    return (
+        <div className="border-1 surface-border border-round m-2 text-center py-5 px-3">
+            <div>
+            <Button className="attachIcon" 
+                  onClick={() =>  window.open(attachments.SRC, '_blank')}
+                  label={
+                    attachments.FileName.substring(0,10)
+                  }
+                  icon="pi pi-file ff"
+                  text
+              />
+            </div>
+        </div>
+    );
+};
+
   const rowExpansionTemplate = (data) => {
     return (
-      <div className="p-grid p-dir-col">
+      <div className="rowGoup">
         <div className="p-col-12">
-          <h5>Articulos de {data.DocNum}</h5>
+          <div className="rowGroupHeader">
+              <span className="field-name">Art&iacute;culos</span>  
+              <Carousel value={data.Attachments} numScroll={1} numVisible={3} 
+                itemTemplate={attachTemplate} 
+                showIndicators={false}
+              />
+          </div>
           <DataTable value={data.Details}>
-            <Column field="Id" header="Id"></Column>
             <Column
               field="PurchaseOrderId"
-              header="Codigo del articulo"
+              header="C&oacute;digo del art&iacute;culo"
             ></Column>
-            <Column field="ItemDescription" header="Descrpcion"></Column>
+            <Column field="ItemDescription" header="Descripci&oacute;n"></Column>
             <Column field="ItemBuyUnitMsr" header="Unidad"></Column>
             <Column field="ItemQuantity" header="Cantidad"></Column>
             <Column
               field="PriceByUnit"
               body={priceBodyTemplateU}
-              header="Precio Por Unidad"
+              header="Precio por unidad"
             ></Column>
-            <Column field="ItemOcrCode" header="Centro de Costo"></Column>
+            <Column field="ItemOcrCode2" header="Centro de costo"></Column>
           </DataTable>
         </div>
       </div>
@@ -487,7 +510,6 @@ function Autorizador() {
               scrollable
               scrollHeight="400px"
               filters={filters}
-              filterDisplay="row"
               globalFilterFields={[
                 "DocNum",
                 "BusinessPartnerCardName",
@@ -552,7 +574,7 @@ function Autorizador() {
 
               <Column header="Estatus" body={statusTemplate} style={{ width: "7%" }}></Column>
               <Column
-                header="Autorizacion"
+                header="Autorizaci&oacute;n"
                 body={approvalStatusTemplate}
                 style={{ width: "10%" }}
               ></Column>
