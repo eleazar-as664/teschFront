@@ -642,7 +642,7 @@ const AuthorizerFilter = () => {
 
   const DocNumBodyTemplate = () => {
     return (
-      <InputNumber placeholder="Buscar Por numero de documento"  onChange={handleDocNumInputChange} />
+      <InputNumber placeholder="Buscar por numero"  onChange={handleDocNumInputChange} />
     )
   };
 
@@ -693,7 +693,7 @@ const AuthorizerFilter = () => {
   const FechaOrdenFilter = () => {
     return (
       <div className="p-inputgroup flex-1">
-        <Calendar placeholder="Fecha Inicial - Fecha Final" value={fechasOrdenes} onChange={handleChangeFechaOrden} selectionMode="range" readOnlyInput hideOnRangeSelection />
+        <Calendar placeholder="Inicial - Final" value={fechasOrdenes} onChange={handleChangeFechaOrden} selectionMode="range" readOnlyInput hideOnRangeSelection />
         <Button icon="pi pi-times" className="p-button-danger" onClick={handleDeleteFechaOrden} style={{ maxWidth: '2rem' }}/>
     </div>
     );
@@ -742,7 +742,7 @@ const AuthorizerFilter = () => {
   const FechaAutorizacionFilter = () => {
     return (
       <div className="p-inputgroup flex-1">
-        <Calendar placeholder="Fecha Inicial - Fecha Final" value={fechaAutorizacion} onChange={handleChangeFechaAutorizacion} selectionMode="range" readOnlyInput hideOnRangeSelection />
+        <Calendar placeholder="Inicial - Final" value={fechaAutorizacion} onChange={handleChangeFechaAutorizacion} selectionMode="range" readOnlyInput hideOnRangeSelection />
         <Button icon="pi pi-times" className="p-button-danger" onClick={handleDeleteFechaAutorizacion} style={{ maxWidth: '2rem' }}/>
     </div>
     );
@@ -833,12 +833,12 @@ const AuthorizerFilter = () => {
               sortable 
               filter
               filterElement={DocNumBodyTemplate} 
-              style={{ width: "5%" }}
+              style={{ width: "8%" }}
             ></Column>
             <Column
               field="CompanyName"
               header="Empresa"
-              style={{ width: "10%" }}
+              style={{ width: "15%" }}
               filter
               filterElement={CompanyFilter}
               sortable 
@@ -846,17 +846,23 @@ const AuthorizerFilter = () => {
             <Column
               field="DocDate"
               header="Fecha Orden"
-              style={{ width: "30%" }}
+              style={{ width: "11%" }}
               filter
               filterElement={FechaOrdenFilter}
               sortable 
             ></Column>
             <Column
+              field="BusinessPartnerCardName"
+              header="Proveedor"
+              style={{ width: "15%" }}
+              sortable 
+            ></Column>            
+            <Column
               field="Requester"
               header="Solicitó"
               filter
               filterElement={RequesterFilter}
-              style={{ width: "10%" }}
+              style={{ width: "15%" }}
               sortable 
             ></Column>
             <Column
@@ -864,70 +870,68 @@ const AuthorizerFilter = () => {
               header="Autorizador"
               filter
               filterElement={AuthorizerFilter}
-              style={{ width: "10%" }}
+              style={{ width: "15%" }}
               sortable 
             ></Column>
             <Column
               field="AuthorizationDate"
               header="Fecha Autorización"
-              style={{ width: "30%" }}
+              style={{ width: "11%" }}
               filter
               filterElement={FechaAutorizacionFilter}
               sortable 
             ></Column>
             <Column
-              field="ApprovalStatus"
+              field="StatusSAP"
               header="Estatus"
-              style={{ width: "5%" }}
+              style={{ width: "10%" }}
               sortable 
-              filter
-              filterElement={StatusFilter}
-              body={(rowData) => {
-                switch (rowData.ApprovalStatus) {
-                  case "Para Autorizar":
-                    return (
-                      <div>
-                        <i
-                          className="pi pi-exclamation-triangle"
-                          style={{ color: "orange" }}
-                        ></i>
-                        {rowData.ApprovalStatus}
-                      </div>
-                    );
-                  case "Abierto":
-                    return (
-                      <div>
-                        <i
-                          className="pi pi-lock-open"
-                          style={{ color: "purple" }}
-                        ></i>
-                        {rowData.ApprovalStatus}
-                      </div>
-                    );
-                  case "Cerrado":
-                    return (
-                      <div>
-                        <i
-                          className="pi pi-check-circle"
-                          style={{ color: "green" }}
-                        ></i>
-                        {rowData.ApprovalStatus}
-                      </div>
-                    );
-                  case "Cancelado":
-                    return (
-                      <div>
-                        <i
-                          className="pi pi-times-circle"
-                          style={{ color: "red" }}
-                        ></i>
-                        {rowData.ApprovalStatus}
-                      </div>
-                    );
-                  default:
-                    return rowData.ApprovalStatus;
-                }
-              }}
+              // body={(rowData) => {
+              //   switch (rowData.ApprovalStatus) {
+              //     case "Para Autorizar":
+              //       return (
+              //         <div>
+              //           <i
+              //             className="pi pi-exclamation-triangle"
+              //             style={{ color: "orange" }}
+              //           ></i>
+              //           {rowData.ApprovalStatus}
+              //         </div>
+              //       );
+              //     case "Abierto":
+              //       return (
+              //         <div>
+              //           <i
+              //             className="pi pi-lock-open"
+              //             style={{ color: "purple" }}
+              //           ></i>
+              //           {rowData.ApprovalStatus}
+              //         </div>
+              //       );
+              //     case "Cerrado":
+              //       return (
+              //         <div>
+              //           <i
+              //             className="pi pi-check-circle"
+              //             style={{ color: "green" }}
+              //           ></i>
+              //           {rowData.ApprovalStatus}
+              //         </div>
+              //       );
+              //     case "Cancelado":
+              //       return (
+              //         <div>
+              //           <i
+              //             className="pi pi-times-circle"
+              //             style={{ color: "red" }}
+              //           ></i>
+              //           {rowData.ApprovalStatus}
+              //         </div>
+              //       );
+              //     default:
+              //       return rowData.ApprovalStatus;
+              //   }
+              // }}
             ></Column>
           </DataTable>
           <Paginator first={globalNumeroPagina}  rows={NUMERO_REGISTROS_POR_PAGINA} totalRecords={totalRecords} onPageChange={handlePageChange}  />

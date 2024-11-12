@@ -535,7 +535,7 @@ function Autorizador() {
                 style={{ width: "15%" }}
               ></Column>
               <Column
-                field="DocDueDate"
+                field="DocDate"
                 header="Fecha de orden"
                 sortable
                 style={{ width: "8%" }}
