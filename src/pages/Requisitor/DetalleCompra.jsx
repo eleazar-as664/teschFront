@@ -10,12 +10,15 @@ import { Layout } from "../../Components/Layout/Layout";
 import { Toast } from "primereact/toast";
 import { Divider } from "primereact/divider";
 import { Avatar } from "primereact/avatar";
+
+import { useNavigate } from "react-router-dom";
 import routes from "../../utils/routes";
 import axios from "axios";
 function DetalleCompra() {
   const [files, setFiles] = useState([]);
 
   const toast = useRef(null);
+  const navigate = useNavigate();
 
   const datosRequisitor = JSON.parse(localStorage.getItem("datosRequisitor"));
   const user = JSON.parse(localStorage.getItem("user"));
@@ -114,7 +117,6 @@ function DetalleCompra() {
         UserId: user.UserId,
         Notes: notasAgregar,
         SAPToken: user.TokenSAP,
-
       };
       console.log("data:", data);
       setEnviandoNota(true);
@@ -231,7 +233,9 @@ function DetalleCompra() {
   const handleErrorResponse = (error) => {
     console.error("Error al enviar el formulario:", error);
   };
-  // const primeraLetra = infoUsuarioCreadorSolicitud.FirstName.charAt(0);
+  const redirecionarDuplicar = () => {
+    navigate("../Requisitor/Requisitor/DuplicarCompra");
+  };
 
   return (
     <Layout>
@@ -243,13 +247,13 @@ function DetalleCompra() {
         </Card>
         <Toast ref={toast} />
         <Card className="cardOrdenCompra">
-          <div className="p-grid p-nogutter">
+          <div className="p-grid p-nogutter" style={{ position: "relative" }}>
             <div className="row">
               <div className="p-col">
                 <Avatar label={primeraLetra} className="mr-2" shape="circle" />
               </div>
               <div className="p-col-field">
-              <div className="p-field">
+                <div className="p-field">
                   <span className="field-name">No.: </span>
                   <span className="field-name">
                     {infoUsuarioCreadorSolicitud.Id}{" "}
@@ -257,24 +261,22 @@ function DetalleCompra() {
                 </div>
                 <div className="p-field">
                   <span className="field-name">Nombre de Requisitor: </span>
-                    {infoUsuarioCreadorSolicitud.FirstName +
-                      " " +
-                      infoUsuarioCreadorSolicitud.LastName}{" "}                  
+                  {infoUsuarioCreadorSolicitud.FirstName +
+                    " " +
+                    infoUsuarioCreadorSolicitud.LastName}{" "}
                 </div>
-
                 <div className="p-field">
                   <span className="field-name">Empresa: </span>
-                    {infoUsuarioCreadorSolicitud.BusinessName}{" "}
+                  {infoUsuarioCreadorSolicitud.BusinessName}{" "}
                 </div>
-
                 <div className="p-field">
-                <span className="field-name">Fecha de Solicitud: </span>
+                  <span className="field-name">Fecha de Solicitud: </span>
                   {infoUsuarioCreadorSolicitud.CreateDate}
                 </div>
               </div>
 
               <div className="p-col-field">
-                <div className="p-field" style={{color:"#1919db"}}>
+                <div className="p-field" style={{ color: "#1919db" }}>
                   <span className="field-name">No. SAP: </span>
                   <span className="field-name">
                     {infoUsuarioCreadorSolicitud.DocNum}{" "}
@@ -284,7 +286,6 @@ function DetalleCompra() {
                   <span className="field-name">Fecha de entrega: </span>
                   {infoUsuarioCreadorSolicitud.DocDueDate}
                 </div>
-
                 <div className="p-field">
                   <span className="field-name">Referencia: </span>
                   {infoUsuarioCreadorSolicitud.NumAtCard}
@@ -294,18 +295,29 @@ function DetalleCompra() {
                   {infoUsuarioCreadorSolicitud.Comments}
                 </div>
               </div>
+
+              {/* Button positioned in the top-right */}
+              <div style={{ position: "absolute", top: 0, right: 0 }}>
+                <Button
+                  icon="pi pi-copy"
+                  className="p-button-success"
+                  label=" Duplicar"
+                  onClick={redirecionarDuplicar}
+                />
+              </div>
             </div>
           </div>
+
           <DataTable
             value={materialesSolicitados}
             scrollable
             scrollHeight="200px"
             tableStyle={{ minWidth: "50rem" }}
           >
-            <Column field="ItemCode" header="Código" sortable  />
-            <Column field="Description" header="Descripción" sortable  />
-            <Column field="BuyUnitMsr" header="Unidad"sortable  />
-            <Column field="Quantity" header="Cantidad" sortable  />
+            <Column field="ItemCode" header="Código" sortable />
+            <Column field="Description" header="Descripción" sortable />
+            <Column field="BuyUnitMsr" header="Unidad" sortable />
+            <Column field="Quantity" header="Cantidad" sortable />
           </DataTable>
         </Card>
 
@@ -351,7 +363,7 @@ function DetalleCompra() {
                     <Column field="FileName" header="Nombre" />
                     <Column
                       header="Acción"
-                      sortable 
+                      sortable
                       body={(rowData) => (
                         <a
                           href={rowData.SRC}
@@ -380,7 +392,6 @@ function DetalleCompra() {
               </div>
             </div>
           </Card>
-
         </div>
       </div>
     </Layout>

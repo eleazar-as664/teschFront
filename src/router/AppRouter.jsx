@@ -5,6 +5,7 @@ import NuevaCompra from "../pages/Requisitor/NuevaCompra";
 import EditarRequisicion from "../pages/Requisitor/EditarRequisicion";
 import DetalleCompra from "../pages/Requisitor/DetalleCompra";
 import NuevoUsuario from "../pages/Administrador/NuevoUsuario";
+import DuplicarCompra from "../pages/Requisitor/DuplicarCompra";
 import Sincronizar from "../pages/Administrador/Sincronizacion";
 
 import SincronizacionProvedores from "../pages/Administrador/SincronizarProvedores";
@@ -138,6 +139,15 @@ export const AppRouter = () => {
             element={
               <PrivateRoute
                 element={<DetalleCompra />}
+                allowedProfiles={["Requisitor"]}
+              />
+            }
+          />
+           <Route
+            path="Requisitor/Requisitor/DuplicarCompra"
+            element={
+              <PrivateRoute
+                element={<DuplicarCompra />}
                 allowedProfiles={["Requisitor"]}
               />
             }
